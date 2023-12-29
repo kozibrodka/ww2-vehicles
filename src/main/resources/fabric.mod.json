@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "vehicles",
+  "version": "${version}",
+
+  "name": "WW2 Vehicles",
+  "description": "This is an example description! Tell everyone what your mod is about!",
+  "authors": [
+    "kozibrodka"
+  ],
+  "contact": {
+    "homepage": "https://glass-launcher.net/",
+    "sources": "https://github.com/calmilamsy/BIN-fabric-example-mod"
+  },
+
+  "license": "CC0-1.0",
+  "icon": "assets/vehicles/iconM4.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "stationapi:event_bus": [
+
+    ],
+    "stationapi:event_bus_client": [
+
+    ],
+    "stationapi:event_bus_server": [
+
+    ]
+  },
+  "mixins": [
+    "vehicles.mixins.json"
+  ],
+
+  "depends": {
+    "minecraft": "1.0.0-beta.7.3"
+  }
+}
