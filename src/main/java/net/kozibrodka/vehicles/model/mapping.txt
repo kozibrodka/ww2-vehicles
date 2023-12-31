@@ -1,0 +1,5 @@
+func_78790_a = addBox
+func_78793_a = setRotationPoint
+field_78808_h = rotateAngleZ
+field_78795_f = rotateAngleX
+field_78796_g = rotateAngleY

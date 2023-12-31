@@ -19,13 +19,16 @@
   "environment": "*",
   "entrypoints": {
     "stationapi:event_bus": [
-
+      "net.kozibrodka.vehicles.events.mod_Vehicles"
     ],
     "stationapi:event_bus_client": [
-
+      "net.kozibrodka.vehicles.events.TextureListener"
     ],
     "stationapi:event_bus_server": [
 
+    ],
+    "gcapi": [
+      "net.kozibrodka.vehicles.events.mod_Vehicles"
     ]
   },
   "mixins": [
