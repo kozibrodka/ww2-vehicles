@@ -1,51 +1,54 @@
 package net.kozibrodka.vehicles.properties;
 
-import net.kozibrodka.sdk_api.events.init.ww2Parts;
 import net.kozibrodka.vehicles.events.mod_Vehicles;
-import net.kozibrodka.vehicles.model.ModelSherman_Classic;
-import net.minecraft.item.ItemBase;
-import net.minecraft.item.ItemInstance;
+import net.kozibrodka.vehicles.model.ModelTigerII;
+import net.kozibrodka.vehicles.model.ModelVWType82;
 
-public class PropertiesClassic_Sherman extends Vehicle_properties{
+public class Properties_Tiger2 extends Vehicle_properties{
 
-    public PropertiesClassic_Sherman() {
-        name = "classic_Sherman";
-        longName = "Sherman";
-        texture = "Sherman.png";
-        model = new ModelSherman_Classic();
+    public Properties_Tiger2() {
+
+        name = "TigerII";
+        longName = "Panzerkampfwagen VI Tiger II - Version B";
+        texture = "SkinVehicleTigerII.png";
+        model = new ModelTigerII();
         SOUND_RIDING = "vehicles:engine";
         shootSound = "vehicles:tankshell";
         SOUND_LOOP_TIME_MAX = 20;
-        przedmiot = mod_Vehicles.vehicleClassic_Sherman;
+        przedmiot = mod_Vehicles.vehicle_Tiger2;
 
         MAX_HEALTH = 200;
         DEATH_TIME_MAX = 100;
         hasTurret = true;
         hasGuns = true;
+        tankDestroyer = false;
+        antiAircraft = false;
         vehicleFuelAdd = 1000;
         vehicleShootDelay = 5;
-        vehicleShellDelay = 110;
+        vehicleShellDelay = 10;
         numCargoSlots = 5;
         numBulletSlots = 5;
         numShellSlots = 5;
-        gunDamage = 3;
+        gunDamage = 3F;
         gunVelocity = 3F;
         gunSpread = 1F;
         autoWidth = 2.5F;
         autoHeight = 3.2F;
-        standingOko = 0F;
+        standingOko = 0.625F;
 
-        playerYOffset = 2D;
-        shellXOffset = 75;
-        shellYOffset = 40;
+        playerXOffset = 0.0D;
+        playerYOffset = 1.8D;
+        playerZOffset = 0.0D;
+        shellXOffset = 70;
+        shellYOffset = 35;
         shellZOffset = 0;
-        barrelX = -28;
-        barrelY = 5;
+        barrelX = -48;
+        barrelY = 2;
         barrelZ = -6;
         gunYawMin = -180;
         gunYawMax = 180;
         gunPitchMin = -45;
-        gunPitchMax = 0;
+        gunPitchMax = 8;
 
         MAX_SPEED = 0.15D;
         TURN_SPEED_STOPPED = 3.5D;
@@ -68,16 +71,5 @@ public class PropertiesClassic_Sherman extends Vehicle_properties{
         COLLISION_DAMAGE = true;
         COLLISION_FLIGHT_PLAYER = false;
         COLLISION_FLIGHT_ENTITY = false;
-
-        item_track =  new ItemInstance(ww2Parts.trackPiece.id, 1, 0);
-        item_body =  new ItemInstance(ww2Parts.mediumTankBody.id, 1, 0);
-        item_mg =  new ItemInstance(ItemBase.egg.id, 1, 0); //TODO
-        item_turret =  new ItemInstance(ww2Parts.mediumTankTurret.id, 1, 0);
-        item_cannon =  new ItemInstance(ItemBase.egg.id, 1, 0);
-        dyeColor = new ItemInstance(ItemBase.dyePowder.id, 1, 2);
-        itemlist1 = "QWE";
-        itemlist2 = "ASD";
-        itemlist3 = " X ";
-        itemlist4 = " X ";
     }
 }

@@ -3,10 +3,8 @@ package net.kozibrodka.vehicles.events;
 
 import net.glasslauncher.hmifabric.event.HMITabRegistryEvent;
 import net.glasslauncher.mods.api.gcapi.api.GConfig;
-import net.kozibrodka.vehicles.entity.EntityAAShell;
-import net.kozibrodka.vehicles.entity.EntityShell;
-import net.kozibrodka.vehicles.entity.EntityVehicle;
-import net.kozibrodka.vehicles.entity.SdkEntityBulletMachineGun;
+import net.kozibrodka.vehicles.entity.*;
+import net.kozibrodka.vehicles.item.ItemTruck;
 import net.kozibrodka.vehicles.item.ItemVehicle;
 import net.kozibrodka.vehicles.item.SdkItemGunMachineGun;
 import net.kozibrodka.vehicles.properties.*;
@@ -17,7 +15,6 @@ import net.kozibrodka.vehicles.recipe.VehicleRecipeTab;
 import net.mine_diver.unsafeevents.listener.EventListener;
 import net.minecraft.block.BlockBase;
 import net.minecraft.item.ItemInstance;
-import net.modificationstation.stationapi.api.client.event.render.entity.EntityRendererRegisterEvent;
 import net.modificationstation.stationapi.api.event.entity.EntityRegister;
 import net.modificationstation.stationapi.api.event.recipe.RecipeRegisterEvent;
 import net.modificationstation.stationapi.api.event.registry.BlockRegistryEvent;
@@ -54,6 +51,8 @@ public class mod_Vehicles {
 
     public static TemplateItemBase vehicleClassic_Sherman;
     public static TemplateItemBase vehicleClassic_Panzer;
+    public static TemplateItemBase vehicleClassic_WillysJeep;
+    public static TemplateItemBase vehicleClassic_Kubelwagen;
 
     public static TemplateItemBase vehicleOld_M41;
     public static TemplateItemBase vehicleOld_Panzer4G;
@@ -62,7 +61,10 @@ public class mod_Vehicles {
     public static TemplateItemBase vehicleOld_Hummel;
     public static TemplateItemBase vehicleOld_Flakpanzer4;
 
+    public static TemplateItemBase vehicle_VWType82;
+    public static TemplateItemBase vehicle_WillyJeep;
     public static TemplateItemBase vehicle_Tiger1;
+    public static TemplateItemBase vehicle_Tiger2;
 
 
     @EventListener
@@ -76,10 +78,12 @@ public class mod_Vehicles {
 
         itemGunMachineGun = (TemplateItemBase) new SdkItemGunMachineGun(Identifier.of(MOD_ID, "itemGunMachineGun")).setTranslationKey(MOD_ID, "itemGunMachineGun");
 
-       //TODO: ADD MACHINE GUN TYPE for vehicles, add cars, engine types work, DMG overall, props
+       //TODO: ADD MACHINE GUN TYPE for vehicles, add cars, engine types work, DMG overall, props, Truck playerXOffset.
         if(vehiclesGlass.registerVehicles_CLASSIC) {
             new VehicleType(new PropertiesClassic_Sherman());
             new VehicleType(new PropertiesClassic_Panzer());
+            new TruckType(new PropertiesClassic_Jeep());
+            new TruckType(new PropertiesClassic_Kubelwagen());
         }
         if(vehiclesGlass.registerVehicles_NORMAL) {
             new VehicleType(new PropertiesOld_M41());
@@ -92,6 +96,9 @@ public class mod_Vehicles {
 
         if(vehiclesGlass.registerVehicles_NEW) {
             new VehicleType(new Properties_Tiger1());
+            new VehicleType(new Properties_Tiger2());
+            new TruckType(new Properties_WillyJeep());
+            new TruckType(new Properties_VWType82());
         }
 
         for (int i = 0; i < VehicleType.types.size(); i++) {
@@ -100,6 +107,14 @@ public class mod_Vehicles {
 
             vehicleMapping.put(vehicletype.name, vehicletype);
             vehicletype.przedmiot = (TemplateItemBase) new ItemVehicle(Identifier.of(MOD_ID, vehicletype.name), vehicletype.name).setTranslationKey(MOD_ID, vehicletype.name).setMaxStackSize(1);
+        }
+
+        for (int i = 0; i < TruckType.types.size(); i++) {
+            TruckType truckType = (TruckType) TruckType.types.get(i);
+            System.out.println((new StringBuilder()).append("mod_Vehicles added vehicle : ").append(truckType.name).toString());
+
+            truckMapping.put(truckType.name, truckType);
+            truckType.przedmiot = (TemplateItemBase) new ItemTruck(Identifier.of(MOD_ID, truckType.name), truckType.name).setTranslationKey(MOD_ID, truckType.name).setMaxStackSize(1);
         }
     }
 
@@ -114,6 +129,7 @@ public class mod_Vehicles {
         event.register(EntityAAShell.class, String.valueOf(Identifier.of(MOD_ID, "EntityAAShellTank")));
         event.register(SdkEntityBulletMachineGun.class, String.valueOf(Identifier.of(MOD_ID, "SdkEntityBulletMachineGun")));
         event.register(EntityVehicle.class, String.valueOf(Identifier.of(MOD_ID, "EntityVehicle")));
+        event.register(EntityTruck.class, String.valueOf(Identifier.of(MOD_ID, "EntityTruck")));
     }
 
     @EventListener
@@ -122,6 +138,7 @@ public class mod_Vehicles {
         Registry.register(event.registry, MOD_ID.id("EntityAAShellTank"), EntityAAShell::new);
         Registry.register(event.registry, MOD_ID.id("SdkEntityBulletMachineGun"), SdkEntityBulletMachineGun::new);
         Registry.register(event.registry, MOD_ID.id("EntityVehicle"), EntityVehicle::new);
+        Registry.register(event.registry, MOD_ID.id("EntityTruck"), EntityTruck::new);
     }
 
     @EventListener
@@ -137,6 +154,11 @@ public class mod_Vehicles {
     public static VehicleType getVehicleType(String s) {
         return (VehicleType) vehicleMapping.get(s);
     }
+    public static TruckType getTruckType(String s) {
+        return (TruckType) truckMapping.get(s);
+    }
     public static VehicleType type = null;
+    public static TruckType type_truck = null;
     private static Map vehicleMapping = new HashMap();
+    private static Map truckMapping = new HashMap();
 }

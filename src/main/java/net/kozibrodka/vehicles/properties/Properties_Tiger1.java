@@ -2,6 +2,7 @@ package net.kozibrodka.vehicles.properties;
 
 import net.kozibrodka.vehicles.events.mod_Vehicles;
 import net.kozibrodka.vehicles.model.ModelTigerI;
+import net.kozibrodka.vehicles.model.ModelTigerII;
 
 public class Properties_Tiger1 extends Vehicle_properties{
 
@@ -9,8 +10,8 @@ public class Properties_Tiger1 extends Vehicle_properties{
 
         name = "TigerI";
         longName = "Panzerkampfwagen VI Tiger - Version E";
-        texture = "SkinVehicleTigerI.png";
-        model = new ModelTigerI();
+        texture = "SkinVehicleTigerI.png"; //SkinVehicleTigerI.png"
+        model = new ModelTigerII(); //new ModelTigerI()
         SOUND_RIDING = "vehicles:engine";
         shootSound = "vehicles:tankshell";
         SOUND_LOOP_TIME_MAX = 20;

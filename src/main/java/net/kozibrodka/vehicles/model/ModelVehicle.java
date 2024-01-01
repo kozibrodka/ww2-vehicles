@@ -1,6 +1,7 @@
 package net.kozibrodka.vehicles.model;
 
 import net.kozibrodka.tmt.TURBO_MODEL_125.*;
+import net.kozibrodka.vehicles.entity.EntityTruck;
 import net.kozibrodka.vehicles.entity.EntityVehicle;
 
 public class ModelVehicle extends ModelBase {
@@ -86,6 +87,7 @@ public class ModelVehicle extends ModelBase {
         //
 
     }
+
 
     public void renderGun(float f, float f1, float f2, float f3, float f4, float f5, EntityVehicle vehicle, float gunYaw, float gunPitch) {
         int i;
@@ -173,9 +175,6 @@ public class ModelVehicle extends ModelBase {
             this.rightTrackModel[i].doMirror(false, true, true);
             this.rightTrackModel[i].setRotationPoint(this.rightTrackModel[i].rotationPointX, -this.rightTrackModel[i].rotationPointY, -this.rightTrackModel[i].rotationPointZ);
         }
-        //
-
-
     }
 
     public void translateAll(int y) {

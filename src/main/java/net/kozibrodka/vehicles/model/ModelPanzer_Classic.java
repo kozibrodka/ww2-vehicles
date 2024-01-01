@@ -1,7 +1,6 @@
 package net.kozibrodka.vehicles.model;
 
 import net.kozibrodka.tmt.TURBO_MODEL_125.*;
-
 public class ModelPanzer_Classic extends ModelVehicle {
     public ModelPanzer_Classic(){
         short c = 256;

@@ -180,7 +180,7 @@ public class VehicleRecipeTab extends TabWithTexture {
             if (gui.isInstance(parent)) return true;
         }
         if (isVanillaWorkbench && (parent == null || isInv(parent))) {
-            for (int i = 3; i < 10; i++) {
+            for (int i = 5; i < 10; i++) {
                 if (i != 4 && i != 5 && recipeItems[i] != null)
                     return false;
             }
@@ -300,7 +300,7 @@ public class VehicleRecipeTab extends TabWithTexture {
         this.inv = Utils.getMC().interactionManager;
         this.windowId = container.container.currentContainerId;
         for (int recipeSlotIndex = 1; recipeSlotIndex < recipeItems.length; recipeSlotIndex++) {
-            if (isInv(parent) && recipeSlotIndex > 5)
+            if (isInv(parent) && recipeSlotIndex > 3)
                 break;
             int slotid = recipeSlotIndex;
             if (isInv(parent) && recipeSlotIndex > 3) {

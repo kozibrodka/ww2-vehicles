@@ -30,16 +30,18 @@ public class PropertiesClassic_Panzer extends Vehicle_properties{
         numBulletSlots = 5;
         numShellSlots = 5;
         gunDamage = 3;
+        gunVelocity = 3F;
+        gunSpread = 1F;
         autoWidth = 2.5F;
         autoHeight = 3.2F;
         standingOko = 0F;
 
-        playerYOffset = 1.15D;
-        shellXOffset = 55;
-        shellYOffset = 10;
+        playerYOffset = 2D;
+        shellXOffset = 60;
+        shellYOffset = 35;
         shellZOffset = 0;
-        barrelX = -48;
-        barrelY = 2;
+        barrelX = -28;
+        barrelY = 5;
         barrelZ = -6;
         gunYawMin = -180;
         gunYawMax = 180;
