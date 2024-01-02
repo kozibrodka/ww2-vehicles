@@ -5,15 +5,16 @@ import net.kozibrodka.sdk_api.events.ingame.mod_SdkFlasher;
 import net.kozibrodka.sdk_api.events.init.ItemCasingListener;
 import net.kozibrodka.sdk_api.events.init.KeyBindingListener;
 import net.kozibrodka.sdk_api.events.init.ww2Parts;
-import net.kozibrodka.sdk_api.events.utils.SdkItemCustomUseDelay;
-import net.kozibrodka.sdk_api.events.utils.SdkItemGun;
-import net.kozibrodka.sdk_api.events.utils.WW2Cannon;
-import net.kozibrodka.sdk_api.events.utils.WW2Tank;
+import net.kozibrodka.sdk_api.events.utils.*;
 import net.kozibrodka.vehicles.events.mod_Vehicles;
 import net.kozibrodka.vehicles.gui.GuiVehicle;
 import net.kozibrodka.vehicles.properties.VehicleType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityBase;
+import net.minecraft.entity.Item;
+import net.minecraft.entity.Living;
+import net.minecraft.entity.animal.Wolf;
+import net.minecraft.entity.monster.MonsterEntityType;
 import net.minecraft.entity.player.PlayerBase;
 import net.minecraft.inventory.InventoryBase;
 import net.minecraft.item.ItemBase;
@@ -49,7 +50,7 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
         gunYaw = 0.0F;
         gunPitch = 0.0F;
         gunYawShoot = 0.0F;
-        gunMachineGun = new ItemInstance(mod_Vehicles.itemGunMachineGun); //TODO: add vehicle gun
+        gunMachineGun = new ItemInstance(mod_Vehicles.itemGunMachineGun);
         renderDistanceMultiplier = 2; //jakos to dostosoawac
 
     }
@@ -121,9 +122,18 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
     {
         if(automobile.MAX_HEALTH != -1)
         {
-            onHurt();
-            System.out.println("Czołg dostał od: " + entity + " dmg: " + i);
-            health -= i;
+            if(entity instanceof Living){
+                if(entity instanceof MonsterEntityType){
+                    health -= (int)i/5;
+                    System.out.println("TANK DAMAGED from: " + entity + " DMG: " + (int)i/5);
+                    onHurt();
+                }
+            }else{
+                health -= i;
+                System.out.println("TANK DAMAGED from: " + entity + " DMG: " + i);
+                onHurt();
+            }
+
             if(health <= 0)
             {
                 onDeath();
@@ -161,8 +171,8 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
         {
             if(health > 0 && health < automobile.MAX_HEALTH)
             {
-                level.playSound(this, "ofensywa:wrench", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
-                health = Math.min(health + 4, automobile.MAX_HEALTH);
+                level.playSound(this, "vehicles:blowtorch", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+                health = Math.min(health + 10, automobile.MAX_HEALTH);
                 entityplayer.swingHand();
                 entityplayer.getHeldItem().applyDamage(1, entityplayer);
                 if(entityplayer.getHeldItem().getDamage() <= 0)
@@ -177,6 +187,7 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
             System.out.println("TYPE: " + automobile.name);
             System.out.println("ENGINE: " + engineType);
             System.out.println("HEALTH: " + health);
+            entityplayer.swingHand();
             return true;
         }
         if(passenger != null && (passenger instanceof PlayerBase) && passenger != entityplayer)
@@ -318,16 +329,19 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
         }
         if(passenger != null && getPrevSpeed() - getSpeed() > automobile.COLLISION_SPEED_MIN)
         {
-            if(lastCollidedEntity != null)
+            if(lastCollidedEntity != null && !(lastCollidedEntity instanceof Item))
             {
                 if(automobile.COLLISION_FLIGHT_ENTITY)
                 {
-                    System.out.println("CZOLG SKOCZYL");
-                    lastCollidedEntity.accelerate(prevMotionX, prevMotionY + 1.0D, prevMotionZ);
+                    if(lastCollidedEntity instanceof WW2Tank){
+                        lastCollidedEntity.accelerate(prevMotionX/64, prevMotionY/64 + 0.1D, prevMotionZ/64);
+                    }else {
+                        lastCollidedEntity.accelerate(prevMotionX, prevMotionY + 1.0D, prevMotionZ);
+                    }
                 }
                 if(automobile.COLLISION_DAMAGE)
                 {
-                    lastCollidedEntity.damage(passenger, automobile.COLLISION_DAMAGE_ENTITY);
+                    lastCollidedEntity.damage(this, automobile.COLLISION_DAMAGE_ENTITY);
                 }
             }
             if(automobile.COLLISION_DAMAGE)
@@ -439,6 +453,10 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
         if(vehicleFuel > 0 && passenger != null)
         {
             vehicleFuel--;
+        }
+        if((automobile.MAX_HEALTH-health) > (4.5 * automobile.MAX_HEALTH) / 5 && rand.nextInt(30) == 0)   //samoniszczenie
+        {
+            damage(this, 1);
         }
         if(towingEntity != null)
         {
@@ -556,7 +574,10 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
 
     public void handleCollision(EntityBase entity)
     {
-        entity.method_1353(this);  //apply entity collision
+        if(entity instanceof WW2Tank || entity instanceof WW2Plane)
+        {
+            entity.method_1353(this);  //apply entity collision
+        }
         if(entity.passenger != this && entity.vehicle != this)
         {
             lastCollidedEntity = entity;
@@ -609,7 +630,7 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
         return (float)(lastTurnSpeed * automobile.TURN_SPEED_RENDER_MULT);
     }    //?
 
-    public boolean method_1380() //canBePushe
+    public boolean method_1380() //canBePushed
     {
         return true;
     }
@@ -847,6 +868,7 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
 
     private double lastTurnSpeed;
     public boolean lastOnGround;
+    public boolean doorOpen;
     public int health;
     public double prevMotionX;
     public double prevMotionY;
@@ -950,6 +972,7 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
                 double d20 = (d4 * d14 - d2 * d12) * d10 + d6 * d8;
 
                 level.spawnEntity(new EntityShell(level, x + d16, y + d18 + (automobile.shellYOffset / 16D), z + d20, d16 / 3D, d18 / 3D, d20 / 3D, shootExplosive, automobile.gunDamage, automobile.gunVelocity, automobile.gunSpread));
+//                ((SdkItemGun)gunMachineGun.getType()).onItemRightClickEntity(gunMachineGun, level, passenger, (float)(automobile.shellXOffset / 16D), (float)(automobile.shellYOffset / 16D), (float)(automobile.shellZOffset / 16D), 90F, 0.0F); //machine gun
                 level.playSound(this, automobile.shootSound, 1.0F, 1.0F);
 
                 mod_SdkFlasher.LightEntity(level, this, 15, 2);
@@ -976,7 +999,7 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
 
         if(j != 0)
         {
-            ((SdkItemGun)gunMachineGun.getType()).onItemRightClickEntity(gunMachineGun, level, this, (float)(automobile.barrelX / 16D), (float)(automobile.barrelY / 16D), (float)(automobile.barrelZ / 16D), 90F, 0.0F); //machine gun
+            ((SdkItemGun)automobile.gunMachineGun.getType()).onItemRightClickEntity(gunMachineGun, level, this, (float)(automobile.barrelX / 16D), (float)(automobile.barrelY / 16D), (float)(automobile.barrelZ / 16D), 90F, 0.0F); //machine gun
             takeInventoryItem(j, 1);
             shootDelay = automobile.vehicleShootDelay;
         }
@@ -1030,6 +1053,6 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
     @Override
     public void reloadKey(PlayerBase entityplayer) {
         shootExplosive = !shootExplosive;
-        System.out.println("HE: " + shootExplosive);
+        level.playSound(this, "vehicles:tankreload", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
     }
 }

@@ -12,6 +12,8 @@ import net.kozibrodka.vehicles.properties.TruckType;
 import net.kozibrodka.vehicles.properties.VehicleType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityBase;
+import net.minecraft.entity.Living;
+import net.minecraft.entity.monster.MonsterEntityType;
 import net.minecraft.entity.player.PlayerBase;
 import net.minecraft.inventory.InventoryBase;
 import net.minecraft.item.ItemBase;
@@ -115,9 +117,17 @@ public class EntityTruck extends EntityBase implements InventoryBase, WW2Truck {
     {
         if(automobile.MAX_HEALTH != -1)
         {
-            onHurt();
-            System.out.println("Czołg dostał od: " + entity + " dmg: " + i);
-            health -= i;
+            if(entity instanceof Living){
+                if(entity instanceof MonsterEntityType){
+                    health -= (int)i/5;
+                    System.out.println("CAR DAMAGED from: " + entity + " DMG: " + (int)i/5);
+                    onHurt();
+                }
+            }else{
+                health -= i;
+                System.out.println("CAR DAMAGED from: " + entity + " DMG: " + i);
+                onHurt();
+            }
             if(health <= 0)
             {
                 onDeath();
@@ -156,7 +166,7 @@ public class EntityTruck extends EntityBase implements InventoryBase, WW2Truck {
             if(health > 0 && health < automobile.MAX_HEALTH)
             {
                 level.playSound(this, "ofensywa:wrench", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
-                health = Math.min(health + 4, automobile.MAX_HEALTH);
+                health = Math.min(health + 10, automobile.MAX_HEALTH);
                 entityplayer.swingHand();
                 entityplayer.getHeldItem().applyDamage(1, entityplayer);
                 if(entityplayer.getHeldItem().getDamage() <= 0)
@@ -171,6 +181,7 @@ public class EntityTruck extends EntityBase implements InventoryBase, WW2Truck {
             System.out.println("TYPE: " + automobile.name);
             System.out.println("ENGINE: " + engineType);
             System.out.println("HEALTH: " + health);
+            entityplayer.swingHand();
             return true;
         }
         if(passenger != null && (passenger instanceof PlayerBase) && passenger != entityplayer)
@@ -316,12 +327,13 @@ public class EntityTruck extends EntityBase implements InventoryBase, WW2Truck {
             {
                 if(automobile.COLLISION_FLIGHT_ENTITY)
                 {
-                    System.out.println("CZOLG SKOCZYL");
-                    lastCollidedEntity.accelerate(prevMotionX, prevMotionY + 1.0D, prevMotionZ);
+                    if(!(lastCollidedEntity instanceof WW2Tank)) {
+                        lastCollidedEntity.accelerate(prevMotionX, prevMotionY + 1.0D, prevMotionZ);
+                    }
                 }
                 if(automobile.COLLISION_DAMAGE)
                 {
-                    lastCollidedEntity.damage(passenger, automobile.COLLISION_DAMAGE_ENTITY);
+                    lastCollidedEntity.damage(this, automobile.COLLISION_DAMAGE_ENTITY);
                 }
             }
             if(automobile.COLLISION_DAMAGE)
@@ -405,6 +417,10 @@ public class EntityTruck extends EntityBase implements InventoryBase, WW2Truck {
         if(vehicleFuel > 0 && passenger != null)
         {
             vehicleFuel--;
+        }
+        if((automobile.MAX_HEALTH-health) > (4.5 * automobile.MAX_HEALTH) / 5 && rand.nextInt(30) == 0)   //samoniszczenie
+        {
+            damage(this, 1);
         }
         if(towingEntity != null)
         {

@@ -1,6 +1,6 @@
 package net.kozibrodka.vehicles.entity;
 
-import net.kozibrodka.sdk_api.events.utils.SdkTools;
+import net.kozibrodka.sdk_api.events.utils.*;
 import net.minecraft.block.BlockBase;
 import net.minecraft.entity.EntityBase;
 import net.minecraft.entity.Living;
@@ -30,7 +30,7 @@ public class EntityShell extends EntityBase
         arrowShake = 0;
         flyTime = 0;
         setSize(0.5F, 0.5F);
-        damage = 10;
+        damageShell = 10;
     }
 
     public EntityShell(Level world, double d, double d1, double d2,
@@ -49,7 +49,7 @@ public class EntityShell extends EntityBase
         standingEyeHeight = 0.0F;
         setVelocity(d3, d4, d5);
         explodeBoolean = he;
-        damage = dmg;
+        damageShell = dmg;
         spreadVal = spr;
         if(explodeBoolean)
         {
@@ -74,7 +74,7 @@ public class EntityShell extends EntityBase
         setSize(0.5F, 0.5F);
         setPosition(d, d1, d2);
         standingEyeHeight = 0.0F;
-        damage = 10;
+        damageShell = 10;
     }
 
     public EntityShell(Level world, Living entityliving)
@@ -99,7 +99,7 @@ public class EntityShell extends EntityBase
         velocityZ = MathHelper.cos((yaw / 180F) * 3.141593F) * MathHelper.cos((pitch / 180F) * 3.141593F);
         velocityY = -MathHelper.sin((pitch / 180F) * 3.141593F);
         setArrowHeading(velocityX, velocityY, velocityZ, 1.5F, 1.0F);
-        damage = 10;
+        damageShell = 10;
     }
 
     protected void initDataTracker()
@@ -216,10 +216,10 @@ public class EntityShell extends EntityBase
             {
                 if(movingobjectposition.field_1989 != null)
                 {
-                    int l = (int)damage * 3;
+                    int l = (int) damageShell;
                     if(!explodeBoolean)
                     {
-                        l *= 6;
+                        l *= 3;
                     }
                     if((owner instanceof MonsterEntityType) && (movingobjectposition.field_1989 instanceof PlayerBase))
                     {
@@ -241,7 +241,12 @@ public class EntityShell extends EntityBase
                         SdkTools.attackEntityIgnoreDelay((Living)movingobjectposition.field_1989, this, l);
                     } else
                     {
-                        movingobjectposition.field_1989.damage(this, l);
+                        if(movingobjectposition.field_1989 instanceof WW2Plane || movingobjectposition.field_1989 instanceof WW2Tank || movingobjectposition.field_1989 instanceof WW2Truck || movingobjectposition.field_1989 instanceof WW2Cannon)
+                        {
+                            movingobjectposition.field_1989.damage(this, l);
+                        }else {
+                            movingobjectposition.field_1989.damage(owner, l);
+                        }
                     }
                 }
                 explode();
@@ -312,7 +317,7 @@ public class EntityShell extends EntityBase
 //            }
 //        }
 
-        Explosion explosion = new Explosion(level, null, x, (float)y, (float)z, damage);
+        Explosion explosion = new Explosion(level, null, x, (float)y, (float)z, damageShell/5);
         explosion.kaboomPhase1();
         if(explodeBoolean)
         {
@@ -359,7 +364,7 @@ public class EntityShell extends EntityBase
     public Living owner;
     private int timeTillDeath;
     private int flyTime;
-    protected float damage;
+    protected float damageShell;
     private float muzzleVel;
     private float spreadVal;
 }

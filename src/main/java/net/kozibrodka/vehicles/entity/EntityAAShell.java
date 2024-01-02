@@ -42,7 +42,7 @@ public class EntityAAShell extends EntityBase
         setPosition(d, d1, d2);
         standingEyeHeight = 0.0F;
         setVelocity(d3, d4, d5);
-        damage = dmg;
+        damageAA = (int)dmg;
         spreadVal = spr;
         muzzleVel = vel;
         aaRange = rng;
@@ -161,7 +161,7 @@ public class EntityAAShell extends EntityBase
         {
             if(movingobjectposition.field_1989 != null)
             {
-                if(movingobjectposition.field_1989.damage(owner, 5))
+                if(movingobjectposition.field_1989.damage(this, damageAA/10))
                 {
                     level.playSound(this, "vehicles:flak", 1.0F, 1.2F / (rand.nextFloat() * 0.2F + 0.9F));
                     remove();
@@ -231,7 +231,7 @@ public class EntityAAShell extends EntityBase
             for(int k = 0; k < list1.size(); k++)
             {
                 EntityBase entityplane = (EntityBase)list1.get(k); //TODO: czy to zadziała??
-                entityplane.damage(this, 40);
+                entityplane.damage(this, damageAA);  //50
             }
 
             remove();
@@ -341,7 +341,7 @@ public class EntityAAShell extends EntityBase
     public Living owner;
     private int timeTillDeath;
     private int flyTime;
-    protected float damage;
+    protected int damageAA;
     private float muzzleVel;
     private float spreadVal;
     private int aaRange;

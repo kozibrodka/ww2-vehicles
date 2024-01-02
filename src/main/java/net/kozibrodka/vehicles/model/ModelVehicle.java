@@ -5,26 +5,15 @@ import net.kozibrodka.vehicles.entity.EntityTruck;
 import net.kozibrodka.vehicles.entity.EntityVehicle;
 
 public class ModelVehicle extends ModelBase {
-//    public ModelRendererTurbo[] bodyModel;
-//    public ModelRendererTurbo[] turretModel;
-//    public ModelRendererTurbo[] barrelModel;
-//    public ModelRendererTurbo[] gunModel;
-//    public ModelRendererTurbo[] ammoModel;
-//    public ModelRendererTurbo[] leftFrontWheelModel;
-//    public ModelRendererTurbo[] rightFrontWheelModel;
-//    public ModelRendererTurbo[] leftBackWheelModel;
-//    public ModelRendererTurbo[] rightBackWheelModel;
-//
-//    public ModelRendererTurbo[] leftTrackWheelModels;
-//    public ModelRendererTurbo[] leftTrackModel;
-//    public ModelRendererTurbo[] rightTrackWheelModels;
-//    public ModelRendererTurbo[] rightTrackModel;
-
+    
     public ModelRendererTurbo[] bodyModel = new ModelRendererTurbo[0];
+    public ModelRendererTurbo[] bodyDoorOpenModel = new ModelRendererTurbo[0];
+    public ModelRendererTurbo[] bodyDoorCloseModel = new ModelRendererTurbo[0];
     public ModelRendererTurbo[] turretModel = new ModelRendererTurbo[0];
     public ModelRendererTurbo[] barrelModel = new ModelRendererTurbo[0];
     public ModelRendererTurbo[] gunModel = new ModelRendererTurbo[0];
     public ModelRendererTurbo[] ammoModel = new ModelRendererTurbo[0];
+
     public ModelRendererTurbo[] leftFrontWheelModel = new ModelRendererTurbo[0];
     public ModelRendererTurbo[] rightFrontWheelModel = new ModelRendererTurbo[0];
     public ModelRendererTurbo[] leftBackWheelModel = new ModelRendererTurbo[0];
@@ -41,6 +30,18 @@ public class ModelVehicle extends ModelBase {
         int i;
         for(i = 0; i < this.bodyModel.length; ++i) {
             this.bodyModel[i].render(f5);
+        }
+
+        for(i = 0; i < this.bodyDoorOpenModel.length; ++i) {
+            if(vehicle.doorOpen) {
+                this.bodyDoorOpenModel[i].render(f5);
+            }
+        }
+
+        for(i = 0; i < this.bodyDoorCloseModel.length; ++i) {
+            if(!vehicle.doorOpen) {
+                this.bodyDoorCloseModel[i].render(f5);
+            }
         }
 
         for(i = 0; i < this.leftBackWheelModel.length; ++i) {

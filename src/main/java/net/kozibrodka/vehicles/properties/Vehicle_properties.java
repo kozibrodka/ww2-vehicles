@@ -14,6 +14,7 @@ public class Vehicle_properties {
     public String shootSound;
     public int SOUND_LOOP_TIME_MAX;
     public TemplateItemBase przedmiot;
+    public ItemInstance gunMachineGun;
 
     public int MAX_HEALTH;
     public int DEATH_TIME_MAX; //czas do eksplozji

@@ -3,3 +3,22 @@ func_78793_a = setRotationPoint
 field_78808_h = rotateAngleZ
 field_78795_f = rotateAngleX
 field_78796_g = rotateAngleY
+
+import net.kozibrodka.tmt.TURBO_MODEL_125.*;
+
+methods: (tmt_125)
+addShapeBox
+addFlexBox
+addFlexTrapezoid
+
+-they wont work properly, added on "lazy" approach, need to have 1.6.4 tmt version which i failed to port succesfully. Propably issues with tmtTesselator not being able to extend Tesselator (private constructor)
+
+models without risk factors (modern models):
+-TigerI
+-VWType82
+-WillyJeep
+-OpenBlitz2
+-OpenBlitz1
+-ModelGMCTruck1
+-ModelGMCTruck2
+

@@ -44,16 +44,16 @@ public class PropertiesClassic_Jeep extends Truck_properties{
         SPEED_MULT_DECEL = 0.95D;
         STOP_SPEED = 0.01D;
         TURN_SPEED_RENDER_MULT = 2D;
-        COLLISION_SPEED_MIN = 0.5D;
+        COLLISION_SPEED_MIN = 0.2D;
         COLLISION_DAMAGE_ENTITY = 10;
         COLLISION_DAMAGE_SELF = 10;
         COLLISION_DAMAGE = true;
-        COLLISION_FLIGHT_PLAYER = false;
-        COLLISION_FLIGHT_ENTITY = false;
+        COLLISION_FLIGHT_PLAYER = true;
+        COLLISION_FLIGHT_ENTITY = true;
 
         item_body =  new ItemInstance(ww2Parts.smallCarChassis.id, 1, 0);
         item_wheel =  new ItemInstance(ww2Parts.largeWheel.id, 1, 0); //TODO
-        dyeColor = new ItemInstance(ItemBase.dyePowder.id, 1, 0);
+        dyeColor = new ItemInstance(ItemBase.dyePowder.id, 1, 2);
         itemlist1 = "   ";
         itemlist2 = "ASD";
         itemlist3 = "X X";

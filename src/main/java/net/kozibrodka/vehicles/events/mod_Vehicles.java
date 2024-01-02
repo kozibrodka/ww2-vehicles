@@ -73,12 +73,12 @@ public class mod_Vehicles {
         tankShell = (TemplateItemBase) new TemplateItemBase(Identifier.of(MOD_ID, "tankShell")).setTranslationKey(MOD_ID, "tankShell");
         tankShellHE = (TemplateItemBase) new TemplateItemBase(Identifier.of(MOD_ID, "tankShellHE")).setTranslationKey(MOD_ID, "tankShellHE");
         tankBullet = (TemplateItemBase) new TemplateItemBase(Identifier.of(MOD_ID, "tankBullet")).setTranslationKey(MOD_ID, "tankBullet");
-        aaShellTank = (TemplateItemBase) new TemplateItemBase(Identifier.of(MOD_ID, "aaShell")).setTranslationKey(MOD_ID, "aaShell");
-        vehicleBlowTorch = (TemplateItemBase) new TemplateItemBase(Identifier.of(MOD_ID, "planeBlowTorch")).setTranslationKey(MOD_ID, "planeBlowTorch").setMaxStackSize(1).setDurability(15);;
+        aaShellTank = (TemplateItemBase) new TemplateItemBase(Identifier.of(MOD_ID, "aaShellTank")).setTranslationKey(MOD_ID, "aaShellTank");
+        vehicleBlowTorch = (TemplateItemBase) new TemplateItemBase(Identifier.of(MOD_ID, "vehicleBlowTorch")).setTranslationKey(MOD_ID, "vehicleBlowTorch").setMaxStackSize(1).setDurability(64);;
 
         itemGunMachineGun = (TemplateItemBase) new SdkItemGunMachineGun(Identifier.of(MOD_ID, "itemGunMachineGun")).setTranslationKey(MOD_ID, "itemGunMachineGun");
 
-       //TODO: ADD MACHINE GUN TYPE for vehicles, add cars, engine types work, DMG overall, props, Truck playerXOffset.
+       //TODO: ADD MACHINE GUN TYPE for vehicles, engine types work, DMG overall & props & collision, Truck playerXOffset, MINA!, ZAPORA ANTY-CZOLGOWA! (ala płotek), blowtorch effect, Gaśnica!
         if(vehiclesGlass.registerVehicles_CLASSIC) {
             new VehicleType(new PropertiesClassic_Sherman());
             new VehicleType(new PropertiesClassic_Panzer());
@@ -96,9 +96,9 @@ public class mod_Vehicles {
 
         if(vehiclesGlass.registerVehicles_NEW) {
             new VehicleType(new Properties_Tiger1());
-            new VehicleType(new Properties_Tiger2());
-            new TruckType(new Properties_WillyJeep());
-            new TruckType(new Properties_VWType82());
+//            new VehicleType(new Properties_Tiger2());
+//            new TruckType(new Properties_WillyJeep());
+//            new TruckType(new Properties_VWType82());
         }
 
         for (int i = 0; i < VehicleType.types.size(); i++) {

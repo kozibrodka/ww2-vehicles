@@ -32,7 +32,7 @@ public class VehicleRecipeRegistry {
 //
 //            this.addShapedRecipeVehicle(new ItemInstance(ItemBase.ironAxe, 1), "W", 'W', ItemBase.arrow);
 
-        for (int i = 0; i < 2; i++) { //VehicleType.types.size()
+        for (int i = 0; i < VehicleType.types.size(); i++) { //VehicleType.types.size()
             VehicleType vehicleType = (VehicleType) VehicleType.types.get(i);
 
             this.addShapedRecipeVehicle(new ItemInstance(vehicleType.przedmiot, 1,1), vehicleType.itemlist1, vehicleType.itemlist2, vehicleType.itemlist3, vehicleType.itemlist4,

@@ -19,6 +19,7 @@ public class VehicleType {
           shootSound = klasa.shootSound;
           SOUND_LOOP_TIME_MAX = klasa.SOUND_LOOP_TIME_MAX;
           przedmiot = klasa.przedmiot;
+          gunMachineGun = klasa.gunMachineGun;
 
           MAX_HEALTH = klasa.MAX_HEALTH;
           DEATH_TIME_MAX = klasa.DEATH_TIME_MAX;
@@ -97,6 +98,7 @@ public class VehicleType {
     public ModelVehicle model;
     public String SOUND_RIDING;
     public TemplateItemBase przedmiot;
+    public ItemInstance gunMachineGun;
     public String shootSound;
     public int SOUND_LOOP_TIME_MAX;
     public static List types = new ArrayList();

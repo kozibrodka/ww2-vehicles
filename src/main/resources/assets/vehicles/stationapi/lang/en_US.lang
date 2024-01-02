@@ -1,15 +1,19 @@
-achievement.boned=You've been boned!
-achievement.boned.desc=Pick up a bone.
-achievement.apple=AppleStuff
-achievement.apple.desc=Pick up an apple.
-
-achievement.page.examplemod=Example
-
-item.coolitem.name=Cool Item
-
-tile.test.name=Example Block
-tile.test2.name=Example Block With Model
-
-key.test=Give Boned Achievement
-key.test2=Give Apple Achievement
-key.hurtme=Hurt Self
+item.classic_Sherman.name=Sherman
+item.classic_Panzer.name=Panzer
+item.classic_Jeep.name=Willy's Jeep
+item.classic_Kubel.name=Kubelwagen
+item.old_M41.name=M4 Sherman
+item.old_Panzer4G.name=Panzer IV G
+item.old_Panzer4H.name=Panzer IV H
+item.old_T34.name=T-34-85
+item.old_Hummel.name=Hummel
+item.old_Flakpanzer4.name=Flakpanzer IV
+item.TigerI.name=Panzerkampfwagen VI Tiger - Version E
+tile.vehicleWorkbench.name=Vehicle Workbench
+item.vehicleFuel.name=Petroleum
+item.tankShell.name=AP Shell
+item.tankShellHE.name=HE Shell
+item.tankBullet.name=Tank Bullet
+item.aaShellTank.name=AAV Shell
+item.vehicleBlowTorch.name=Vehicle Blowtorch
+item.itemGunMachineGun.name=mg_tank
