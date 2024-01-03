@@ -12,9 +12,9 @@ public class VehiclesCFG {
     @ConfigName("Add Legacy Vehicles")
     public Boolean registerVehicles_CLASSIC = true;
     @ConfigName("Add OLD Vehicles")
-    public Boolean registerVehicles_NORMAL = true;
+    public Boolean registerVehicles_NORMAL = false;
     @ConfigName("Add New Vehicles")
-    public Boolean registerVehicles_NEW = true;
+    public Boolean registerVehicles_NEW = false;
 
 
 

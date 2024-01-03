@@ -11,6 +11,7 @@ import net.kozibrodka.vehicles.properties.*;
 import net.kozibrodka.vehicles.properties.VehicleType;
 import net.kozibrodka.vehicles.recipe.BlockVehicleWorkbench;
 import net.kozibrodka.vehicles.recipe.VehicleRecipeRegistry;
+//import net.kozibrodka.vehicles.recipe.VehicleRecipeTab;
 import net.kozibrodka.vehicles.recipe.VehicleRecipeTab;
 import net.mine_diver.unsafeevents.listener.EventListener;
 import net.minecraft.block.BlockBase;
@@ -21,11 +22,11 @@ import net.modificationstation.stationapi.api.event.registry.BlockRegistryEvent;
 import net.modificationstation.stationapi.api.event.registry.EntityHandlerRegistryEvent;
 import net.modificationstation.stationapi.api.event.registry.ItemRegistryEvent;
 import net.modificationstation.stationapi.api.mod.entrypoint.Entrypoint;
-import net.modificationstation.stationapi.api.registry.Identifier;
-import net.modificationstation.stationapi.api.registry.ModID;
 import net.modificationstation.stationapi.api.registry.Registry;
-import net.modificationstation.stationapi.api.template.block.TemplateBlockBase;
-import net.modificationstation.stationapi.api.template.item.TemplateItemBase;
+import net.modificationstation.stationapi.api.template.item.TemplateItem;
+import net.modificationstation.stationapi.api.template.block.TemplateBlock;
+import net.modificationstation.stationapi.api.util.Identifier;
+import net.modificationstation.stationapi.api.util.Namespace;
 import net.modificationstation.stationapi.api.util.Null;
 
 import java.util.HashMap;
@@ -36,47 +37,47 @@ public class mod_Vehicles {
     @GConfig(value = "VehiclesCFG", visibleName = "WW2 Vehicles Config")
     public static final VehiclesCFG vehiclesGlass = new VehiclesCFG();
 
-    @Entrypoint.ModID
-    public static final ModID MOD_ID = Null.get();
+    @Entrypoint.Namespace
+    public static final Namespace MOD_ID = Null.get();
 
-    public static TemplateBlockBase vehicleWorkbench;
-    public static TemplateItemBase vehicleFuel;
-    public static TemplateItemBase tankShell;
-    public static TemplateItemBase tankShellHE;
-    public static TemplateItemBase tankBullet;
-    public static TemplateItemBase aaShellTank;
-    public static TemplateItemBase vehicleBlowTorch;
-    public static TemplateItemBase itemGunMachineGun;
+    public static TemplateBlock vehicleWorkbench;
+    public static TemplateItem vehicleFuel;
+    public static TemplateItem tankShell;
+    public static TemplateItem tankShellHE;
+    public static TemplateItem tankBullet;
+    public static TemplateItem aaShellTank;
+    public static TemplateItem vehicleBlowTorch;
+    public static TemplateItem itemGunMachineGun;
 
 
-    public static TemplateItemBase vehicleClassic_Sherman;
-    public static TemplateItemBase vehicleClassic_Panzer;
-    public static TemplateItemBase vehicleClassic_WillysJeep;
-    public static TemplateItemBase vehicleClassic_Kubelwagen;
+    public static TemplateItem vehicleClassic_Sherman;
+    public static TemplateItem vehicleClassic_Panzer;
+    public static TemplateItem vehicleClassic_WillysJeep;
+    public static TemplateItem vehicleClassic_Kubelwagen;
 
-    public static TemplateItemBase vehicleOld_M41;
-    public static TemplateItemBase vehicleOld_Panzer4G;
-    public static TemplateItemBase vehicleOld_Panzer4H;
-    public static TemplateItemBase vehicleOld_T34;
-    public static TemplateItemBase vehicleOld_Hummel;
-    public static TemplateItemBase vehicleOld_Flakpanzer4;
+    public static TemplateItem vehicleOld_M41;
+    public static TemplateItem vehicleOld_Panzer4G;
+    public static TemplateItem vehicleOld_Panzer4H;
+    public static TemplateItem vehicleOld_T34;
+    public static TemplateItem vehicleOld_Hummel;
+    public static TemplateItem vehicleOld_Flakpanzer4;
 
-    public static TemplateItemBase vehicle_VWType82;
-    public static TemplateItemBase vehicle_WillyJeep;
-    public static TemplateItemBase vehicle_Tiger1;
-    public static TemplateItemBase vehicle_Tiger2;
+    public static TemplateItem vehicle_VWType82;
+    public static TemplateItem vehicle_WillyJeep;
+    public static TemplateItem vehicle_Tiger1;
+    public static TemplateItem vehicle_Tiger2;
 
 
     @EventListener
     public void registerItems(ItemRegistryEvent event) {
-        vehicleFuel = (TemplateItemBase) new TemplateItemBase(Identifier.of(MOD_ID, "vehicleFuel")).setTranslationKey(MOD_ID, "vehicleFuel");
-        tankShell = (TemplateItemBase) new TemplateItemBase(Identifier.of(MOD_ID, "tankShell")).setTranslationKey(MOD_ID, "tankShell");
-        tankShellHE = (TemplateItemBase) new TemplateItemBase(Identifier.of(MOD_ID, "tankShellHE")).setTranslationKey(MOD_ID, "tankShellHE");
-        tankBullet = (TemplateItemBase) new TemplateItemBase(Identifier.of(MOD_ID, "tankBullet")).setTranslationKey(MOD_ID, "tankBullet");
-        aaShellTank = (TemplateItemBase) new TemplateItemBase(Identifier.of(MOD_ID, "aaShellTank")).setTranslationKey(MOD_ID, "aaShellTank");
-        vehicleBlowTorch = (TemplateItemBase) new TemplateItemBase(Identifier.of(MOD_ID, "vehicleBlowTorch")).setTranslationKey(MOD_ID, "vehicleBlowTorch").setMaxStackSize(1).setDurability(64);;
+        vehicleFuel = (TemplateItem) new TemplateItem(Identifier.of(MOD_ID, "vehicleFuel")).setTranslationKey(MOD_ID, "vehicleFuel");
+        tankShell = (TemplateItem) new TemplateItem(Identifier.of(MOD_ID, "tankShell")).setTranslationKey(MOD_ID, "tankShell");
+        tankShellHE = (TemplateItem) new TemplateItem(Identifier.of(MOD_ID, "tankShellHE")).setTranslationKey(MOD_ID, "tankShellHE");
+        tankBullet = (TemplateItem) new TemplateItem(Identifier.of(MOD_ID, "tankBullet")).setTranslationKey(MOD_ID, "tankBullet");
+        aaShellTank = (TemplateItem) new TemplateItem(Identifier.of(MOD_ID, "aaShellTank")).setTranslationKey(MOD_ID, "aaShellTank");
+        vehicleBlowTorch = (TemplateItem) new TemplateItem(Identifier.of(MOD_ID, "vehicleBlowTorch")).setTranslationKey(MOD_ID, "vehicleBlowTorch").setMaxStackSize(1).setDurability(64);;
 
-        itemGunMachineGun = (TemplateItemBase) new SdkItemGunMachineGun(Identifier.of(MOD_ID, "itemGunMachineGun")).setTranslationKey(MOD_ID, "itemGunMachineGun");
+        itemGunMachineGun = (TemplateItem) new SdkItemGunMachineGun(Identifier.of(MOD_ID, "itemGunMachineGun")).setTranslationKey(MOD_ID, "itemGunMachineGun");
 
        //TODO: ADD MACHINE GUN TYPE for vehicles, engine types work, DMG overall & props & collision, Truck playerXOffset, MINA!, ZAPORA ANTY-CZOLGOWA! (ala płotek), blowtorch effect, Gaśnica!
         if(vehiclesGlass.registerVehicles_CLASSIC) {
@@ -106,7 +107,7 @@ public class mod_Vehicles {
             System.out.println((new StringBuilder()).append("mod_Vehicles added vehicle : ").append(vehicletype.name).toString());
 
             vehicleMapping.put(vehicletype.name, vehicletype);
-            vehicletype.przedmiot = (TemplateItemBase) new ItemVehicle(Identifier.of(MOD_ID, vehicletype.name), vehicletype.name).setTranslationKey(MOD_ID, vehicletype.name).setMaxStackSize(1);
+            vehicletype.przedmiot = (TemplateItem) new ItemVehicle(Identifier.of(MOD_ID, vehicletype.name), vehicletype.name).setTranslationKey(MOD_ID, vehicletype.name).setMaxStackSize(1);
         }
 
         for (int i = 0; i < TruckType.types.size(); i++) {
@@ -114,13 +115,13 @@ public class mod_Vehicles {
             System.out.println((new StringBuilder()).append("mod_Vehicles added vehicle : ").append(truckType.name).toString());
 
             truckMapping.put(truckType.name, truckType);
-            truckType.przedmiot = (TemplateItemBase) new ItemTruck(Identifier.of(MOD_ID, truckType.name), truckType.name).setTranslationKey(MOD_ID, truckType.name).setMaxStackSize(1);
+            truckType.przedmiot = (TemplateItem) new ItemTruck(Identifier.of(MOD_ID, truckType.name), truckType.name).setTranslationKey(MOD_ID, truckType.name).setMaxStackSize(1);
         }
     }
 
     @EventListener
     public void registerBlocks(BlockRegistryEvent samolotAddEvent) {
-        vehicleWorkbench = (TemplateBlockBase) new BlockVehicleWorkbench(Identifier.of(MOD_ID, "vehicleWorkbench")).setTranslationKey(MOD_ID, "vehicleWorkbench").setHardness(5F).setBlastResistance(10F).setSounds(BlockBase.METAL_SOUNDS);
+        vehicleWorkbench = (TemplateBlock) new BlockVehicleWorkbench(Identifier.of(MOD_ID, "vehicleWorkbench")).setTranslationKey(MOD_ID, "vehicleWorkbench").setHardness(5F).setBlastResistance(10F).setSounds(BlockBase.METAL_SOUNDS);
     }
 
     @EventListener

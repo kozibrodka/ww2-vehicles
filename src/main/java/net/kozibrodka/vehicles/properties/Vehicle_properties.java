@@ -2,7 +2,7 @@ package net.kozibrodka.vehicles.properties;
 
 import net.kozibrodka.vehicles.model.ModelVehicle;
 import net.minecraft.item.ItemInstance;
-import net.modificationstation.stationapi.api.template.item.TemplateItemBase;
+import net.modificationstation.stationapi.api.template.item.TemplateItem;
 
 public class Vehicle_properties {
 
@@ -13,7 +13,7 @@ public class Vehicle_properties {
     public String SOUND_RIDING;
     public String shootSound;
     public int SOUND_LOOP_TIME_MAX;
-    public TemplateItemBase przedmiot;
+    public TemplateItem przedmiot;
     public ItemInstance gunMachineGun;
 
     public int MAX_HEALTH;

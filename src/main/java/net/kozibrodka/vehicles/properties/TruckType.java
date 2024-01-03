@@ -3,7 +3,7 @@ package net.kozibrodka.vehicles.properties;
 import net.kozibrodka.vehicles.model.ModelTruck;
 import net.kozibrodka.vehicles.model.ModelVehicle;
 import net.minecraft.item.ItemInstance;
-import net.modificationstation.stationapi.api.template.item.TemplateItemBase;
+import net.modificationstation.stationapi.api.template.item.TemplateItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +73,7 @@ public class TruckType {
     public String texture;
     public ModelTruck model;
     public String SOUND_RIDING;
-    public TemplateItemBase przedmiot;
+    public TemplateItem przedmiot;
     public String shootSound;
     public int SOUND_LOOP_TIME_MAX;
     public static List types = new ArrayList();

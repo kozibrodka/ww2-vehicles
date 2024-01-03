@@ -7,10 +7,10 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerBase;
 import net.minecraft.level.Level;
-import net.modificationstation.stationapi.api.registry.Identifier;
-import net.modificationstation.stationapi.api.template.block.TemplateBlockBase;
+import net.modificationstation.stationapi.api.util.Identifier;
+import net.modificationstation.stationapi.api.template.block.TemplateBlock;
 
-public class BlockVehicleWorkbench extends TemplateBlockBase
+public class BlockVehicleWorkbench extends TemplateBlock
 {
 
     public BlockVehicleWorkbench(Identifier i)
