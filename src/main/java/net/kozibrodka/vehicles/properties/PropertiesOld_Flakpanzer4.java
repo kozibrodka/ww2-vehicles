@@ -30,7 +30,7 @@ public class PropertiesOld_Flakpanzer4 extends Vehicle_properties{
         numCargoSlots = 5;
         numBulletSlots = 5;
         numShellSlots = 5;
-        gunDamage = 3F;
+        gunDamage = 10F;
         gunVelocity = 3F;
         gunSpread = 1F;
         gunFlakRange = 20;

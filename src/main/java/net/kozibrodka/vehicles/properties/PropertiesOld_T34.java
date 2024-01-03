@@ -49,7 +49,7 @@ public class PropertiesOld_T34 extends Vehicle_properties{
         gunPitchMin = -45;
         gunPitchMax = 5;
 
-        MAX_SPEED = 0.9D; //0.22 //TODO:
+        MAX_SPEED = 0.22D; //TODO: 0.9 do testów kolizji
         TURN_SPEED_STOPPED = 6D;
         TURN_SPEED_FULL = 2.5D;
         ACCEL_FORWARD_STOPPED = 0.006D;

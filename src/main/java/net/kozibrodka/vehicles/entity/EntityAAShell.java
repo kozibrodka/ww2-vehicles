@@ -161,7 +161,7 @@ public class EntityAAShell extends EntityBase
         {
             if(movingobjectposition.field_1989 != null)
             {
-                if(movingobjectposition.field_1989.damage(this, damageAA/10))
+                if(movingobjectposition.field_1989.damage(this, damageAA/2))
                 {
                     level.playSound(this, "vehicles:flak", 1.0F, 1.2F / (rand.nextFloat() * 0.2F + 0.9F));
                     remove();
@@ -231,7 +231,7 @@ public class EntityAAShell extends EntityBase
             for(int k = 0; k < list1.size(); k++)
             {
                 EntityBase entityplane = (EntityBase)list1.get(k); //TODO: czy to zadziała??
-                entityplane.damage(this, damageAA);  //50
+                entityplane.damage(this, damageAA*5);  //50
             }
 
             remove();

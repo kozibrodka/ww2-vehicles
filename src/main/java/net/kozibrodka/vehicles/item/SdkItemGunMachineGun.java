@@ -22,6 +22,7 @@ public class SdkItemGunMachineGun extends SdkItemGun {
         useDelay = 1;
         recoil = 1.0F;
         soundRangeFactor = 4F;
+        penetration = 2;
     }
 
     public SdkEntityBullet getBulletEntity(Level world, EntityBase entity, float f, float f1, float f2, float f3, float f4) {
