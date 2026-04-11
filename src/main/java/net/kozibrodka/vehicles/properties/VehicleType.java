@@ -1,7 +1,7 @@
 package net.kozibrodka.vehicles.properties;
 
 import net.kozibrodka.vehicles.model.ModelVehicle;
-import net.minecraft.item.ItemInstance;
+import net.minecraft.item.ItemStack;
 import net.modificationstation.stationapi.api.template.item.TemplateItem;
 
 import java.util.ArrayList;
@@ -98,7 +98,7 @@ public class VehicleType {
     public ModelVehicle model;
     public String SOUND_RIDING;
     public TemplateItem przedmiot;
-    public ItemInstance gunMachineGun;
+    public ItemStack gunMachineGun;
     public String shootSound;
     public int SOUND_LOOP_TIME_MAX;
     public static List types = new ArrayList();
@@ -138,12 +138,12 @@ public class VehicleType {
     public float gunPitchMin;
     public float gunPitchMax;
 
-    public ItemInstance dyeColor;
-    public ItemInstance item_track;
-    public ItemInstance item_body;
-    public ItemInstance item_mg;
-    public ItemInstance item_turret;
-    public ItemInstance item_cannon;
+    public ItemStack dyeColor;
+    public ItemStack item_track;
+    public ItemStack item_body;
+    public ItemStack item_mg;
+    public ItemStack item_turret;
+    public ItemStack item_cannon;
     public String itemlist1;
     public String itemlist2;
     public String itemlist3;

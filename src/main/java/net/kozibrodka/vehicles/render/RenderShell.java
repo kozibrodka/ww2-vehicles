@@ -3,8 +3,8 @@ package net.kozibrodka.vehicles.render;
 import net.kozibrodka.vehicles.entity.EntityShell;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.entity.EntityBase;
-import net.minecraft.util.maths.MathHelper;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.math.MathHelper;
 import org.lwjgl.opengl.GL11;
 
 
@@ -45,14 +45,14 @@ public class RenderShell extends EntityRenderer
         GL11.glScalef(f10, f10, f10);
         GL11.glTranslatef(-4F, 0.0F, 0.0F);
         GL11.glNormal3f(f10, 0.0F, 0.0F);
-        tessellator.start();
+        tessellator.startQuads();
         tessellator.vertex(-6D, -2D, -2D, f6, f8);
         tessellator.vertex(-6D, -2D, 2D, f7, f8);
         tessellator.vertex(-6D, 2D, 2D, f7, f9);
         tessellator.vertex(-6D, 2D, -2D, f6, f9);
         tessellator.draw();
         GL11.glNormal3f(-f10, 0.0F, 0.0F);
-        tessellator.start();
+        tessellator.startQuads();
         tessellator.vertex(-0D, 2D, -2D, f6, f8);
         tessellator.vertex(-0D, 2D, 2D, f7, f8);
         tessellator.vertex(-0D, -2D, 2D, f7, f9);
@@ -62,7 +62,7 @@ public class RenderShell extends EntityRenderer
         {
             GL11.glRotatef(90F, 1.0F, 0.0F, 0.0F);
             GL11.glNormal3f(0.0F, 0.0F, -f10);
-            tessellator.start();
+            tessellator.startQuads();
             tessellator.vertex(-0D, -2D, 2D, f2, f4);
             tessellator.vertex(-0D, 2D, 2D, f2, f5);
             tessellator.vertex(-6D, 2D, 2D, f3, f5);
@@ -74,7 +74,7 @@ public class RenderShell extends EntityRenderer
         GL11.glPopMatrix();
     }
 
-    public void render(EntityBase entity, double d, double d1, double d2,
+    public void render(Entity entity, double d, double d1, double d2,
                        float f, float f1)
     {
         renderArrow((EntityShell)entity, d, d1, d2, f, f1);

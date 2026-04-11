@@ -3,7 +3,7 @@ package net.kozibrodka.vehicles.properties;
 import net.kozibrodka.vehicles.events.mod_Vehicles;
 import net.kozibrodka.vehicles.model.ModelTigerII;
 import net.kozibrodka.vehicles.model.ModelVWType82;
-import net.minecraft.item.ItemInstance;
+import net.minecraft.item.ItemStack;
 
 public class Properties_Tiger2 extends Vehicle_properties{
 
@@ -17,7 +17,7 @@ public class Properties_Tiger2 extends Vehicle_properties{
         shootSound = "vehicles:tankshell";
         SOUND_LOOP_TIME_MAX = 20;
         przedmiot = mod_Vehicles.vehicle_Tiger2;
-        gunMachineGun = new ItemInstance(mod_Vehicles.itemGunMachineGun);
+        gunMachineGun = new ItemStack(mod_Vehicles.itemGunMachineGun);
 
         MAX_HEALTH = 1100;
         DEATH_TIME_MAX = 100;

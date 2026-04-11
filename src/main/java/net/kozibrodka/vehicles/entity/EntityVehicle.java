@@ -10,29 +10,28 @@ import net.kozibrodka.vehicles.events.mod_Vehicles;
 import net.kozibrodka.vehicles.gui.GuiVehicle;
 import net.kozibrodka.vehicles.properties.VehicleType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.EntityBase;
-import net.minecraft.entity.Item;
-import net.minecraft.entity.Living;
-import net.minecraft.entity.animal.Wolf;
-import net.minecraft.entity.monster.MonsterEntityType;
-import net.minecraft.entity.player.PlayerBase;
-import net.minecraft.inventory.InventoryBase;
-import net.minecraft.item.ItemBase;
-import net.minecraft.item.ItemInstance;
-import net.minecraft.level.Level;
-import net.minecraft.sortme.Explosion;
-import net.minecraft.util.io.CompoundTag;
-import net.minecraft.util.io.DoubleTag;
-import net.minecraft.util.io.FloatTag;
-import net.minecraft.util.io.ListTag;
-import net.minecraft.util.maths.Box;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Monster;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtDouble;
+import net.minecraft.nbt.NbtFloat;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.util.math.Box;
+import net.minecraft.world.World;
+import net.minecraft.world.explosion.Explosion;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank {
+public class EntityVehicle extends Entity implements Inventory, WW2Tank {
 
-    public EntityVehicle(Level world)
+    public EntityVehicle(World world)
     {
         super(world);
         lastTurnSpeed = 0.0D;
@@ -41,21 +40,21 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
         prevMotionY = 0.0D;
         prevMotionZ = 0.0D;
         lastCollidedEntity = null;
-        field_1593 = true;  //preventEntitySpawning
+        blocksSameBlockSpawning = true;  //preventEntitySpawning
         deathTime = -13;
         soundLoopTime = 0;
 //        standingEyeHeight = 0.625F;
-        field_1641 = 1.0F; //stepHeight
-        field_1622 = true; //ignoreFrustumCheck
+        stepHeight = 1.0F; //stepHeight
+        ignoreFrustumCull = true; //ignoreFrustumCheck
         gunYaw = 0.0F;
         gunPitch = 0.0F;
         gunYawShoot = 0.0F;
-        gunMachineGun = new ItemInstance(mod_Vehicles.itemGunMachineGun);
+        gunMachineGun = new ItemStack(mod_Vehicles.itemGunMachineGun);
         renderDistanceMultiplier = 2; //jakos to dostosoawac
 
     }
 
-    public EntityVehicle(Level world, double d, double d1, double d2)
+    public EntityVehicle(World world, double d, double d1, double d2)
     {
         this(world);
         setPosition(d, d1 + (double)standingEyeHeight, d2);
@@ -73,16 +72,16 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
             automobile = mod_Vehicles.type;
         }
         inventorySize = automobile.numCargoSlots + automobile.numBulletSlots + automobile.numShellSlots + 1;
-        cargoItems = new ItemInstance[inventorySize];
+        cargoItems = new ItemStack[inventorySize];
     }
 
-    public EntityVehicle(Level world, double d, double d1, double d2,
-                         PlayerBase entityplayer, int i, VehicleType vehicletype)
+    public EntityVehicle(World world, double d, double d1, double d2,
+                         PlayerEntity entityplayer, int i, VehicleType vehicletype)
     {
         this(world);
         automobile = vehicletype;
         standingEyeHeight = automobile.standingOko;
-        setSize(automobile.autoWidth, automobile.autoHeight);
+        setBoundingBoxSpacing(automobile.autoWidth, automobile.autoHeight);
         setPosition(d, d1 + (double)standingEyeHeight, d2);
         velocityX = 0.0D;
         velocityY = 0.0D;
@@ -91,7 +90,7 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
         prevY = d1;
         prevZ = d2;
         inventorySize = automobile.numCargoSlots + automobile.numBulletSlots + automobile.numShellSlots + 1;
-        cargoItems = new ItemInstance[inventorySize];
+        cargoItems = new ItemStack[inventorySize];
         health = automobile.MAX_HEALTH;
         engineType = i;
         if(engineType < 1)
@@ -108,22 +107,22 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
     {
     }
 
-    public Box getBoundingBox(EntityBase entity)
+    public Box getCollisionAgainstShape(Entity entity)
     {
         return entity.boundingBox;
     }
 
-    public Box method_1381()
+    public Box getBoundingBox()
     {
         return boundingBox;
     }
 
-    public boolean damage(EntityBase entity, int i)
+    public boolean damage(Entity entity, int i)
     {
         if(automobile.MAX_HEALTH != -1)
         {
-            if(entity instanceof Living){
-                if(entity instanceof MonsterEntityType){
+            if(entity instanceof LivingEntity){
+                if(entity instanceof Monster){
                     health -= (int)i/5;
                     System.out.println("TANK DAMAGED from: " + entity + " DMG: " + (int)i/5);
                     onHurt();
@@ -144,7 +143,7 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
 
     public void onHurt()
     {
-        level.playSound(this, "vehicles:mechhurt", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+        world.playSound(this, "vehicles:mechhurt", 1.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
     }
 
     public void onDeath()
@@ -155,34 +154,34 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
         }
     }
 
-    public boolean method_1356() //canBeCollidedWith
+    public boolean isCollidable() //canBeCollidedWith
     {
-        return !removed;
+        return !dead;
     }
 
-    public float getEyeHeight()
+    public float getShadowRadius()
     {
         return 0.0F;
     }
 
-    public boolean interact(PlayerBase entityplayer)
+    public boolean interact(PlayerEntity entityplayer)
     {
-        if(entityplayer.getHeldItem() != null && entityplayer.getHeldItem().itemId == mod_Vehicles.vehicleBlowTorch.id)
+        if(entityplayer.getHand() != null && entityplayer.getHand().itemId == mod_Vehicles.vehicleBlowTorch.id)
         {
             if(health > 0 && health < automobile.MAX_HEALTH)
             {
-                level.playSound(this, "vehicles:blowtorch", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+                world.playSound(this, "vehicles:blowtorch", 1.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
                 health = Math.min(health + 10, automobile.MAX_HEALTH);
                 entityplayer.swingHand();
-                entityplayer.getHeldItem().applyDamage(1, entityplayer);
-                if(entityplayer.getHeldItem().getDamage() <= 0)
+                entityplayer.getHand().damage(1, entityplayer);
+                if(entityplayer.getHand().getDamage() <= 0)
                 {
-                    entityplayer.inventory.main[entityplayer.inventory.selectedHotbarSlot] = null;
+                    entityplayer.inventory.main[entityplayer.inventory.selectedSlot] = null;
                 }
             }
             return true;
         }
-        if(entityplayer.getHeldItem() != null && entityplayer.getHeldItem().itemId == ItemCasingListener.itemWrenchGold.id)
+        if(entityplayer.getHand() != null && entityplayer.getHand().itemId == ItemCasingListener.itemWrenchGold.id)
         {
             System.out.println("TYPE: " + automobile.name);
             System.out.println("ENGINE: " + engineType);
@@ -190,14 +189,14 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
             entityplayer.swingHand();
             return true;
         }
-        if(passenger != null && (passenger instanceof PlayerBase) && passenger != entityplayer)
+        if(passenger != null && (passenger instanceof PlayerEntity) && passenger != entityplayer)
         {
             return true;
         }
-        if(!level.isServerSide && passenger == null)
+        if(!world.isRemote && passenger == null)
         {
-            entityplayer.startRiding(this);
-            SdkItemCustomUseDelay.doNotUseThisTick = level.getLevelTime();
+            entityplayer.setVehicle(this);
+            SdkItemCustomUseDelay.doNotUseThisTick = world.getTime();
         }
         return true;
     }
@@ -229,12 +228,12 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
                 if(getSpeed() != 0.0D)
                 {
                     double d4 = 0.0D;
-                    if(vehicleFuel > 0 && minecraft.currentScreen == null && Keyboard.isKeyDown(minecraft.options.leftKey.key))
+                    if(vehicleFuel > 0 && minecraft.currentScreen == null && Keyboard.isKeyDown(minecraft.options.leftKey.code))
                     {
                         d4 = -getTurnSpeed() * (double)(flag1 ? 1 : -1);
                         wheelsYaw = (float)((double)wheelsYaw - 0.5D * getTurnSpeed());
                     } else
-                    if(vehicleFuel > 0 && minecraft.currentScreen == null && Keyboard.isKeyDown(minecraft.options.rightKey.key))
+                    if(vehicleFuel > 0 && minecraft.currentScreen == null && Keyboard.isKeyDown(minecraft.options.rightKey.code))
                     {
                         d4 = getTurnSpeed() * (double)(flag1 ? 1 : -1);
                         wheelsYaw = (float)((double)wheelsYaw + 0.5D * getTurnSpeed());
@@ -249,13 +248,13 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
                 double d5 = 0.0D;
                 if(passenger != null && minecraft.currentScreen == null)
                 {
-                    if(vehicleFuel > 0 && Keyboard.isKeyDown(minecraft.options.forwardKey.key))
+                    if(vehicleFuel > 0 && Keyboard.isKeyDown(minecraft.options.forwardKey.code))
                     {
                         d5 = -(flag1 ? getAccelForward() : automobile.ACCEL_BRAKE);
                         vehicleFuel--;
                         flag = true;
                     }else
-                    if(vehicleFuel > 0 && Keyboard.isKeyDown(minecraft.options.backKey.key))
+                    if(vehicleFuel > 0 && Keyboard.isKeyDown(minecraft.options.backKey.code))
                     {
                         d5 = flag1 ? automobile.ACCEL_BRAKE : getAccelBackward();
                         flag = true;
@@ -284,7 +283,7 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
                 multiplySpeed((automobile.MAX_SPEED + engineType*0.03D) / d3);
             }
         }
-        if(method_1393()) //handle water mv
+        if(checkWaterCollisions()) //handle water mv
         {
             multiplySpeed(automobile.SPEED_MULT_WATER);
         }
@@ -314,13 +313,13 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
             velocityY = y - prevY - automobile.FALL_SPEED;
         }
         lastOnGround = onGround;
-        List list = level.getEntities(this, boundingBox.expand(0.20000000000000001D, 0.0D, 0.20000000000000001D));
+        List list = world.getEntities(this, boundingBox.expand(0.20000000000000001D, 0.0D, 0.20000000000000001D));
         if(list != null && list.size() > 0)
         {
             for(int j = 0; j < list.size(); j++)
             {
-                EntityBase entity = (EntityBase)list.get(j);
-                if(entity != passenger && entity.method_1380()) //canbepushed
+                Entity entity = (Entity)list.get(j);
+                if(entity != passenger && entity.isPushable()) //canbepushed
                 {
                     handleCollision(entity);
                 }
@@ -329,14 +328,14 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
         }
         if(passenger != null && getPrevSpeed() - getSpeed() > automobile.COLLISION_SPEED_MIN)
         {
-            if(lastCollidedEntity != null && !(lastCollidedEntity instanceof Item))
+            if(lastCollidedEntity != null && !(lastCollidedEntity instanceof ItemEntity))
             {
                 if(automobile.COLLISION_FLIGHT_ENTITY)
                 {
                     if(lastCollidedEntity instanceof WW2Tank){
-                        lastCollidedEntity.accelerate(prevMotionX/64, prevMotionY/64 + 0.1D, prevMotionZ/64);
+                        lastCollidedEntity.addVelocity(prevMotionX/64, prevMotionY/64 + 0.1D, prevMotionZ/64);
                     }else {
-                        lastCollidedEntity.accelerate(prevMotionX, prevMotionY + 1.0D, prevMotionZ);
+                        lastCollidedEntity.addVelocity(prevMotionX, prevMotionY + 1.0D, prevMotionZ);
                     }
                 }
                 if(automobile.COLLISION_DAMAGE)
@@ -350,19 +349,19 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
             }
             if(automobile.COLLISION_FLIGHT_PLAYER)
             {
-                passenger.accelerate(prevMotionX, prevMotionY + 1.0D, prevMotionZ);
-                passenger.startRiding(null);
+                passenger.addVelocity(prevMotionX, prevMotionY + 1.0D, prevMotionZ);
+                passenger.setVehicle(null);
             }
         }
         lastCollidedEntity = null;
         prevMotionX = velocityX;
         prevMotionY = velocityY;
         prevMotionZ = velocityZ;
-        if(passenger != null && passenger.removed)
+        if(passenger != null && passenger.dead)
         {
             passenger = null;
         }
-        if(rand.nextInt(automobile.MAX_HEALTH) > health * 2)
+        if(random.nextInt(automobile.MAX_HEALTH) > health * 2)
         {
             if(health < automobile.MAX_HEALTH/8)
                 spawnParticles("flame", 2, false);
@@ -379,15 +378,15 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
         {
             if(deathTime == 0)
             {
-                Explosion explosion = new Explosion(level, null, x, (float)y, (float)z, 3F);
-                explosion.kaboomPhase1();
-                level.playSound(x, y, z, "random.explode", 4F, (1.0F + (level.rand.nextFloat() - level.rand.nextFloat()) * 0.2F) * 0.7F);
+                Explosion explosion = new Explosion(world, null, x, (float)y, (float)z, 3F);
+                explosion.explode();
+                world.playSound(x, y, z, "random.explode", 4F, (1.0F + (world.random.nextFloat() - world.random.nextFloat()) * 0.2F) * 0.7F);
                 spawnParticles("explode", 64, true);
                 spawnParticles("smoke", 64, true);
                 dropParts();
-                remove();
+                markDead();
             } else
-            if(rand.nextInt(automobile.DEATH_TIME_MAX) > deathTime)
+            if(random.nextInt(automobile.DEATH_TIME_MAX) > deathTime)
             {
 //                spawnParticles("flame", 8, false);
                 spawnParticles("lava", 8, false);
@@ -398,7 +397,7 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
         {
             if(soundLoopTime <= 0 && vehicleFuel > 0)
             {
-                level.playSound(this, automobile.SOUND_RIDING, 1.0F, 1.0F);
+                world.playSound(this, automobile.SOUND_RIDING, 1.0F, 1.0F);
                 soundLoopTime = automobile.SOUND_LOOP_TIME_MAX;
             }
             soundLoopTime--;
@@ -442,19 +441,19 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
         {
             shellDelay--;
         }
-        if(vehicleFuel <= 0 && passenger != null && !level.isServerSide)
+        if(vehicleFuel <= 0 && passenger != null && !world.isRemote)
         {
             if(cargoItems[0] != null && cargoItems[0].itemId == mod_Vehicles.vehicleFuel.id)
             {
                 vehicleFuel = automobile.vehicleFuelAdd;
-                takeInventoryItem(0, 1);
+                removeStack(0, 1);
             }
         }
         if(vehicleFuel > 0 && passenger != null)
         {
             vehicleFuel--;
         }
-        if((automobile.MAX_HEALTH-health) > (4.5 * automobile.MAX_HEALTH) / 5 && rand.nextInt(30) == 0)   //samoniszczenie
+        if((automobile.MAX_HEALTH-health) > (4.5 * automobile.MAX_HEALTH) / 5 && random.nextInt(30) == 0)   //samoniszczenie
         {
             damage(this, 1);
         }
@@ -473,34 +472,34 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
     public void dropParts(){
         int r8 = 2;
         float f8 = 1.5F;
-        if(automobile.item_cannon.itemId != ItemBase.egg.id && rand.nextInt(r8) == 0)
+        if(automobile.item_cannon.itemId != Item.EGG.id && random.nextInt(r8) == 0)
             dropItem(automobile.item_cannon.itemId, 1, f8);
-        if(rand.nextInt(r8) == 0)
+        if(random.nextInt(r8) == 0)
             dropItem(automobile.item_body.itemId, 1, f8);
-        if(rand.nextInt(r8) == 0)
+        if(random.nextInt(r8) == 0)
             dropItem(automobile.item_turret.itemId, 1, f8);
-        if(rand.nextInt(r8) == 0)
+        if(random.nextInt(r8) == 0)
             dropItem(automobile.item_mg.itemId, 1, f8);
-        if(rand.nextInt(r8) == 0)
+        if(random.nextInt(r8) == 0)
             dropItem(automobile.item_track.itemId, 1, f8);
-        if(rand.nextInt(r8) == 0)
+        if(random.nextInt(r8) == 0)
             dropItem(automobile.item_track.itemId, 1, f8);
-        dropItem(automobile.dyeColor.itemId, rand.nextInt(2) + 1, f8);
+        dropItem(automobile.dyeColor.itemId, random.nextInt(2) + 1, f8);
 
         switch(engineType)
         {
             case 1: // '\001'
-                if(rand.nextInt(r8) == 0)
+                if(random.nextInt(r8) == 0)
                     dropItem(ww2Parts.smallEngine.id, 1, f8);
                 break;
 
             case 2: // '\002'
-                if(rand.nextInt(r8) == 0)
+                if(random.nextInt(r8) == 0)
                     dropItem(ww2Parts.mediumEngine.id, 1, f8);
                 break;
 
             case 3: // '\003'
-                if(rand.nextInt(r8) == 0)
+                if(random.nextInt(r8) == 0)
                     dropItem(ww2Parts.largeEngine.id, 1, f8);
                 break;
 
@@ -572,11 +571,11 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
         return d - (d - d1) * (getSpeed() / (automobile.MAX_SPEED + engineType*0.03D));
     }
 
-    public void handleCollision(EntityBase entity)
+    public void handleCollision(Entity entity)
     {
         if(entity instanceof WW2Tank || entity instanceof WW2Plane)
         {
-            entity.method_1353(this);  //apply entity collision
+            entity.onCollision(this);  //apply entity collision
         }
         if(entity.passenger != this && entity.vehicle != this)
         {
@@ -603,18 +602,18 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
     {
         for(int j = 0; j < i; j++)
         {
-            double d = (x + rand.nextDouble() * (double)width * 1.5D) - (double)width * 0.75D;
-            double d1 = ((y + rand.nextDouble() * (double)height) - (double)height * 0.5D) + 0.25D;
-            double d2 = (z + rand.nextDouble() * (double)width) - (double)width * 0.5D;
-            double d3 = flag ? rand.nextDouble() - 0.5D : 0.0D;
-            double d4 = flag ? rand.nextDouble() - 0.5D : 0.0D;
-            double d5 = flag ? rand.nextDouble() - 0.5D : 0.0D;
+            double d = (x + random.nextDouble() * (double)width * 1.5D) - (double)width * 0.75D;
+            double d1 = ((y + random.nextDouble() * (double)height) - (double)height * 0.5D) + 0.25D;
+            double d2 = (z + random.nextDouble() * (double)width) - (double)width * 0.5D;
+            double d3 = flag ? random.nextDouble() - 0.5D : 0.0D;
+            double d4 = flag ? random.nextDouble() - 0.5D : 0.0D;
+            double d5 = flag ? random.nextDouble() - 0.5D : 0.0D;
             if(Math.random() < 0.75D)
             {
-                level.addParticle(s, d, d1, d2, d3, d4, d5);
+                world.addParticle(s, d, d1, d2, d3, d4, d5);
             } else
             {
-                level.addParticle(s, d, d1, d2, d3, d4, d5);
+                world.addParticle(s, d, d1, d2, d3, d4, d5);
             }
         }
 
@@ -630,42 +629,42 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
         return (float)(lastTurnSpeed * automobile.TURN_SPEED_RENDER_MULT);
     }    //?
 
-    public boolean method_1380() //canBePushed
+    public boolean isPushable() //canBePushed
     {
         return true;
     }
 
-    public double getMountedHeightOffset()
+    public double getPassengerRidingHeight()
     {
         return automobile.playerYOffset;
     }
 
-    public float getStandingEyeHeight()
+    public float getEyeHeight()
     {
         return 0.7F;
     }
 
-    public int getInventorySize()
+    public int size()
     {
         return inventorySize;
     }
 
-    public ItemInstance getInventoryItem(int i)
+    public ItemStack getStack(int i)
     {
         return cargoItems[i];
     }
 
-    public ItemInstance takeInventoryItem(int i, int j)
+    public ItemStack removeStack(int i, int j)
     {
         if(cargoItems[i] != null)
         {
             if(cargoItems[i].count <= j)
             {
-                ItemInstance itemstack = cargoItems[i];
+                ItemStack itemstack = cargoItems[i];
                 cargoItems[i] = null;
                 return itemstack;
             }
-            ItemInstance itemstack1 = cargoItems[i].split(j);
+            ItemStack itemstack1 = cargoItems[i].split(j);
             if(cargoItems[i].count == 0)
             {
                 cargoItems[i] = null;
@@ -677,25 +676,25 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
         }
     }
 
-    public void setInventoryItem(int i, ItemInstance itemstack)
+    public void setStack(int i, ItemStack itemstack)
     {
         cargoItems[i] = itemstack;
-        if(itemstack != null && itemstack.count > getMaxItemCount())
+        if(itemstack != null && itemstack.count > getMaxCountPerStack())
         {
-            itemstack.count = getMaxItemCount();
+            itemstack.count = getMaxCountPerStack();
         }
-        if(itemstack != null && itemstack.itemId == 263 && i == 0 && passenger != null && (passenger instanceof PlayerBase))
+        if(itemstack != null && itemstack.itemId == 263 && i == 0 && passenger != null && (passenger instanceof PlayerEntity))
         {
 //            ((PlayerBase)passenger).increaseStat(mod_Planes.startPlane, 1); //TODO: achievement
         }
     }
 
-    public String getContainerName()
+    public String getName()
     {
         return automobile.name;
     }
 
-    public int getMaxItemCount()
+    public int getMaxCountPerStack()
     {
         return 64;
     }
@@ -704,20 +703,20 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
     {
     }
 
-    public boolean canPlayerUse(PlayerBase entityplayer)
+    public boolean canPlayerUse(PlayerEntity entityplayer)
     {
-        return entityplayer.squaredDistanceTo(x, y, z) <= 64D;
+        return entityplayer.getSquaredDistance(x, y, z) <= 64D;
     }
 
-    public void fromTag(CompoundTag nbttagcompound)
+    public void read(NbtCompound nbttagcompound)
     {
-        ListTag nbttaglist = nbttagcompound.getListTag("Pos");
-        ListTag nbttaglist1 = nbttagcompound.getListTag("Motion");
-        ListTag nbttaglist2 = nbttagcompound.getListTag("Rotation");
+        NbtList nbttaglist = nbttagcompound.getList("Pos");
+        NbtList nbttaglist1 = nbttagcompound.getList("Motion");
+        NbtList nbttaglist2 = nbttagcompound.getList("Rotation");
         setPosition(0.0D, 0.0D, 0.0D);
-        velocityX = ((DoubleTag)nbttaglist1.get(0)).data;
-        velocityY = ((DoubleTag)nbttaglist1.get(1)).data;
-        velocityZ = ((DoubleTag)nbttaglist1.get(2)).data;
+        velocityX = ((NbtDouble)nbttaglist1.get(0)).value;
+        velocityY = ((NbtDouble)nbttaglist1.get(1)).value;
+        velocityZ = ((NbtDouble)nbttaglist1.get(2)).value;
         if(Math.abs(velocityX) > 10D)
         {
             velocityX = 0.0D;
@@ -730,59 +729,59 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
         {
             velocityZ = 0.0D;
         }
-        prevX = prevRenderX = x = ((DoubleTag)nbttaglist.get(0)).data;
-        prevY = prevRenderY = y = ((DoubleTag)nbttaglist.get(1)).data;
-        prevZ = prevRenderZ = z = ((DoubleTag)nbttaglist.get(2)).data;
-        prevYaw = yaw = ((FloatTag)nbttaglist2.get(0)).data;
-        prevPitch = pitch = ((FloatTag)nbttaglist2.get(1)).data;
+        prevX = lastTickX = x = ((NbtDouble)nbttaglist.get(0)).value;
+        prevY = lastTickY = y = ((NbtDouble)nbttaglist.get(1)).value;
+        prevZ = lastTickZ = z = ((NbtDouble)nbttaglist.get(2)).value;
+        prevYaw = yaw = ((NbtFloat)nbttaglist2.get(0)).value;
+        prevPitch = pitch = ((NbtFloat)nbttaglist2.get(1)).value;
         fallDistance = nbttagcompound.getFloat("FallDistance");
-        fire = nbttagcompound.getShort("Fire");
+        fireTicks = nbttagcompound.getShort("Fire");
         air = nbttagcompound.getShort("Air");
         onGround = nbttagcompound.getBoolean("OnGround");
-        readCustomDataFromTag(nbttagcompound);
+        readNbt(nbttagcompound);
     }
 
-    public void writeCustomDataToTag(CompoundTag nbttagcompound)
+    public void writeNbt(NbtCompound nbttagcompound)
     {
-        ListTag nbttaglist = new ListTag();
+        NbtList nbttaglist = new NbtList();
         for(int i = 0; i < cargoItems.length; i++)
         {
             if(cargoItems[i] != null)
             {
-                CompoundTag nbttagcompound1 = new CompoundTag();
-                nbttagcompound1.put("Slot", (byte)i);
-                cargoItems[i].toTag(nbttagcompound1);
+                NbtCompound nbttagcompound1 = new NbtCompound();
+                nbttagcompound1.putByte("Slot", (byte)i);
+                cargoItems[i].writeNbt(nbttagcompound1);
                 nbttaglist.add(nbttagcompound1);
             }
         }
 
-        nbttagcompound.put("Health", health);
-        nbttagcompound.put("DeathTime", deathTime);
+        nbttagcompound.putInt("Health", health);
+        nbttagcompound.putInt("DeathTime", deathTime);
         nbttagcompound.put("Items", nbttaglist);
-        nbttagcompound.put("GunYaw", gunYaw);
-        nbttagcompound.put("GunPitch", gunPitch);
-        nbttagcompound.put("Engine", engineType);
-        nbttagcompound.put("Fuel", vehicleFuel);
-        nbttagcompound.put("Type", automobile.name);
-        nbttagcompound.put("HE", shootExplosive);
+        nbttagcompound.putFloat("GunYaw", gunYaw);
+        nbttagcompound.putFloat("GunPitch", gunPitch);
+        nbttagcompound.putInt("Engine", engineType);
+        nbttagcompound.putInt("Fuel", vehicleFuel);
+        nbttagcompound.putString("Type", automobile.name);
+        nbttagcompound.putBoolean("HE", shootExplosive);
     }
 
-    public void readCustomDataFromTag(CompoundTag nbttagcompound)
+    public void readNbt(NbtCompound nbttagcompound)
     {
         automobile = mod_Vehicles.getVehicleType(nbttagcompound.getString("Type"));
         standingEyeHeight = automobile.standingOko;
-        setSize(automobile.autoWidth, automobile.autoHeight);
+        setBoundingBoxSpacing(automobile.autoWidth, automobile.autoHeight);
         setPosition(x, y, z);
         inventorySize = automobile.numCargoSlots + automobile.numBulletSlots + automobile.numShellSlots + 1;
-        ListTag nbttaglist = nbttagcompound.getListTag("Items");
-        cargoItems = new ItemInstance[getInventorySize()];
+        NbtList nbttaglist = nbttagcompound.getList("Items");
+        cargoItems = new ItemStack[size()];
         for(int i = 0; i < nbttaglist.size(); i++)
         {
-            CompoundTag nbttagcompound1 = (CompoundTag)nbttaglist.get(i);
+            NbtCompound nbttagcompound1 = (NbtCompound)nbttaglist.get(i);
             int k = nbttagcompound1.getByte("Slot") & 0xff;
             if(k >= 0 && k < cargoItems.length)
             {
-                cargoItems[k] = new ItemInstance(nbttagcompound1);
+                cargoItems[k] = new ItemStack(nbttagcompound1);
             }
         }
 
@@ -809,7 +808,7 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
         {
             return;
         }
-        if(method_1352(towingEntity) > 36D)
+        if(getSquaredDistance(towingEntity) > 36D)
         {
             towEntity(towingEntity);
             return;
@@ -835,7 +834,7 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
         }
     }
 
-    public boolean towEntity(EntityBase entity)
+    public boolean towEntity(Entity entity)
     {
         if(towingEntity != null && towingEntity == entity)
         {
@@ -873,8 +872,8 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
     public double prevMotionX;
     public double prevMotionY;
     public double prevMotionZ;
-    public EntityBase lastCollidedEntity;
-    public EntityBase towingEntity;
+    public Entity lastCollidedEntity;
+    public Entity towingEntity;
     public int flakGunOff;
     Minecraft minecraft = Minecraft.class.cast(FabricLoader.getInstance().getGameInstance());
 
@@ -889,22 +888,22 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
     public RotatedAxes axes;
     public int engineType;
     public float wheelsAngle;
-    public ItemInstance cargoItems[];
+    public ItemStack cargoItems[];
     public int inventorySize;
     private int vehicleFuel;
     private int shellDelay;
     private int shootDelay;
-    public ItemInstance gunMachineGun;
-    public ItemInstance gunSpecial;
+    public ItemStack gunMachineGun;
+    public ItemStack gunSpecial;
     public VehicleType automobile;
     public boolean shootExplosive;
     public boolean reloadKeyDown;
     public boolean rocketKeyDown;
 
     @Override
-    public void firePrimaryKey(PlayerBase entityplayer) {
+    public void firePrimaryKey(PlayerEntity entityplayer) {
         if(automobile.antiAircraft){
-            if(level.isServerSide || shellDelay > 0 || !automobile.hasTurret)
+            if(world.isRemote || shellDelay > 0 || !automobile.hasTurret)
             {
                 return;
             }
@@ -930,16 +929,16 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
                 double d18 = d2 * d14 + d4 * d12;
                 double d20 = (d4 * d14 - d2 * d12) * d10 + d6 * d8;
 
-                level.spawnEntity(new EntityAAShell(level, x + d16, y + d18 + (automobile.shellYOffset / 16D), z + d20, d16 / 3D, d18 / 3D, d20 / 3D, automobile.gunDamage, automobile.gunVelocity, automobile.gunSpread, automobile.gunFlakRange));
-                level.playSound(this, automobile.shootSound, 1.0F, 1.0F);
+                world.spawnEntity(new EntityAAShell(world, x + d16, y + d18 + (automobile.shellYOffset / 16D), z + d20, d16 / 3D, d18 / 3D, d20 / 3D, automobile.gunDamage, automobile.gunVelocity, automobile.gunSpread, automobile.gunFlakRange));
+                world.playSound(this, automobile.shootSound, 1.0F, 1.0F);
 
-                mod_SdkFlasher.LightEntity(level, this, 15, 2);
-                takeInventoryItem(k2, 1);
+                mod_SdkFlasher.LightEntity(world, this, 15, 2);
+                removeStack(k2, 1);
                 shellDelay = automobile.vehicleShellDelay;
                 automobile.shellZOffset = -automobile.shellZOffset;
             }
         }else{
-            if(level.isServerSide || shellDelay > 0 || !automobile.hasTurret)
+            if(world.isRemote || shellDelay > 0 || !automobile.hasTurret)
             {
                 return;
             }
@@ -971,20 +970,20 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
                 double d18 = d2 * d14 + d4 * d12;
                 double d20 = (d4 * d14 - d2 * d12) * d10 + d6 * d8;
 
-                level.spawnEntity(new EntityShell(level, x + d16, y + d18 + (automobile.shellYOffset / 16D), z + d20, d16 / 3D, d18 / 3D, d20 / 3D, shootExplosive, automobile.gunDamage, automobile.gunVelocity, automobile.gunSpread));
+                world.spawnEntity(new EntityShell(world, x + d16, y + d18 + (automobile.shellYOffset / 16D), z + d20, d16 / 3D, d18 / 3D, d20 / 3D, shootExplosive, automobile.gunDamage, automobile.gunVelocity, automobile.gunSpread));
 //                ((SdkItemGun)gunMachineGun.getType()).onItemRightClickEntity(gunMachineGun, level, passenger, (float)(automobile.shellXOffset / 16D), (float)(automobile.shellYOffset / 16D), (float)(automobile.shellZOffset / 16D), 90F, 0.0F); //machine gun
-                level.playSound(this, automobile.shootSound, 1.0F, 1.0F);
+                world.playSound(this, automobile.shootSound, 1.0F, 1.0F);
 
-                mod_SdkFlasher.LightEntity(level, this, 15, 2);
-                takeInventoryItem(k, 1);
+                mod_SdkFlasher.LightEntity(world, this, 15, 2);
+                removeStack(k, 1);
                 shellDelay = automobile.vehicleShellDelay;
             }
         }
     }
 
     @Override
-    public void fireSecondaryKey(PlayerBase entityplayer) {
-        if(level.isServerSide || shootDelay > 0 || !automobile.hasGuns)
+    public void fireSecondaryKey(PlayerEntity entityplayer) {
+        if(world.isRemote || shootDelay > 0 || !automobile.hasGuns)
         {
             return;
         }
@@ -999,48 +998,48 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
 
         if(j != 0)
         {
-            ((SdkItemGun)automobile.gunMachineGun.getType()).onItemRightClickEntity(gunMachineGun, level, this, (float)(automobile.barrelX / 16D), (float)(automobile.barrelY / 16D), (float)(automobile.barrelZ / 16D), 90F, 0.0F); //machine gun
-            takeInventoryItem(j, 1);
+            ((SdkItemGun)automobile.gunMachineGun.getItem()).onItemRightClickEntity(gunMachineGun, world, this, (float)(automobile.barrelX / 16D), (float)(automobile.barrelY / 16D), (float)(automobile.barrelZ / 16D), 90F, 0.0F); //machine gun
+            removeStack(j, 1);
             shootDelay = automobile.vehicleShootDelay;
         }
         return;
     }
 
     @Override
-    public void inventoryKey(Minecraft minecraft, PlayerBase entityplayer) {
+    public void inventoryKey(Minecraft minecraft, PlayerEntity entityplayer) {
         if (minecraft.currentScreen instanceof GuiVehicle) {
-            minecraft.openScreen(null);
+            minecraft.setScreen(null);
             return;
         } else if (passenger.vehicle instanceof EntityVehicle) {
-            minecraft.openScreen(new GuiVehicle(((PlayerBase)passenger).inventory, (EntityVehicle) passenger.vehicle));
+            minecraft.setScreen(new GuiVehicle(((PlayerEntity)passenger).inventory, (EntityVehicle) passenger.vehicle));
             return;
         }
     }
 
     @Override
-    public void exitKey(PlayerBase entityplayer) {
-        passenger.startRiding(this);
+    public void exitKey(PlayerEntity entityplayer) {
+        passenger.setVehicle(this);
     }
 
     @Override
-    public void towKey(PlayerBase entityplayer) {
+    public void towKey(PlayerEntity entityplayer) {
         if(automobile.specialWeapon == "haul")
         {
             if(towingEntity == null)
             {
-                List list = level.getEntities(this, boundingBox.expand(0.10000000000000001D, 0.0D, 0.10000000000000001D));
+                List list = world.getEntities(this, boundingBox.expand(0.10000000000000001D, 0.0D, 0.10000000000000001D));
                 if(list != null && list.size() > 0)
                 {
                     for(int j2 = 0; j2 < list.size(); j2++)
                     {
-                        EntityBase entity = (EntityBase)list.get(j2);
+                        Entity entity = (Entity)list.get(j2);
 
                         if(entity instanceof WW2Cannon && towingEntity == null)
                         {
                             towEntity(entity);
                         }else
                         {
-                            entity.method_1353(this);
+                            entity.onCollision(this);
                         }
                     }
                 }
@@ -1051,8 +1050,8 @@ public class EntityVehicle extends EntityBase implements InventoryBase, WW2Tank 
     }
 
     @Override
-    public void reloadKey(PlayerBase entityplayer) {
+    public void reloadKey(PlayerEntity entityplayer) {
         shootExplosive = !shootExplosive;
-        level.playSound(this, "vehicles:tankreload", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+        world.playSound(this, "vehicles:tankreload", 1.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
     }
 }

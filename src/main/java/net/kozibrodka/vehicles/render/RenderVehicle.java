@@ -4,13 +4,13 @@ import net.kozibrodka.vehicles.entity.EntityPassengerSeat;
 import net.kozibrodka.vehicles.entity.EntityVehicle;
 import net.kozibrodka.vehicles.model.ModelVehicle;
 import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.entity.EntityBase;
+import net.minecraft.entity.Entity;
 import org.lwjgl.opengl.GL11;
 
 public class RenderVehicle extends EntityRenderer {
 
     public RenderVehicle() {
-        this.field_2678 = 0.5F;
+        this.shadowRadius = 0.5F;
     }
 
     public void func_157_a(EntityVehicle vehicle, double d, double d1, double d2, float f, float f1) {
@@ -87,7 +87,7 @@ public class RenderVehicle extends EntityRenderer {
         GL11.glPopMatrix();
     }
 
-    public void render(EntityBase entity, double d, double d1, double d2, float f, float f1) {
+    public void render(Entity entity, double d, double d1, double d2, float f, float f1) {
         this.func_157_a((EntityVehicle)entity, d, d1, d2, f, f1);
     }
 }

@@ -1,25 +1,24 @@
 package net.kozibrodka.vehicles.entity;
 
 import net.kozibrodka.sdk_api.events.utils.*;
-import net.minecraft.block.BlockBase;
-import net.minecraft.entity.EntityBase;
-import net.minecraft.entity.Living;
-import net.minecraft.entity.monster.MonsterEntityType;
-import net.minecraft.entity.player.PlayerBase;
-import net.minecraft.level.Level;
-import net.minecraft.sortme.Explosion;
+import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Monster;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.io.CompoundTag;
-import net.minecraft.util.maths.Box;
-import net.minecraft.util.maths.MathHelper;
-import net.minecraft.util.maths.Vec3f;
-
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
+import net.minecraft.world.explosion.Explosion;
 import java.util.List;
 
-public class EntityShell extends EntityBase
+public class EntityShell extends Entity
 {
 
-    public EntityShell(Level world)
+    public EntityShell(World world)
     {
         super(world);
         xTile = -1;
@@ -29,11 +28,11 @@ public class EntityShell extends EntityBase
         inGround = false;
         arrowShake = 0;
         flyTime = 0;
-        setSize(0.5F, 0.5F);
+        setBoundingBoxSpacing(0.5F, 0.5F);
         damageShell = 10;
     }
 
-    public EntityShell(Level world, double d, double d1, double d2,
+    public EntityShell(World world, double d, double d1, double d2,
                        double d3, double d4, double d5, boolean he, float dmg, float vel, float spr)
     {
         super(world);
@@ -44,10 +43,10 @@ public class EntityShell extends EntityBase
         inGround = false;
         arrowShake = 0;
         flyTime = 0;
-        setSize(0.5F, 0.5F);
+        setBoundingBoxSpacing(0.5F, 0.5F);
         setPosition(d, d1, d2);
         standingEyeHeight = 0.0F;
-        setVelocity(d3, d4, d5);
+        setVelocityClient(d3, d4, d5);
         explodeBoolean = he;
         damageShell = dmg;
         spreadVal = spr;
@@ -61,7 +60,7 @@ public class EntityShell extends EntityBase
         setArrowHeading(velocityX, velocityY, velocityZ, muzzleVel, spreadVal);
     }
 
-    public EntityShell(Level world, double d, double d1, double d2)
+    public EntityShell(World world, double d, double d1, double d2)
     {
         super(world);
         xTile = -1;
@@ -71,13 +70,13 @@ public class EntityShell extends EntityBase
         inGround = false;
         arrowShake = 0;
         flyTime = 0;
-        setSize(0.5F, 0.5F);
+        setBoundingBoxSpacing(0.5F, 0.5F);
         setPosition(d, d1, d2);
         standingEyeHeight = 0.0F;
         damageShell = 10;
     }
 
-    public EntityShell(Level world, Living entityliving)
+    public EntityShell(World world, LivingEntity entityliving)
     {
         super(world);
         xTile = -1;
@@ -88,8 +87,8 @@ public class EntityShell extends EntityBase
         arrowShake = 0;
         flyTime = 0;
         owner = entityliving;
-        setSize(0.5F, 0.5F);
-        setPositionAndAngles(entityliving.x, entityliving.y + (double)entityliving.getEyeHeight(), entityliving.z, entityliving.yaw, entityliving.pitch);
+        setBoundingBoxSpacing(0.5F, 0.5F);
+        setPositionAndAnglesKeepPrevAngles(entityliving.x, entityliving.y + (double)entityliving.getShadowRadius(), entityliving.z, entityliving.yaw, entityliving.pitch);
         x -= MathHelper.cos((yaw / 180F) * 3.141593F) * 0.16F;
         y -= 0.10000000149011612D;
         z -= MathHelper.sin((yaw / 180F) * 3.141593F) * 0.16F;
@@ -113,9 +112,9 @@ public class EntityShell extends EntityBase
         d /= f2;
         d1 /= f2;
         d2 /= f2;
-        d += rand.nextGaussian() * 0.0074999998323619366D * (double)f1;
-        d1 += rand.nextGaussian() * 0.0074999998323619366D * (double)f1;
-        d2 += rand.nextGaussian() * 0.0074999998323619366D * (double)f1;
+        d += random.nextGaussian() * 0.0074999998323619366D * (double)f1;
+        d1 += random.nextGaussian() * 0.0074999998323619366D * (double)f1;
+        d2 += random.nextGaussian() * 0.0074999998323619366D * (double)f1;
         d *= f;
         d1 *= f;
         d2 *= f;
@@ -128,7 +127,7 @@ public class EntityShell extends EntityBase
         timeTillDeath = 0;
     }
 
-    public void setVelocity(double d, double d1, double d2)
+    public void setVelocityClient(double d, double d1, double d2)
     {
         velocityX = d;
         velocityY = d1;
@@ -141,7 +140,7 @@ public class EntityShell extends EntityBase
         }
     }
 
-    public boolean shouldRenderAtDistance(double d) {
+    public boolean shouldRender(double d) {
         return true;
     }
 
@@ -150,7 +149,7 @@ public class EntityShell extends EntityBase
         super.tick();
         if(flyTime > 1000)
         {
-            remove();
+            markDead();
         }
         if(prevPitch == 0.0F && prevYaw == 0.0F)
         {
@@ -171,33 +170,33 @@ public class EntityShell extends EntityBase
         {
             flyTime++;
         }
-        Vec3f vec3d = Vec3f.from(x, y, z);
-        Vec3f vec3d1 = Vec3f.from(x + velocityX, y + velocityY, z + velocityZ);
-        HitResult movingobjectposition = level.method_160(vec3d, vec3d1);
-        vec3d = Vec3f.from(x, y, z);
-        vec3d1 = Vec3f.from(x + velocityX, y + velocityY, z + velocityZ);
+        Vec3d vec3d = Vec3d.createCached(x, y, z);
+        Vec3d vec3d1 = Vec3d.createCached(x + velocityX, y + velocityY, z + velocityZ);
+        HitResult movingobjectposition = world.raycast(vec3d, vec3d1);
+        vec3d = Vec3d.createCached(x, y, z);
+        vec3d1 = Vec3d.createCached(x + velocityX, y + velocityY, z + velocityZ);
         if(movingobjectposition != null)
         {
-            vec3d1 = Vec3f.from(movingobjectposition.field_1988.x, movingobjectposition.field_1988.y, movingobjectposition.field_1988.z);
+            vec3d1 = Vec3d.createCached(movingobjectposition.pos.x, movingobjectposition.pos.y, movingobjectposition.pos.z);
         }
-        EntityBase entity = null;
-        List list = level.getEntities(this, boundingBox.method_86(velocityX, velocityY, velocityZ).expand(1.0D, 1.0D, 1.0D));
+        Entity entity = null;
+        List list = world.getEntities(this, boundingBox.stretch(velocityX, velocityY, velocityZ).expand(1.0D, 1.0D, 1.0D));
         double d = 0.0D;
         for(int i = 0; i < list.size(); i++)
         {
-            EntityBase entity1 = (EntityBase)list.get(i);
-            if(!entity1.method_1356() || entity1 == owner && flyTime < 5)
+            Entity entity1 = (Entity)list.get(i);
+            if(!entity1.isCollidable() || entity1 == owner && flyTime < 5)
             {
                 continue;
             }
             float f3 = 0.3F;
             Box axisalignedbb = entity1.boundingBox.expand(f3, f3, f3);
-            HitResult movingobjectposition1 = axisalignedbb.method_89(vec3d, vec3d1);
+            HitResult movingobjectposition1 = axisalignedbb.raycast(vec3d, vec3d1);
             if(movingobjectposition1 == null)
             {
                 continue;
             }
-            double d1 = vec3d.method_1294(movingobjectposition1.field_1988);
+            double d1 = vec3d.distanceTo(movingobjectposition1.pos);
             if(d1 < d || d == 0.0D)
             {
                 entity = entity1;
@@ -211,41 +210,41 @@ public class EntityShell extends EntityBase
         }
         if(movingobjectposition != null)
         {
-            int k = level.getTileId(movingobjectposition.x, movingobjectposition.y, movingobjectposition.z);
-            if(movingobjectposition.field_1989 != null || k != BlockBase.TALLGRASS.id)
+            int k = world.getBlockId(movingobjectposition.blockX, movingobjectposition.blockY, movingobjectposition.blockZ);
+            if(movingobjectposition.entity != null || k != Block.GRASS.id)
             {
-                if(movingobjectposition.field_1989 != null)
+                if(movingobjectposition.entity != null)
                 {
                     int l = (int) damageShell;
                     if(!explodeBoolean)
                     {
                         l *= 3;
                     }
-                    if((owner instanceof MonsterEntityType) && (movingobjectposition.field_1989 instanceof PlayerBase))
+                    if((owner instanceof Monster) && (movingobjectposition.entity instanceof PlayerEntity))
                     {
-                        if(level.difficulty == 0)
+                        if(world.difficulty == 0)
                         {
                             l = 0;
                         }
-                        if(level.difficulty == 1)
+                        if(world.difficulty == 1)
                         {
                             l = l / 3 + 1;
                         }
-                        if(level.difficulty == 3)
+                        if(world.difficulty == 3)
                         {
                             l = (l * 3) / 2;
                         }
                     }
-                    if(movingobjectposition.field_1989 instanceof Living) //TODO: ?
+                    if(movingobjectposition.entity instanceof LivingEntity) //TODO: ?
                     {
-                        SdkTools.attackEntityIgnoreDelay((Living)movingobjectposition.field_1989, this, l);
+                        SdkTools.attackEntityIgnoreDelay((LivingEntity)movingobjectposition.entity, this, l);
                     } else
                     {
-                        if(movingobjectposition.field_1989 instanceof WW2Plane || movingobjectposition.field_1989 instanceof WW2Tank || movingobjectposition.field_1989 instanceof WW2Truck || movingobjectposition.field_1989 instanceof WW2Cannon)
+                        if(movingobjectposition.entity instanceof WW2Plane || movingobjectposition.entity instanceof WW2Tank || movingobjectposition.entity instanceof WW2Truck || movingobjectposition.entity instanceof WW2Cannon)
                         {
-                            movingobjectposition.field_1989.damage(this, l);
+                            movingobjectposition.entity.damage(this, l);
                         }else {
-                            movingobjectposition.field_1989.damage(owner, l);
+                            movingobjectposition.entity.damage(owner, l);
                         }
                     }
                 }
@@ -266,12 +265,12 @@ public class EntityShell extends EntityBase
         yaw = prevYaw + (yaw - prevYaw) * 0.2F;
         float f2 = 1.002557F;
         float f4 = 0.005F; //opad oryg 0.03
-        if(method_1393())
+        if(checkWaterCollisions())
         {
             for(int j = 0; j < 4; j++)
             {
                 float f5 = 0.25F;
-                level.addParticle("bubble", x - velocityX * (double)f5, y - velocityY * (double)f5, z - velocityZ * (double)f5, velocityX, velocityY, velocityZ);
+                world.addParticle("bubble", x - velocityX * (double)f5, y - velocityY * (double)f5, z - velocityZ * (double)f5, velocityX, velocityY, velocityZ);
             }
 
             f2 = 0.95F;
@@ -284,14 +283,14 @@ public class EntityShell extends EntityBase
         setPosition(x, y, z);
     }
 
-    public void writeCustomDataToTag(CompoundTag nbttagcompound)
+    public void writeNbt(NbtCompound nbttagcompound)
     {
-        nbttagcompound.put("xTile", (short)xTile);
-        nbttagcompound.put("yTile", (short)yTile);
-        nbttagcompound.put("zTile", (short)zTile);
+        nbttagcompound.putShort("xTile", (short)xTile);
+        nbttagcompound.putShort("yTile", (short)yTile);
+        nbttagcompound.putShort("zTile", (short)zTile);
     }
 
-    public void readCustomDataFromTag(CompoundTag nbttagcompound)
+    public void readNbt(NbtCompound nbttagcompound)
     {
         xTile = nbttagcompound.getShort("xTile");
         yTile = nbttagcompound.getShort("yTile");
@@ -317,22 +316,22 @@ public class EntityShell extends EntityBase
 //            }
 //        }
 
-        Explosion explosion = new Explosion(level, null, x, (float)y, (float)z, damageShell/5);
-        explosion.kaboomPhase1();
+        Explosion explosion = new Explosion(world, null, x, (float)y, (float)z, damageShell/5);
+        explosion.explode();
         if(explodeBoolean)
         {
-            explosion.kaboomPhase2(true);
+            explosion.playExplosionSound(true);
         } else
         {
-            level.playSound(x, y, z, "random.explode", 4F, (1.0F + (level.rand.nextFloat() - level.rand.nextFloat()) * 0.2F) * 0.7F);
+            world.playSound(x, y, z, "random.explode", 4F, (1.0F + (world.random.nextFloat() - world.random.nextFloat()) * 0.2F) * 0.7F);
         }
         for(int i = 0; i < 32; i++)
         {
-            level.addParticle("explode", x, y, z, level.rand.nextDouble() - 0.5D, level.rand.nextDouble() - 0.5D, level.rand.nextDouble() - 0.5D);
-            level.addParticle("smoke", x, y, z, level.rand.nextDouble() - 0.5D, level.rand.nextDouble() - 0.5D, level.rand.nextDouble() - 0.5D);
+            world.addParticle("explode", x, y, z, world.random.nextDouble() - 0.5D, world.random.nextDouble() - 0.5D, world.random.nextDouble() - 0.5D);
+            world.addParticle("smoke", x, y, z, world.random.nextDouble() - 0.5D, world.random.nextDouble() - 0.5D, world.random.nextDouble() - 0.5D);
         }
 
-        remove();
+        markDead();
     }
 
 //    public void onPlayerCollision(PlayerBase entityplayer)
@@ -349,7 +348,7 @@ public class EntityShell extends EntityBase
 //        }
 //    }
 
-    public float getEyeHeight()
+    public float getShadowRadius()
     {
         return 0.0F;
     }
@@ -361,7 +360,7 @@ public class EntityShell extends EntityBase
     private int inTile;
     private boolean inGround;
     public int arrowShake;
-    public Living owner;
+    public LivingEntity owner;
     private int timeTillDeath;
     private int flyTime;
     protected float damageShell;

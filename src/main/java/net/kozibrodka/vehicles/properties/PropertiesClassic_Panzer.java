@@ -3,8 +3,8 @@ package net.kozibrodka.vehicles.properties;
 import net.kozibrodka.sdk_api.events.init.ww2Parts;
 import net.kozibrodka.vehicles.events.mod_Vehicles;
 import net.kozibrodka.vehicles.model.ModelPanzer_Classic;
-import net.minecraft.item.ItemBase;
-import net.minecraft.item.ItemInstance;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 public class PropertiesClassic_Panzer extends Vehicle_properties{
 
@@ -17,7 +17,7 @@ public class PropertiesClassic_Panzer extends Vehicle_properties{
         shootSound = "vehicles:tankshell";
         SOUND_LOOP_TIME_MAX = 20;
         przedmiot = mod_Vehicles.vehicleClassic_Panzer;
-        gunMachineGun = new ItemInstance(mod_Vehicles.itemGunMachineGun);
+        gunMachineGun = new ItemStack(mod_Vehicles.itemGunMachineGun);
 
         MAX_HEALTH = 500;
         DEATH_TIME_MAX = 100;
@@ -70,12 +70,12 @@ public class PropertiesClassic_Panzer extends Vehicle_properties{
         COLLISION_FLIGHT_PLAYER = false;
         COLLISION_FLIGHT_ENTITY = true;
 
-        item_track =  new ItemInstance(ww2Parts.trackPiece.id, 1, 0);
-        item_body =  new ItemInstance(ww2Parts.lightTankBody.id, 1, 0);
-        item_mg =  new ItemInstance(ww2Parts.machinegun.id, 1, 0);
-        item_turret =  new ItemInstance(ww2Parts.lightTankTurret.id, 1, 0);
-        item_cannon =  new ItemInstance(ItemBase.egg.id, 1, 0);
-        dyeColor = new ItemInstance(ItemBase.dyePowder.id, 1, 8);
+        item_track =  new ItemStack(ww2Parts.trackPiece.id, 1, 0);
+        item_body =  new ItemStack(ww2Parts.lightTankBody.id, 1, 0);
+        item_mg =  new ItemStack(ww2Parts.machinegun.id, 1, 0);
+        item_turret =  new ItemStack(ww2Parts.lightTankTurret.id, 1, 0);
+        item_cannon =  new ItemStack(Item.EGG.id, 1, 0);
+        dyeColor = new ItemStack(Item.DYE.id, 1, 8);
         itemlist1 = "QW ";
         itemlist2 = "ASD";
         itemlist3 = " X ";

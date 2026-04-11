@@ -8,14 +8,13 @@ import net.kozibrodka.vehicles.item.ItemTruck;
 import net.kozibrodka.vehicles.item.ItemVehicle;
 import net.kozibrodka.vehicles.item.SdkItemGunMachineGun;
 import net.kozibrodka.vehicles.properties.*;
-import net.kozibrodka.vehicles.properties.VehicleType;
 import net.kozibrodka.vehicles.recipe.BlockVehicleWorkbench;
 import net.kozibrodka.vehicles.recipe.VehicleRecipeRegistry;
 //import net.kozibrodka.vehicles.recipe.VehicleRecipeTab;
 import net.kozibrodka.vehicles.recipe.VehicleRecipeTab;
 import net.mine_diver.unsafeevents.listener.EventListener;
-import net.minecraft.block.BlockBase;
-import net.minecraft.item.ItemInstance;
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
 import net.modificationstation.stationapi.api.event.entity.EntityRegister;
 import net.modificationstation.stationapi.api.event.entity.player.PlayerEvent;
 import net.modificationstation.stationapi.api.event.recipe.RecipeRegisterEvent;
@@ -76,7 +75,7 @@ public class mod_Vehicles {
         tankShellHE = (TemplateItem) new TemplateItem(Identifier.of(MOD_ID, "tankShellHE")).setTranslationKey(MOD_ID, "tankShellHE");
         tankBullet = (TemplateItem) new TemplateItem(Identifier.of(MOD_ID, "tankBullet")).setTranslationKey(MOD_ID, "tankBullet");
         aaShellTank = (TemplateItem) new TemplateItem(Identifier.of(MOD_ID, "aaShellTank")).setTranslationKey(MOD_ID, "aaShellTank");
-        vehicleBlowTorch = (TemplateItem) new TemplateItem(Identifier.of(MOD_ID, "vehicleBlowTorch")).setTranslationKey(MOD_ID, "vehicleBlowTorch").setMaxStackSize(1).setDurability(64);;
+        vehicleBlowTorch = (TemplateItem) new TemplateItem(Identifier.of(MOD_ID, "vehicleBlowTorch")).setTranslationKey(MOD_ID, "vehicleBlowTorch").setMaxCount(1).setMaxDamage(64);;
 
         itemGunMachineGun = (TemplateItem) new SdkItemGunMachineGun(Identifier.of(MOD_ID, "itemGunMachineGun")).setTranslationKey(MOD_ID, "itemGunMachineGun");
 
@@ -108,7 +107,7 @@ public class mod_Vehicles {
             System.out.println((new StringBuilder()).append("mod_Vehicles added vehicle : ").append(vehicletype.name).toString());
 
             vehicleMapping.put(vehicletype.name, vehicletype);
-            vehicletype.przedmiot = (TemplateItem) new ItemVehicle(Identifier.of(MOD_ID, vehicletype.name), vehicletype.name).setTranslationKey(MOD_ID, vehicletype.name).setMaxStackSize(1);
+            vehicletype.przedmiot = (TemplateItem) new ItemVehicle(Identifier.of(MOD_ID, vehicletype.name), vehicletype.name).setTranslationKey(MOD_ID, vehicletype.name).setMaxCount(1);
         }
 
         for (int i = 0; i < TruckType.types.size(); i++) {
@@ -116,13 +115,13 @@ public class mod_Vehicles {
             System.out.println((new StringBuilder()).append("mod_Vehicles added vehicle : ").append(truckType.name).toString());
 
             truckMapping.put(truckType.name, truckType);
-            truckType.przedmiot = (TemplateItem) new ItemTruck(Identifier.of(MOD_ID, truckType.name), truckType.name).setTranslationKey(MOD_ID, truckType.name).setMaxStackSize(1);
+            truckType.przedmiot = (TemplateItem) new ItemTruck(Identifier.of(MOD_ID, truckType.name), truckType.name).setTranslationKey(MOD_ID, truckType.name).setMaxCount(1);
         }
     }
 
     @EventListener
     public void registerBlocks(BlockRegistryEvent samolotAddEvent) {
-        vehicleWorkbench = (TemplateBlock) new BlockVehicleWorkbench(Identifier.of(MOD_ID, "vehicleWorkbench")).setTranslationKey(MOD_ID, "vehicleWorkbench").setHardness(5F).setBlastResistance(10F).setSounds(BlockBase.METAL_SOUNDS);
+        vehicleWorkbench = (TemplateBlock) new BlockVehicleWorkbench(Identifier.of(MOD_ID, "vehicleWorkbench")).setTranslationKey(MOD_ID, "vehicleWorkbench").setHardness(5F).setResistance(10F).setSoundGroup(Block.METAL_SOUND_GROUP);
     }
 
     @EventListener
@@ -150,7 +149,7 @@ public class mod_Vehicles {
 
     @EventListener
     public void registerTabs(HMITabRegistryEvent event) {
-        event.registry.register(Identifier.of(MOD_ID, "vehicles"), new VehicleRecipeTab(MOD_ID), new ItemInstance(vehicleWorkbench));
+        event.registry.register(Identifier.of(MOD_ID, "vehicles"), new VehicleRecipeTab(MOD_ID), new ItemStack(vehicleWorkbench));
     }
 
     @EventListener

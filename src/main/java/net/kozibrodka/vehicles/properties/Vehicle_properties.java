@@ -1,7 +1,7 @@
 package net.kozibrodka.vehicles.properties;
 
 import net.kozibrodka.vehicles.model.ModelVehicle;
-import net.minecraft.item.ItemInstance;
+import net.minecraft.item.ItemStack;
 import net.modificationstation.stationapi.api.template.item.TemplateItem;
 
 public class Vehicle_properties {
@@ -14,7 +14,7 @@ public class Vehicle_properties {
     public String shootSound;
     public int SOUND_LOOP_TIME_MAX;
     public TemplateItem przedmiot;
-    public ItemInstance gunMachineGun;
+    public ItemStack gunMachineGun;
 
     public int MAX_HEALTH;
     public int DEATH_TIME_MAX; //czas do eksplozji
@@ -51,12 +51,12 @@ public class Vehicle_properties {
     public float gunPitchMin;
     public float gunPitchMax;
 
-    public ItemInstance dyeColor;
-    public ItemInstance item_track;
-    public ItemInstance item_body;
-    public ItemInstance item_mg;
-    public ItemInstance item_turret;
-    public ItemInstance item_cannon;
+    public ItemStack dyeColor;
+    public ItemStack item_track;
+    public ItemStack item_body;
+    public ItemStack item_mg;
+    public ItemStack item_turret;
+    public ItemStack item_cannon;
     public String itemlist1;
     public String itemlist2;
     public String itemlist3;

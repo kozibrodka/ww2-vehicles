@@ -1,15 +1,15 @@
 package net.kozibrodka.vehicles.gui;
 
 import net.kozibrodka.vehicles.entity.EntityVehicle;
-import net.minecraft.container.ContainerBase;
-import net.minecraft.container.slot.Slot;
-import net.minecraft.entity.player.PlayerBase;
-import net.minecraft.inventory.InventoryBase;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.slot.Slot;
 
-public class InventoryVehicle extends ContainerBase
+public class InventoryVehicle extends ScreenHandler
 {
 
-    public InventoryVehicle(InventoryBase iinventory, EntityVehicle entityvehicle)
+    public InventoryVehicle(Inventory iinventory, EntityVehicle entityvehicle)
     {
         vehicle = entityvehicle;
         addSlot(new Slot(entityvehicle, 0, 8, 53));
@@ -48,7 +48,7 @@ public class InventoryVehicle extends ContainerBase
 
     }
 
-    public boolean canUse(PlayerBase entityplayer)
+    public boolean canUse(PlayerEntity entityplayer)
     {
         return vehicle.canPlayerUse(entityplayer);
     }

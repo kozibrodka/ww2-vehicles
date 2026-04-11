@@ -1,6 +1,7 @@
 plugins {
-	id 'babric-loom' version '1.4.2'
 	id 'maven-publish'
+	id 'fabric-loom' version '1.9.2'
+	id 'babric-loom-extension' version '1.9.4'
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
@@ -11,8 +12,8 @@ version = project.mod_version
 group = project.maven_group
 
 loom {
-	gluedMinecraftJar()
 	customMinecraftManifest.set("https://babric.github.io/manifest-polyfill/${minecraft_version}.json")
+	intermediaryUrl.set("https://maven.glass-launcher.net/babric/babric/intermediary/%1\$s/intermediary-%1\$s-v2.jar")
 }
 
 repositories {
@@ -65,12 +66,16 @@ repositories {
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.glasslauncher:bin:${project.yarn_mappings}"
-	modImplementation "babric:fabric-loader:${project.loader_version}"
+	mappings "net.glasslauncher:biny:${project.yarn_mappings}:v2"
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
+	implementation "com.google.guava:guava:33.2.1-jre"
+	implementation "com.google.code.gson:gson:2.9.0"
 	implementation "org.slf4j:slf4j-api:1.8.0-beta4"
 	implementation 'org.apache.logging.log4j:log4j-slf4j18-impl:2.17.2'
+	implementation(include("me.carleslc:Simple-Yaml:1.8.4") as Dependency)
 	implementation "blue.endless:jankson:1.2.1"
+	implementation("io.github.llamalad7:mixinextras-fabric:0.2.1")
 
 	modImplementation "net.modificationstation:StationAPI:${project.stapi_version}"
 

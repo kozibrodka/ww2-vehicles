@@ -3,7 +3,7 @@ package net.kozibrodka.vehicles.render;
 import net.kozibrodka.vehicles.entity.SdkEntityBulletMachineGun;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.entity.EntityBase;
+import net.minecraft.entity.Entity;
 import org.lwjgl.opengl.GL11;
 
 public class SdkRenderBulletMachineGun extends EntityRenderer {
@@ -36,14 +36,14 @@ public class SdkRenderBulletMachineGun extends EntityRenderer {
         GL11.glScalef(f10, f10, f10);
         GL11.glTranslatef(-4F, 0.0F, 0.0F);
         GL11.glNormal3f(f10, 0.0F, 0.0F);
-        tessellator.start();
+        tessellator.startQuads();
         tessellator.vertex(-7D, -2D, -2D, f6, f8);
         tessellator.vertex(-7D, -2D, 2D, f7, f8);
         tessellator.vertex(-7D, 2D, 2D, f7, f9);
         tessellator.vertex(-7D, 2D, -2D, f6, f9);
         tessellator.draw();
         GL11.glNormal3f(-f10, 0.0F, 0.0F);
-        tessellator.start();
+        tessellator.startQuads();
         tessellator.vertex(-7D, 2D, -2D, f6, f8);
         tessellator.vertex(-7D, 2D, 2D, f7, f8);
         tessellator.vertex(-7D, -2D, 2D, f7, f9);
@@ -53,7 +53,7 @@ public class SdkRenderBulletMachineGun extends EntityRenderer {
         {
             GL11.glRotatef(90F, 1.0F, 0.0F, 0.0F);
             GL11.glNormal3f(0.0F, 0.0F, f10);
-            tessellator.start();
+            tessellator.startQuads();
             tessellator.vertex(-8D, -2D, 0.0D, f2, f4);
             tessellator.vertex(8D, -2D, 0.0D, f3, f4);
             tessellator.vertex(8D, 2D, 0.0D, f3, f5);
@@ -65,7 +65,7 @@ public class SdkRenderBulletMachineGun extends EntityRenderer {
         GL11.glPopMatrix();
     }
 
-    public void render(EntityBase entity, double d, double d1, double d2,
+    public void render(Entity entity, double d, double d1, double d2,
                        float f, float f1)
     {
         renderArrow((SdkEntityBulletMachineGun)entity, d, d1, d2, f, f1);

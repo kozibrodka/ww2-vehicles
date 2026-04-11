@@ -3,29 +3,29 @@ package net.kozibrodka.vehicles.gui;
 import net.kozibrodka.vehicles.events.mod_Vehicles;
 import net.kozibrodka.vehicles.recipe.SlotVehicles;
 import net.kozibrodka.vehicles.recipe.VehicleRecipeRegistry;
-import net.minecraft.container.ContainerBase;
-import net.minecraft.container.slot.CraftingResult;
-import net.minecraft.container.slot.Slot;
-import net.minecraft.entity.player.PlayerBase;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Chest;
-import net.minecraft.inventory.Crafting;
-import net.minecraft.inventory.InventoryBase;
-import net.minecraft.item.ItemInstance;
-import net.minecraft.level.Level;
+import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.inventory.CraftingResultInventory;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.slot.CraftingResultSlot;
+import net.minecraft.screen.slot.Slot;
+import net.minecraft.world.World;
 
 
-public class CraftingInventoryVehicle extends ContainerBase {
+public class CraftingInventoryVehicle extends ScreenHandler {
 
-    public CraftingInventoryVehicle(PlayerInventory inventoryplayer, Level worldy, int i, int j, int k) {
+    public CraftingInventoryVehicle(PlayerInventory inventoryplayer, World worldy, int i, int j, int k) {
         this.inventory = inventoryplayer;
-        this.craftMatrix = new Crafting(this, 3, 4);
-        this.craftResult = new Chest();
+        this.craftMatrix = new CraftingInventory(this, 3, 4);
+        this.craftResult = new CraftingResultInventory();
         this.world = worldy;
         this.xTile = i;
         this.yTile = j;
         this.zTile = k;
-        this.addSlot(new CraftingResult(inventoryplayer.player, craftMatrix, craftResult, 0, 127, 54));
+        this.addSlot(new CraftingResultSlot(inventoryplayer.player, craftMatrix, craftResult, 0, 127, 54));
 
         int col;
         int col1;
@@ -45,26 +45,26 @@ public class CraftingInventoryVehicle extends ContainerBase {
             this.addSlot(new Slot(inventoryplayer, col, 8 + col * 18, 160));
         }
 
-        this.onContentsChanged(this.craftMatrix);
+        this.onSlotUpdate(this.craftMatrix);
     }
 
 //    public ItemStack transferStackInSlot(int i) {
 //        return null;
 //    }
 
-    public void onContentsChanged(InventoryBase iinventory)
+    public void onSlotUpdate(Inventory iinventory)
     {
 //        craftResult.setInventoryItem(0, RecipeRegistry.getInstance().getCraftingOutput(craftMatrix));
-        craftResult.setInventoryItem(0, VehicleRecipeRegistry.getInstance().getCraftingOutput(craftMatrix));
+        craftResult.setStack(0, VehicleRecipeRegistry.getInstance().getCraftingOutput(craftMatrix));
     }
 
 
-    public void onClosed(PlayerBase entityplayer)
+    public void onClosed(PlayerEntity entityplayer)
     {
         super.onClosed(entityplayer);
         for(int i = 0; i < 12; i++)
         {
-            ItemInstance itemstack = craftMatrix.getInventoryItem(i);
+            ItemStack itemstack = craftMatrix.getStack(i);
             if(itemstack != null)
             {
                 entityplayer.dropItem(itemstack);
@@ -73,21 +73,21 @@ public class CraftingInventoryVehicle extends ContainerBase {
 
     }
 
-    public boolean canUse(PlayerBase entityplayer)
+    public boolean canUse(PlayerEntity entityplayer)
     {
-        if(world.getTileId(xTile, yTile, zTile) != mod_Vehicles.vehicleWorkbench.id)
+        if(world.getBlockId(xTile, yTile, zTile) != mod_Vehicles.vehicleWorkbench.id)
         {
             return false;
         } else
         {
-            return entityplayer.squaredDistanceTo((double)xTile + 0.5D, (double)yTile + 0.5D, (double)zTile + 0.5D) <= 64D;
+            return entityplayer.getSquaredDistance((double)xTile + 0.5D, (double)yTile + 0.5D, (double)zTile + 0.5D) <= 64D;
         }
     }
 
     public PlayerInventory inventory;
-    public Crafting craftMatrix;
-    public InventoryBase craftResult;
-    public Level world;
+    public CraftingInventory craftMatrix;
+    public Inventory craftResult;
+    public World world;
     private int xTile;
     private int yTile;
     private int zTile;

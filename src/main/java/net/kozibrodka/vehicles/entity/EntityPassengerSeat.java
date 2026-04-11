@@ -1,21 +1,21 @@
 package net.kozibrodka.vehicles.entity;
 
 import net.kozibrodka.sdk_api.events.utils.SdkTools;
-import net.minecraft.entity.EntityBase;
-import net.minecraft.entity.animal.Wolf;
-import net.minecraft.entity.player.PlayerBase;
-import net.minecraft.level.Level;
-import net.minecraft.util.io.CompoundTag;
-import net.minecraft.util.maths.Box;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.passive.WolfEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.Box;
+import net.minecraft.world.World;
 
-public class EntityPassengerSeat extends EntityBase
+public class EntityPassengerSeat extends Entity
 {
 
-    public EntityPassengerSeat(Level world)
+    public EntityPassengerSeat(World world)
     {
         super(world);
-        field_1593 = true;
-        setSize(0.8F, 1.0F);
+        blocksSameBlockSpawning = true;
+        setBoundingBoxSpacing(0.8F, 1.0F);
         standingEyeHeight = height / 2.0F - 0.17F;
         velocityX = 0.0D;
         velocityY = 0.0D;
@@ -30,29 +30,29 @@ public class EntityPassengerSeat extends EntityBase
         z = d2;
         float f = width / 2.0F;
         float f1 = height;
-        boundingBox.method_99(d - (double)f, (d1 - (double)standingEyeHeight) + (double)field_1640, d2 - (double)f, d + (double)f, (d1 - (double)standingEyeHeight) + (double)field_1640 + (double)f1, d2 + (double)f);
+        boundingBox.set(d - (double)f, (d1 - (double)standingEyeHeight) + (double)cameraOffset, d2 - (double)f, d + (double)f, (d1 - (double)standingEyeHeight) + (double)cameraOffset + (double)f1, d2 + (double)f);
     }
 
     protected void initDataTracker()
     {
     }
 
-    public Box getBoundingBox(EntityBase entity1)
+    public Box getCollisionAgainstShape(Entity entity1)
     {
         return entity1.boundingBox;
     }
 
-    public Box method_1381()
+    public Box getBoundingBox()
     {
         return boundingBox;
     }
 
-    public boolean method_1380()
+    public boolean isPushable()
     {
         return true;
     }
 
-    public EntityPassengerSeat(Level world, double d, double d1, double d2)
+    public EntityPassengerSeat(World world, double d, double d1, double d2)
     {
         this(world);
         setPosition(d, d1 + (double)standingEyeHeight, d2);
@@ -61,8 +61,8 @@ public class EntityPassengerSeat extends EntityBase
         prevZ = d2;
     }
 
-    public EntityPassengerSeat(Level world, double d, double d1, double d2,
-                               EntityBase entity1)
+    public EntityPassengerSeat(World world, double d, double d1, double d2,
+                               Entity entity1)
     {
         this(world);
         relativeX = d / 16D;
@@ -77,31 +77,31 @@ public class EntityPassengerSeat extends EntityBase
         return playerYOffset;
     }
 
-    public boolean damage(EntityBase entity1, int i)
+    public boolean damage(Entity entity1, int i)
     {
         return true;
     }
 
-    public void remove()
+    public void markDead()
     {
-        method_1336();
+        scheduleVelocityUpdate();
         if(passenger != null)
         {
-            passenger.startRiding(this);
+            passenger.setVehicle(this);
         }
-        super.remove();
+        super.markDead();
     }
 
-    public void method_1312()
+    public void animateHurt()
     {
     }
 
-    public boolean method_1356()
+    public boolean isCollidable()
     {
-        return !removed;
+        return !dead;
     }
 
-    public void method_1311(double d, double d1, double d2, float f,
+    public void setPositionAndAnglesAvoidEntities(double d, double d1, double d2, float f,
                                         float f1, int i)
     {
         field_9393_e = d;
@@ -115,7 +115,7 @@ public class EntityPassengerSeat extends EntityBase
         velocityZ = field_9386_l;
     }
 
-    public void setVelocity(double d, double d1, double d2)
+    public void setVelocityClient(double d, double d1, double d2)
     {
         field_9388_j = velocityX = d;
         field_9387_k = velocityY = d1;
@@ -131,7 +131,7 @@ public class EntityPassengerSeat extends EntityBase
     {
         if(i == 8)
         {
-            passenger.startRiding(this);
+            passenger.setVehicle(this);
         }
     }
 
@@ -150,7 +150,7 @@ public class EntityPassengerSeat extends EntityBase
 //                pressKey(8);
 //            }
 //        }
-        if(level.isServerSide)
+        if(world.isRemote)
         {
             if(field_9394_d > 0)
             {
@@ -168,9 +168,9 @@ public class EntityPassengerSeat extends EntityBase
             }
             return;
         }
-        if(entity == null || entity.removed)
+        if(entity == null || entity.dead)
         {
-            remove();
+            markDead();
         }
     }
 
@@ -187,19 +187,19 @@ public class EntityPassengerSeat extends EntityBase
         prevPitch = pitch;
         setPosition(d, d1, d2);
         setRotation(f, f1);
-        method_1382();
+        updatePassengerPosition();
     }
 
-    public void method_1382()  //updateRiderPosition
+    public void updatePassengerPosition()  //updateRiderPosition
     {
         if(passenger == null)
         {
             return;
         }
-        if(passenger == SdkTools.minecraft.player || (passenger instanceof Wolf))
+        if(passenger == SdkTools.minecraft.player || (passenger instanceof WolfEntity))
         {
             double d = relativeX;
-            double d1 = getMountedYOffset() + passenger.getHeightOffset() + relativeY;
+            double d1 = getMountedYOffset() + passenger.getStandingEyeHeight() + relativeY;
             double d2 = relativeZ;
             double d3 = Math.cos(((double)(-yaw) / 180D) * 3.1415926535897931D);
             double d4 = Math.sin(((double)(-yaw) / 180D) * 3.1415926535897931D);
@@ -218,40 +218,40 @@ public class EntityPassengerSeat extends EntityBase
         }
     }
 
-    protected void writeCustomDataToTag(CompoundTag nbttagcompound)
+    protected void writeNbt(NbtCompound nbttagcompound)
     {
     }
 
-    protected void readCustomDataFromTag(CompoundTag nbttagcompound)
+    protected void readNbt(NbtCompound nbttagcompound)
     {
     }
 
-    public float getEyeHeight()
+    public float getShadowRadius()
     {
         return 0.0F;
     }
 
-    public boolean interact(PlayerBase entityplayer)
+    public boolean interact(PlayerEntity entityplayer)
     {
-        if(passenger != null && (passenger instanceof PlayerBase) && passenger != entityplayer)
+        if(passenger != null && (passenger instanceof PlayerEntity) && passenger != entityplayer)
         {
             return true;
         }
-        if(!level.isServerSide && passenger != entityplayer)
+        if(!world.isRemote && passenger != entityplayer)
         {
-            entityplayer.startRiding(this);
+            entityplayer.setVehicle(this);
         }
         return true;
     }
 
-    public boolean canPlayerUse(PlayerBase entityplayer) //? czemu sie nie swieci
+    public boolean canPlayerUse(PlayerEntity entityplayer) //? czemu sie nie swieci
     {
-        if(removed)
+        if(dead)
         {
             return false;
         } else
         {
-            return entityplayer.method_1352(this) <= 64D;
+            return entityplayer.getSquaredDistance(this) <= 64D;
         }
     }
 
@@ -269,7 +269,7 @@ public class EntityPassengerSeat extends EntityBase
     private double field_9386_l;
     private static int KEY_GETOUT;
     private static int KEY_INV;
-    public EntityBase entity;
+    public Entity entity;
     private int seatNumber;
     private double relativeX;
     private double relativeY;

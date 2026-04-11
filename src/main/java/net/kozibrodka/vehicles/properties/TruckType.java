@@ -2,7 +2,7 @@ package net.kozibrodka.vehicles.properties;
 
 import net.kozibrodka.vehicles.model.ModelTruck;
 import net.kozibrodka.vehicles.model.ModelVehicle;
-import net.minecraft.item.ItemInstance;
+import net.minecraft.item.ItemStack;
 import net.modificationstation.stationapi.api.template.item.TemplateItem;
 
 import java.util.ArrayList;
@@ -92,9 +92,9 @@ public class TruckType {
     public double playerYOffset;
     public double playerZOffset;
 
-    public ItemInstance dyeColor;
-    public ItemInstance item_body;
-    public ItemInstance item_wheel;
+    public ItemStack dyeColor;
+    public ItemStack item_body;
+    public ItemStack item_wheel;
     public String itemlist1;
     public String itemlist2;
     public String itemlist3;

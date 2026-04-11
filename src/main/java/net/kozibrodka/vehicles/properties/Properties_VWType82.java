@@ -5,8 +5,8 @@ import net.kozibrodka.sdk_api.events.init.ww2Parts;
 import net.kozibrodka.vehicles.events.mod_Vehicles;
 import net.kozibrodka.vehicles.model.ModelJeep_Classic;
 import net.kozibrodka.vehicles.model.ModelVWType82;
-import net.minecraft.item.ItemBase;
-import net.minecraft.item.ItemInstance;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 public class Properties_VWType82 extends Truck_properties{
 
@@ -52,9 +52,9 @@ public class Properties_VWType82 extends Truck_properties{
         COLLISION_FLIGHT_PLAYER = false;
         COLLISION_FLIGHT_ENTITY = false;
 
-        item_body =  new ItemInstance(ww2Parts.smallCarChassis.id, 1, 0);
-        item_wheel =  new ItemInstance(ww2Parts.largeWheel.id, 1, 0); //TODO
-        dyeColor = new ItemInstance(ItemBase.dyePowder.id, 1, 0);
+        item_body =  new ItemStack(ww2Parts.smallCarChassis.id, 1, 0);
+        item_wheel =  new ItemStack(ww2Parts.largeWheel.id, 1, 0); //TODO
+        dyeColor = new ItemStack(Item.DYE.id, 1, 0);
         itemlist1 = "   ";
         itemlist2 = "ASD";
         itemlist3 = "X X";
