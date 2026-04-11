@@ -17,6 +17,7 @@ import net.mine_diver.unsafeevents.listener.EventListener;
 import net.minecraft.block.BlockBase;
 import net.minecraft.item.ItemInstance;
 import net.modificationstation.stationapi.api.event.entity.EntityRegister;
+import net.modificationstation.stationapi.api.event.entity.player.PlayerEvent;
 import net.modificationstation.stationapi.api.event.recipe.RecipeRegisterEvent;
 import net.modificationstation.stationapi.api.event.registry.BlockRegistryEvent;
 import net.modificationstation.stationapi.api.event.registry.EntityHandlerRegistryEvent;
@@ -97,8 +98,8 @@ public class mod_Vehicles {
 
         if(vehiclesGlass.registerVehicles_NEW) {
             new VehicleType(new Properties_Tiger1());
-//            new VehicleType(new Properties_Tiger2());
-//            new TruckType(new Properties_WillyJeep());
+            new VehicleType(new Properties_Tiger2());
+            new TruckType(new Properties_WillyJeep());
 //            new TruckType(new Properties_VWType82());
         }
 
@@ -150,6 +151,11 @@ public class mod_Vehicles {
     @EventListener
     public void registerTabs(HMITabRegistryEvent event) {
         event.registry.register(Identifier.of(MOD_ID, "vehicles"), new VehicleRecipeTab(MOD_ID), new ItemInstance(vehicleWorkbench));
+    }
+
+    @EventListener
+    public void registerPlayerHandlers(PlayerEvent.HandlerRegister event) {
+        event.playerHandlers.add(new ExamplePlayerHandler());
     }
 
     public static VehicleType getVehicleType(String s) {
