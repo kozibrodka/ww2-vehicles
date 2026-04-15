@@ -1,8 +1,7 @@
 package net.kozibrodka.vehicles.events;
 
 
-import net.glasslauncher.hmifabric.event.HMITabRegistryEvent;
-import net.glasslauncher.mods.api.gcapi.api.GConfig;
+import net.glasslauncher.mods.gcapi3.api.ConfigRoot;
 import net.kozibrodka.vehicles.entity.*;
 import net.kozibrodka.vehicles.item.ItemTruck;
 import net.kozibrodka.vehicles.item.ItemVehicle;
@@ -10,13 +9,10 @@ import net.kozibrodka.vehicles.item.SdkItemGunMachineGun;
 import net.kozibrodka.vehicles.properties.*;
 import net.kozibrodka.vehicles.recipe.BlockVehicleWorkbench;
 import net.kozibrodka.vehicles.recipe.VehicleRecipeRegistry;
-//import net.kozibrodka.vehicles.recipe.VehicleRecipeTab;
-import net.kozibrodka.vehicles.recipe.VehicleRecipeTab;
 import net.mine_diver.unsafeevents.listener.EventListener;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.modificationstation.stationapi.api.event.entity.EntityRegister;
-import net.modificationstation.stationapi.api.event.entity.player.PlayerEvent;
 import net.modificationstation.stationapi.api.event.recipe.RecipeRegisterEvent;
 import net.modificationstation.stationapi.api.event.registry.BlockRegistryEvent;
 import net.modificationstation.stationapi.api.event.registry.EntityHandlerRegistryEvent;
@@ -34,11 +30,11 @@ import java.util.Map;
 
 public class mod_Vehicles {
 
-    @GConfig(value = "VehiclesCFG", visibleName = "WW2 Vehicles Config")
+    @ConfigRoot(value = "VehiclesCFG", visibleName = "WW2 Vehicles Config")
     public static final VehiclesCFG vehiclesGlass = new VehiclesCFG();
 
     @Entrypoint.Namespace
-    public static final Namespace MOD_ID = Null.get();
+    public static  Namespace MOD_ID = Null.get();
 
     public static TemplateBlock vehicleWorkbench;
     public static TemplateItem vehicleFuel;
@@ -112,7 +108,7 @@ public class mod_Vehicles {
 
         for (int i = 0; i < TruckType.types.size(); i++) {
             TruckType truckType = (TruckType) TruckType.types.get(i);
-            System.out.println((new StringBuilder()).append("mod_Vehicles added vehicle : ").append(truckType.name).toString());
+            System.out.println((new StringBuilder()).append("mod_Vehicles added truck : ").append(truckType.name).toString());
 
             truckMapping.put(truckType.name, truckType);
             truckType.przedmiot = (TemplateItem) new ItemTruck(Identifier.of(MOD_ID, truckType.name), truckType.name).setTranslationKey(MOD_ID, truckType.name).setMaxCount(1);
@@ -125,7 +121,7 @@ public class mod_Vehicles {
     }
 
     @EventListener
-    private static void registerEntities(EntityRegister event) {
+    public static void registerEntities(EntityRegister event) {
         event.register(EntityShell.class, String.valueOf(Identifier.of(MOD_ID, "EntityShell")));
         event.register(EntityAAShell.class, String.valueOf(Identifier.of(MOD_ID, "EntityAAShellTank")));
         event.register(SdkEntityBulletMachineGun.class, String.valueOf(Identifier.of(MOD_ID, "SdkEntityBulletMachineGun")));
@@ -134,7 +130,7 @@ public class mod_Vehicles {
     }
 
     @EventListener
-    private static void registerMobHandlers(EntityHandlerRegistryEvent event) {
+    public static void registerMobHandlers(EntityHandlerRegistryEvent event) {
         Registry.register(event.registry, MOD_ID.id("EntityShell"), EntityShell::new);
         Registry.register(event.registry, MOD_ID.id("EntityAAShellTank"), EntityAAShell::new);
         Registry.register(event.registry, MOD_ID.id("SdkEntityBulletMachineGun"), SdkEntityBulletMachineGun::new);
@@ -147,15 +143,11 @@ public class mod_Vehicles {
         VehicleRecipeRegistry.getInstance().initVehicleRecipe();
     }
 
-    @EventListener
-    public void registerTabs(HMITabRegistryEvent event) {
-        event.registry.register(Identifier.of(MOD_ID, "vehicles"), new VehicleRecipeTab(MOD_ID), new ItemStack(vehicleWorkbench));
-    }
+//    @EventListener
+//    public void registerTabs(HMITabRegistryEvent event) {
+//        event.registry.register(Identifier.of(MOD_ID, "vehicles"), new VehicleRecipeTab(MOD_ID), new ItemStack(vehicleWorkbench));
+//    }
 
-    @EventListener
-    public void registerPlayerHandlers(PlayerEvent.HandlerRegister event) {
-        event.playerHandlers.add(new ExamplePlayerHandler());
-    }
 
     public static VehicleType getVehicleType(String s) {
         return (VehicleType) vehicleMapping.get(s);

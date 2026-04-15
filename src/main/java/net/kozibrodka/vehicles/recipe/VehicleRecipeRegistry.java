@@ -32,7 +32,7 @@ public class VehicleRecipeRegistry {
 //            this.addShapedRecipeVehicle(new ItemInstance(ItemBase.ironAxe, 1), "W", 'W', ItemBase.arrow);
 
         for (int i = 0; i < VehicleType.types.size(); i++) { //VehicleType.types.size()
-            VehicleType vehicleType = (VehicleType) VehicleType.types.get(i);
+            VehicleType vehicleType = (VehicleType) VehicleType.types.get(i); //TODO ?? wszędzie meta 1
 
             this.addShapedRecipeVehicle(new ItemStack(vehicleType.przedmiot, 1,1), vehicleType.itemlist1, vehicleType.itemlist2, vehicleType.itemlist3, vehicleType.itemlist4,
                     'Q', vehicleType.item_mg,'W', vehicleType.item_turret,'E', vehicleType.item_cannon,'A', ww2Parts.smallEngine,'S', vehicleType.item_body,'D', vehicleType.dyeColor,'X', ww2Parts.trackPiece);

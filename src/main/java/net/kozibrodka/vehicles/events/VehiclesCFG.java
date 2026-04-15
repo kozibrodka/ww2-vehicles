@@ -1,19 +1,19 @@
 package net.kozibrodka.vehicles.events;
 
-import net.glasslauncher.mods.api.gcapi.api.ConfigName;
+import net.glasslauncher.mods.gcapi3.api.ConfigEntry;
 
 public class VehiclesCFG {
 
-    @ConfigName("Enable Bullets")
+    @ConfigEntry(name = "Enable Bullets")
     public Boolean shellsEnabled = true;
-    @ConfigName("Vehicles Explode")
+    @ConfigEntry(name = "Vehicles Explode")
     public Boolean vehiclesExplode = true;
 
-    @ConfigName("Add Legacy Vehicles")
+    @ConfigEntry(name = "Add Legacy Vehicles")
     public Boolean registerVehicles_CLASSIC = true;
-    @ConfigName("Add OLD Vehicles")
+    @ConfigEntry(name = "Add OLD Vehicles")
     public Boolean registerVehicles_NORMAL = false;
-    @ConfigName("Add New Vehicles")
+    @ConfigEntry(name = "Add New Vehicles")
     public Boolean registerVehicles_NEW = false;
 
 

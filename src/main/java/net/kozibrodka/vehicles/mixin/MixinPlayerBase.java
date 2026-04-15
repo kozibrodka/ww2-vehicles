@@ -25,7 +25,7 @@ public abstract class MixinPlayerBase extends LivingEntity {
 
     }
 
-    @Inject(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerBase;increaseStat(Lnet/minecraft/stat/Stat;I)V"), cancellable = true)
+    @Inject(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;increaseStat(Lnet/minecraft/stat/Stat;I)V"), cancellable = true)
     private void InjectedDMG2(Entity arg, int i, CallbackInfoReturnable<Boolean> cir){
         if(this.vehicle instanceof EntityVehicle){ //todo przenies do api
             System.out.println("negacja DMG w człogu");

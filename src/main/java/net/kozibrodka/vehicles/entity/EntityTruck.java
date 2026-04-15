@@ -886,4 +886,9 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
 
     }
 
+    @Override
+    public int getPercentHealth() { /// co to?
+        return 0;
+    }
+
 }

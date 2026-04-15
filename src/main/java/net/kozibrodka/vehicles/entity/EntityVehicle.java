@@ -1054,4 +1054,9 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
         shootExplosive = !shootExplosive;
         world.playSound(this, "vehicles:tankreload", 1.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
     }
+
+    @Override
+    public int getPercentHealth() {
+        return 0;
+    }
 }
