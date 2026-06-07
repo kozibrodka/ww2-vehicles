@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Monster;
+import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -22,10 +23,12 @@ import net.minecraft.nbt.NbtDouble;
 import net.minecraft.nbt.NbtFloat;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
 import org.lwjgl.input.Keyboard;
 
+import java.util.Iterator;
 import java.util.List;
 
 public class EntityTruck extends Entity implements Inventory, WW2Truck {
@@ -46,7 +49,6 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
         stepHeight = 1.0F; //stepHeight
         ignoreFrustumCull = true; //ignoreFrustumCheck
         renderDistanceMultiplier = 2; //jakos to dostosoawac
-
     }
 
     public EntityTruck(World world, double d, double d1, double d2)
@@ -98,28 +100,97 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
         }
     }
 
+    public void addPassengerSeats()
+    {
+        for(int i = 0; i < automobile.numPassengers; i++)
+        {
+            if(world != null)
+            {
+                seats[i] = new EntityPassengerSeat(world, automobile.passengerSeats[i].offSetX, automobile.passengerSeats[i].offSetY, automobile.passengerSeats[i].offSetZ, this);
+                world.spawnEntity(seats[i]);
+            }
+        }
+    }
+
+    public boolean shouldCollide(Entity otherEntity){
+        if(otherEntity.passenger == this || otherEntity.vehicle == this || otherEntity instanceof EntityPassengerSeat || otherEntity.vehicle instanceof EntityPassengerSeat){
+            return false;
+        }else {
+            return true;
+        }
+    }
+
+    @Override
+    public void onCollision(Entity otherEntity) {
+        if (shouldCollide(otherEntity)) {
+            double var2 = otherEntity.x - this.x;
+            double var4 = otherEntity.z - this.z;
+            double var6 = MathHelper.absMax(var2, var4);
+            if (var6 >= (double)0.01F) {
+                var6 = (double)MathHelper.sqrt(var6);
+                var2 /= var6;
+                var4 /= var6;
+                double var8 = (double)1.0F / var6;
+                if (var8 > (double)1.0F) {
+                    var8 = (double)1.0F;
+                }
+
+                var2 *= var8;
+                var4 *= var8;
+                var2 *= (double)0.05F;
+                var4 *= (double)0.05F;
+                var2 *= (double)(1.0F - this.pushSpeedReduction);
+                var4 *= (double)(1.0F - this.pushSpeedReduction);
+                if(!(otherEntity instanceof LivingEntity)){ /// Gracz nie przesunie Pojazdu
+                    this.addVelocity(-var2, (double)0.0F, -var4);
+                }
+                otherEntity.addVelocity(var2, (double)0.0F, var4);
+            }
+        }
+    }
+
+    @Override
     protected void initDataTracker()
     {
     }
 
-    public Box getCollisionAgainstShape(Entity entity)
-    {
-        return entity.boundingBox;
+    @Override
+    public Box getCollisionAgainstShape(Entity other) {
+//        if (world.isRemote) {
+//            return null;
+//        }
+//        return other == passenger ? null : other.boundingBox;
+//        return other instanceof EntityPassengerSeat ? null : other.boundingBox;
+//        return other == passenger || other.vehicle instanceof EntityPassengerSeat ? null : other.boundingBox;
+//        return other == passenger || other.vehicle instanceof EntityPassengerSeat || other instanceof EntityPassengerSeat ? null : other.boundingBox;
+
+        return boundingBox;
+//        return null;
     }
 
+    @Override
     public Box getBoundingBox()
     {
         return boundingBox;
+//        return null;
     }
 
+    @Override
+    public boolean isPushable()
+    {
+        return true;
+//        return false;
+    }
+
+    @Override
     public boolean damage(Entity entity, int i)
     {
         if(automobile.MAX_HEALTH != -1)
         {
             if(entity instanceof LivingEntity){
                 if(entity instanceof Monster){
-                    health -= (int)i/5;
-                    System.out.println("CAR DAMAGED from: " + entity + " DMG: " + (int)i/5);
+                    health -= i /5;
+                    System.out.println("CAR DAMAGED from: " + entity + " DMG: " + i /5);
                     onHurt();
                 }
             }else{
@@ -148,16 +219,19 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
         }
     }
 
+    @Override
     public boolean isCollidable() //canBeCollidedWith
     {
         return !dead;
     }
 
+    @Override
     public float getShadowRadius()
     {
         return 0.0F;
     }
 
+    @Override
     public boolean interact(PlayerEntity entityplayer)
     {
         if(entityplayer.getHand() != null && entityplayer.getHand().itemId == mod_Vehicles.vehicleBlowTorch.id)
@@ -180,6 +254,7 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
             System.out.println("TYPE: " + automobile.name);
             System.out.println("ENGINE: " + engineType);
             System.out.println("HEALTH: " + health);
+            damage(null, 200); ///debug
             entityplayer.swingHand();
             return true;
         }
@@ -191,10 +266,34 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
         {
             entityplayer.setVehicle(this);
             SdkItemCustomUseDelay.doNotUseThisTick = world.getTime();
+            List list = world.collectEntitiesByClass(WolfEntity.class, Box.createCached(x, y, z, x + 1.0D, y + 1.0D, z + 1.0D).expand(16D, 4D, 16D));
+            Iterator iterator = list.iterator();
+            do
+            {
+                if(!iterator.hasNext())
+                {
+                    break;
+                }
+                Entity entity = (Entity)iterator.next();
+                WolfEntity entitywolf = (WolfEntity)entity;
+                if(entitywolf.isTamed() && entityplayer.name.equals(entitywolf.getOwnerName()))
+                {
+                    int j = 0;
+                    while(j < automobile.numPassengers)
+                    {
+                        if(seats[j].passenger == null)
+                        {
+                            entitywolf.setVehicle(seats[j]);
+                        }
+                        j++;
+                    }
+                }
+            } while(true);
         }
         return true;
     }
 
+    @Override
     public void tick()
     {
         super.tick();
@@ -234,8 +333,18 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
                     }
                     if(d4 != 0.0D)
                     {
-                        yaw += d4;
-                        projectMotion(d4);
+                        /// More Realistic 4 wheels physics
+                        double rotSpeedM = getSpeed() * 2D;
+                        if(rotSpeedM > 1D){
+                            rotSpeedM = 1.0D;
+                        }
+                        double d4car = d4*rotSpeedM;
+                        yaw += d4car;
+                        projectMotion(d4car);
+                        /// Old
+//                        yaw += d4;
+//                        projectMotion(d4);
+                        ///
                     }
                     lastTurnSpeed = d4 * (double)(flag1 ? 1 : -1);
                 }
@@ -320,9 +429,10 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
             }
 
         }
+        ///
         if(passenger != null && getPrevSpeed() - getSpeed() > automobile.COLLISION_SPEED_MIN)
         {
-            if(lastCollidedEntity != null)
+            if(lastCollidedEntity != null) //TODO Collision with Living...
             {
                 if(automobile.COLLISION_FLIGHT_ENTITY)
                 {
@@ -345,6 +455,10 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
                 passenger.setVehicle(null);
             }
         }
+        ///
+
+
+        ///
         lastCollidedEntity = null;
         prevMotionX = velocityX;
         prevMotionY = velocityY;
@@ -417,7 +531,7 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
         {
             vehicleFuel--;
         }
-        if((automobile.MAX_HEALTH-health) > (4.5 * automobile.MAX_HEALTH) / 5 && random.nextInt(30) == 0)   //samoniszczenie
+        if((automobile.MAX_HEALTH-health) > (4.5 * automobile.MAX_HEALTH) / 5 && random.nextInt(30) == 0)   ///samoniszczenie
         {
             damage(this, 1);
         }
@@ -431,6 +545,12 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
             wheelsAngle += (float)getSpeed() / 2F;
             if(wheelsAngle > 3600)
                 wheelsAngle = 0;
+
+        if(!spawnedSeats){
+            spawnedSeats = true;
+            this.seats = new EntityPassengerSeat[automobile.numPassengers];
+            addPassengerSeats();
+        }
     }
 
     public void dropParts(){
@@ -588,31 +708,25 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
         return (float)(lastTurnSpeed * automobile.TURN_SPEED_RENDER_MULT);
     }    //?
 
-    public boolean isPushable() //canBePushe
-    {
-        return true;
-    }
-
-    public double getPassengerRidingHeight()
-    {
-        return automobile.playerYOffset;
-    }
-
+    @Override
     public float getEyeHeight()
     {
         return 0.7F;
     }
 
+    @Override
     public int size()
     {
         return inventorySize;
     }
 
+    @Override
     public ItemStack getStack(int i)
     {
         return cargoItems[i];
     }
 
+    @Override
     public ItemStack removeStack(int i, int j)
     {
         if(cargoItems[i] != null)
@@ -635,6 +749,7 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
         }
     }
 
+    @Override
     public void setStack(int i, ItemStack itemstack)
     {
         cargoItems[i] = itemstack;
@@ -648,58 +763,64 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
         }
     }
 
+    @Override
     public String getName()
     {
         return automobile.name;
     }
 
+    @Override
     public int getMaxCountPerStack()
     {
         return 64;
     }
 
+    @Override
     public void markDirty()
     {
     }
 
+    @Override
     public boolean canPlayerUse(PlayerEntity entityplayer)
     {
         return entityplayer.getSquaredDistance(x, y, z) <= 64D;
     }
 
-    public void read(NbtCompound nbttagcompound)
-    {
-        NbtList nbttaglist = nbttagcompound.getList("Pos");
-        NbtList nbttaglist1 = nbttagcompound.getList("Motion");
-        NbtList nbttaglist2 = nbttagcompound.getList("Rotation");
-        setPosition(0.0D, 0.0D, 0.0D);
-        velocityX = ((NbtDouble)nbttaglist1.get(0)).value;
-        velocityY = ((NbtDouble)nbttaglist1.get(1)).value;
-        velocityZ = ((NbtDouble)nbttaglist1.get(2)).value;
-        if(Math.abs(velocityX) > 10D)
-        {
-            velocityX = 0.0D;
-        }
-        if(Math.abs(velocityY) > 10D)
-        {
-            velocityY = 0.0D;
-        }
-        if(Math.abs(velocityZ) > 10D)
-        {
-            velocityZ = 0.0D;
-        }
-        prevX = lastTickX = x = ((NbtDouble)nbttaglist.get(0)).value;
-        prevY = lastTickY = y = ((NbtDouble)nbttaglist.get(1)).value;
-        prevZ = lastTickZ = z = ((NbtDouble)nbttaglist.get(2)).value;
-        prevYaw = yaw = ((NbtFloat)nbttaglist2.get(0)).value;
-        prevPitch = pitch = ((NbtFloat)nbttaglist2.get(1)).value;
-        fallDistance = nbttagcompound.getFloat("FallDistance");
-        fireTicks = nbttagcompound.getShort("Fire");
-        air = nbttagcompound.getShort("Air");
-        onGround = nbttagcompound.getBoolean("OnGround");
-        readNbt(nbttagcompound);
-    }
+//    @Override
+//    public void read(NbtCompound nbttagcompound)
+//    {
+//        NbtList nbttaglist = nbttagcompound.getList("Pos");
+//        NbtList nbttaglist1 = nbttagcompound.getList("Motion");
+//        NbtList nbttaglist2 = nbttagcompound.getList("Rotation");
+//        setPosition(0.0D, 0.0D, 0.0D);
+//        velocityX = ((NbtDouble)nbttaglist1.get(0)).value;
+//        velocityY = ((NbtDouble)nbttaglist1.get(1)).value;
+//        velocityZ = ((NbtDouble)nbttaglist1.get(2)).value;
+//        if(Math.abs(velocityX) > 10D)
+//        {
+//            velocityX = 0.0D;
+//        }
+//        if(Math.abs(velocityY) > 10D)
+//        {
+//            velocityY = 0.0D;
+//        }
+//        if(Math.abs(velocityZ) > 10D)
+//        {
+//            velocityZ = 0.0D;
+//        }
+//        prevX = lastTickX = x = ((NbtDouble)nbttaglist.get(0)).value;
+//        prevY = lastTickY = y = ((NbtDouble)nbttaglist.get(1)).value;
+//        prevZ = lastTickZ = z = ((NbtDouble)nbttaglist.get(2)).value;
+//        prevYaw = yaw = ((NbtFloat)nbttaglist2.get(0)).value;
+//        prevPitch = pitch = ((NbtFloat)nbttaglist2.get(1)).value;
+//        fallDistance = nbttagcompound.getFloat("FallDistance");
+//        fireTicks = nbttagcompound.getShort("Fire");
+//        air = nbttagcompound.getShort("Air");
+//        onGround = nbttagcompound.getBoolean("OnGround");
+//        readNbt(nbttagcompound);
+//    }
 
+    @Override
     public void writeNbt(NbtCompound nbttagcompound)
     {
         NbtList nbttaglist = new NbtList();
@@ -723,6 +844,7 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
 
     }
 
+    @Override
     public void readNbt(NbtCompound nbttagcompound)
     {
         automobile = mod_Vehicles.getTruckType(nbttagcompound.getString("Type"));
@@ -756,6 +878,41 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
         }
     }
 
+    @Override
+    public double getPassengerRidingHeight()
+    {
+        return automobile.playerYOffset;
+    }
+
+    @Override
+    public void updatePassengerPosition(){
+
+            double d = automobile.playerXOffset;;
+            double d1 = getPassengerRidingHeight() + passenger.getStandingEyeHeight();
+            double d2 = automobile.playerZOffset;
+            double d3 = Math.cos(((double)(-yaw) / 180D) * 3.1415926535897931D);
+            double d4 = Math.sin(((double)(-yaw) / 180D) * 3.1415926535897931D);
+
+//            double d5 = Math.cos(((double)pitch / 180D) * 3.1415926535897931D); /// GÓRA - DÓŁ
+//            double d6 = Math.sin(((double)pitch / 180D) * 3.1415926535897931D) * 0.5D; /// Przesunięcie PRZÓD-TYŁ
+            /// Issue: Little "freeze" on drop
+
+//            double d5 = Math.cos(((double)pitch / 180D) * 3.1415926535897931D);
+//            double d6 = Math.sin(((double)pitch / 180D) * 3.1415926535897931D);
+            /// Oryginal
+
+            double d5 = Math.cos(((double)0 / 180D) * 3.1415926535897931D);
+            double d6 = Math.sin(((double)0 / 180D) * 3.1415926535897931D);
+            /// Simple no drop freeze
+
+            double d7 = Math.cos(((double)yaw * 3.1415926535897931D) / 180D) * 0.40000000000000002D * d5;
+            double d8 = Math.sin(((double)yaw * 3.1415926535897931D) / 180D) * 0.40000000000000002D * d5;
+            double d9 = (d * d5 - d1 * d6) * d3 + d2 * d4;
+            double d10 = d * d6 + d1 * d5;
+            double d11 = (d1 * d6 - d * d5) * d4 + d2 * d3;
+            passenger.setPosition(x + d9 + d7, y + d10, z + d11 + d8);
+    }
+
     public void updateTowedPosition()
     {
         if(towingEntity == null)
@@ -765,7 +922,6 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
         if(getSquaredDistance(towingEntity) > 36D)
         {
             towEntity(towingEntity);
-            return;
         } else
         {
             double d = -1 * 2;  //-blockCheck (Integer) * 2
@@ -784,7 +940,6 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
             double d13 = (y + d10) - towingEntity.y;
             double d14 = (z + d8 + d11) - towingEntity.z;
             towingEntity.move(d12, d13, d14);
-            return;
         }
     }
 
@@ -827,37 +982,47 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
     public double prevMotionZ;
     public Entity lastCollidedEntity;
     public Entity towingEntity;
-    Minecraft minecraft = Minecraft.class.cast(FabricLoader.getInstance().getGameInstance());
+    Minecraft minecraft = (Minecraft) FabricLoader.getInstance().getGameInstance();
 
     public int deathTime;
     public int soundLoopTime;
     public float wheelsYaw;
     public float prevRotationRoll;
-    public EntityPassengerSeat seats[];
     public RotatedAxes axes;
     public int engineType;
     public float wheelsAngle;
-    public ItemStack cargoItems[];
+    public ItemStack[] cargoItems;
     public int inventorySize;
     private int vehicleFuel;
     public TruckType automobile;
 
+    public boolean spawnedSeats;
+    public EntityPassengerSeat[] seats;
 
 
     @Override
     public void inventoryKey(Minecraft minecraft, PlayerEntity entityplayer) {
         if (minecraft.currentScreen instanceof GuiTruck) {
             minecraft.setScreen(null);
-            return;
         } else if (passenger.vehicle instanceof EntityTruck) {
             minecraft.setScreen(new GuiTruck(((PlayerEntity)passenger).inventory, (EntityTruck) passenger.vehicle));
-            return;
         }
     }
 
     @Override
     public void exitKey(PlayerEntity entityplayer) {
         passenger.setVehicle(this);
+        int j = 0;
+        //todo na szybko wolf exit - crashuje.
+        while(j < automobile.numPassengers)
+        {
+            if(seats[j].passenger != null)
+            {
+                seats[j].passenger.setVehicle(null);
+//                entitywolf.setVehicle(seats[j]);
+            }
+            j++;
+        }
     }
 
     @Override

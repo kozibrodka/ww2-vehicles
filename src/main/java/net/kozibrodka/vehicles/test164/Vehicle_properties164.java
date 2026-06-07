@@ -1,41 +1,62 @@
-package net.kozibrodka.vehicles.properties;
+package net.kozibrodka.vehicles.test164;
 
-import net.kozibrodka.vehicles.entity.EntityPassengerSeat;
-import net.kozibrodka.vehicles.model.ModelTruck;
 import net.kozibrodka.vehicles.model.ModelVehicle;
 import net.minecraft.item.ItemStack;
 import net.modificationstation.stationapi.api.template.item.TemplateItem;
 
-public class Truck_properties {
+public class Vehicle_properties164 {
 
     public String name;
     public String longName;
     public String texture;
-    public ModelTruck model;
+    public ModelVehicle164 model;
     public String SOUND_RIDING;
     public String shootSound;
     public int SOUND_LOOP_TIME_MAX;
     public TemplateItem przedmiot;
+    public ItemStack gunMachineGun;
 
     public int MAX_HEALTH;
     public int DEATH_TIME_MAX; //czas do eksplozji
+    public boolean hasTurret;
+    public boolean hasGuns;
+    public boolean tankDestroyer;
+    public boolean antiAircraft;
+    public String specialWeapon;
     public int vehicleFuelAdd;
+    public int vehicleShootDelay;
+    public int vehicleShellDelay;
     public int numCargoSlots;
     public int numBulletSlots;
     public int numShellSlots;
+    public int gunFlakRange;
+    public float gunDamage;
+    public float gunVelocity;
+    public float gunSpread;
     public float autoWidth;
     public float autoHeight;
     public float standingOko;
+
     public double playerXOffset;
     public double playerYOffset;
     public double playerZOffset;
-
-    public int numPassengers;
-    public PassengerSeatData passengerSeats[];
+    public int shellXOffset;
+    public int shellYOffset;
+    public int shellZOffset;
+    public int barrelX;
+    public float barrelY;
+    public int barrelZ;
+    public float gunYawMin;
+    public float gunYawMax;
+    public float gunPitchMin;
+    public float gunPitchMax;
 
     public ItemStack dyeColor;
+    public ItemStack item_track;
     public ItemStack item_body;
-    public ItemStack item_wheel;
+    public ItemStack item_mg;
+    public ItemStack item_turret;
+    public ItemStack item_cannon;
     public String itemlist1;
     public String itemlist2;
     public String itemlist3;
@@ -62,4 +83,6 @@ public class Truck_properties {
     public boolean COLLISION_DAMAGE;
     public boolean COLLISION_FLIGHT_PLAYER;
     public boolean COLLISION_FLIGHT_ENTITY;
+
+
 }

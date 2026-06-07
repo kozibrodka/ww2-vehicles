@@ -729,6 +729,7 @@ public class ModelTigerI extends ModelVehicle
         (MGFrontModel[1][0] = new ModelRendererTurbo((ModelBase)this, 425, 0, this.textureX, this.textureY)).addBox(-2.0f, -0.5f, -0.5f, 7, 1, 1, 0.0f);
         for (final ModelRendererTurbo gunPart : MGFrontModel[1]) {
             gunPart.setRotationPoint(47.0f, -18.5f, -11.5f);
+//            gunPart.ro
         }
 //        this.bodyModel =  new ModelRendererTurbo((ModelBase)this, 425, 0, this.textureX, this.textureY);
         MGFrontModel[2] = new ModelRendererTurbo[0];

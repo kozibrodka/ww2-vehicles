@@ -1,4 +1,4 @@
-package net.kozibrodka.vehicles.item;
+package net.kozibrodka.vehicles.test164;
 
 import net.kozibrodka.vehicles.entity.EntityVehicle;
 import net.kozibrodka.vehicles.events.mod_Vehicles;
@@ -10,16 +10,15 @@ import net.minecraft.util.hit.HitResultType;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.modificationstation.stationapi.api.util.Identifier;
 import net.modificationstation.stationapi.api.template.item.TemplateItem;
+import net.modificationstation.stationapi.api.util.Identifier;
 
-public class ItemVehicle extends TemplateItem {
+public class ItemVehicle164 extends TemplateItem {
 
-    public ItemVehicle(Identifier i, String s)
+    public ItemVehicle164(Identifier i)
     {
         super(i);
         maxCount = 1;
-        vehicleType = s;
     }
 
     @Override
@@ -51,11 +50,11 @@ public class ItemVehicle extends TemplateItem {
             int i = movingobjectposition.blockX;
             int j = movingobjectposition.blockY;
             int k = movingobjectposition.blockZ;
-            VehicleType vehicletype = mod_Vehicles.getVehicleType(vehicleType);
+//            VehicleType vehicletype = mod_Vehicles.getVehicleType(vehicleType);
             if(!world.isRemote)
             {
                 int l = itemstack.getDamage();
-                world.spawnEntity(new EntityVehicle(world, (double)i + 0.5D, (double)j + 1.5D, (double)k + 0.5D, entityplayer, l, vehicletype));
+                world.spawnEntity(new EntityVehicleTEST164(world, (double)i + 0.5D, (double)j + 1.5D, (double)k + 0.5D, entityplayer, l));
 //                                Class class1 = mod_Vehicles.getVehicleClass(vehicleType);
 //                Constructor constructor = null;
 //                try {

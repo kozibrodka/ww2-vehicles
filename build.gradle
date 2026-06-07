@@ -1,5 +1,5 @@
 plugins {
-	id 'net.fabricmc.fabric-loom-remap' version '1.15.5'
+	id 'fabric-loom' version '1.16.2'
 	id 'babric-loom-extension' version '1.15.3'
 	id 'maven-publish'
 }
@@ -121,7 +121,9 @@ dependencies {
 		transitive = false
 	}
 	modImplementation(files("libs/sdk-api-0.4.1.jar"))
-	modImplementation(files("libs/turbo-model-thingy-1.1.jar"))
+	modImplementation(files("libs/turbo-model-thingy-1.2.jar"))
+	modImplementation(files("libs/InventoryTweaks-2.6.1.jar"))
+	modImplementation(files("libs/keyf3-1.0.2.jar"))
 }
 
 processResources {

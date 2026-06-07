@@ -7,6 +7,7 @@ public class ModelJeep_Classic extends ModelTruck{
         char c = '\200';
         char c1 = '\200';
         bodyModel = new ModelRendererTurbo[12];
+//        bodyModel = new ModelRendererTurbo[10];
         bodyModel[0] = new ModelRendererTurbo(this, 0, 0, c, c1);
         bodyModel[1] = new ModelRendererTurbo(this,0, 94, c, c1);
         bodyModel[2] = new ModelRendererTurbo(this,0, 40, c, c1);
@@ -32,17 +33,19 @@ public class ModelJeep_Classic extends ModelTruck{
         bodyModel[9].addBox(-4F, -4F, -1F, 8, 8, 2, 0.0F);
         bodyModel[9].rotateAngleY = 1.570796F;
         bodyModel[9].setRotationPoint(-25F, -12F, 0.0F);
+        bodyModel[10] = new ModelRendererTurbo(this,90, 22, c, c1);
+        bodyModel[11] = new ModelRendererTurbo(this,90, 22, c, c1);
         bodyModel[10].addBox(-20F, -4F, -15F, 8, 4, 2, 0.0F);
         bodyModel[11].addBox(-20F, -4F, 13F, 8, 4, 2, 0.0F);
 
-//        this.leftFrontWheelModel = new ModelRendererTurbo[1];
-//        this.rightFrontWheelModel = new ModelRendererTurbo[1];
-//        leftFrontWheelModel[0] = new ModelRendererTurbo(this, 90, 28, c, c1);
-//        rightFrontWheelModel[0] = new ModelRendererTurbo(this,90, 28, c, c1);
-//        leftFrontWheelModel[0].addBox(-4F, -4F, -1F, 8, 8, 2, 0.0F);
-//        leftFrontWheelModel[0].setRotationPoint(16F, -4F, 15F);
-//        rightFrontWheelModel[0].addBox(-4F, -4F, -1F, 8, 8, 2, 0.0F);
-//        rightFrontWheelModel[0].setRotationPoint(16F, -4F, -15F);
+//        this.leftBackWheelModel = new ModelRendererTurbo[1];
+//        this.rightBackWheelModel = new ModelRendererTurbo[1];
+//        leftBackWheelModel[0] = new ModelRendererTurbo(this, 90, 22, c, c1);
+//        rightBackWheelModel[0] = new ModelRendererTurbo(this,90, 22, c, c1);
+//        leftBackWheelModel[0].addBox(-20F, -4F, -15F, 8, 4, 2, 0.0F);
+//        rightBackWheelModel[0].addBox(-20F, -4F, 13F, 8, 4, 2, 0.0F);
+//        rightBackWheelModel[0].setRotationPoint(0F, 0F, 1F);
+//        leftBackWheelModel[0].setRotationPoint(0F, 0F, -3F);
 
         this.leftFrontWheelModel = new ModelRendererTurbo[1];
         this.rightFrontWheelModel = new ModelRendererTurbo[1];

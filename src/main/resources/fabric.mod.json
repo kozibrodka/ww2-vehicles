@@ -27,6 +27,9 @@
     "stationapi:event_bus_server": [
 
     ],
+    "alwaysmoreitems:plugin": [
+      "net.kozibrodka.vehicles.compat.ami.AMICompat"
+    ],
     "gcapi3": [
       "net.kozibrodka.vehicles.events.mod_Vehicles"
     ]

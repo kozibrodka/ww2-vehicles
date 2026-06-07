@@ -26,10 +26,12 @@ public class ModelTruck extends ModelBase {
         }
 
         for(i = 0; i < this.leftBackWheelModel.length; ++i) {
+//            this.leftBackWheelModel[i].rotateAngleY = vehicle.wheelsYaw * (float)Math.PI / 180.0F * 3.0F; ///
             this.leftBackWheelModel[i].render(f5);
         }
 
         for(i = 0; i < this.rightBackWheelModel.length; ++i) {
+//            this.rightBackWheelModel[i].rotateAngleY = vehicle.wheelsYaw * (float)Math.PI / 180.0F * 3.0F; ///
             this.rightBackWheelModel[i].render(f5);
         }
 

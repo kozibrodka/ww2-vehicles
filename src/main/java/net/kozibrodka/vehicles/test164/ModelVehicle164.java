@@ -1,10 +1,12 @@
-package net.kozibrodka.vehicles.model;
+package net.kozibrodka.vehicles.test164;
 
-import net.kozibrodka.tmt.TURBO_MODEL_125.*;
-import net.kozibrodka.vehicles.entity.EntityTruck;
+//import net.kozibrodka.tmt.TURBO_MODEL_125.ModelBase;
+//import net.kozibrodka.tmt.TURBO_MODEL_125.ModelRendererTurbo;
 import net.kozibrodka.vehicles.entity.EntityVehicle;
 
-public class ModelVehicle extends ModelBase {
+import net.kozibrodka.tmt.TURBO_MODEL_164.*;
+
+public class ModelVehicle164 extends ModelBase {
     
     public ModelRendererTurbo[] bodyModel = new ModelRendererTurbo[0];
     public ModelRendererTurbo[] bodyDoorOpenModel = new ModelRendererTurbo[0];
@@ -26,7 +28,7 @@ public class ModelVehicle extends ModelBase {
 
 //    public CollisionBox[] collisionBoxes;
 
-    public void render(float f, float f1, float f2, float f3, float f4, float f5, EntityVehicle vehicle) {
+    public void render(float f, float f1, float f2, float f3, float f4, float f5, EntityVehicleTEST164 vehicle) {
         int i;
         for(i = 0; i < this.bodyModel.length; ++i) {
             this.bodyModel[i].render(f5);
@@ -106,7 +108,7 @@ public class ModelVehicle extends ModelBase {
 
     }
 
-    public void renderTurret(float f, float f1, float f2, float f3, float f4, float f5, EntityVehicle vehicle, float gunYaw, float gunPitch) {
+    public void renderTurret(float f, float f1, float f2, float f3, float f4, float f5, EntityVehicleTEST164 vehicle, float gunYaw, float gunPitch) {
         int i;
         for(i = 0; i < this.turretModel.length; ++i) {
             this.turretModel[i].render(f5);

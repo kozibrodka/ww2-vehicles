@@ -9,8 +9,10 @@ import net.kozibrodka.vehicles.item.SdkItemGunMachineGun;
 import net.kozibrodka.vehicles.properties.*;
 import net.kozibrodka.vehicles.recipe.BlockVehicleWorkbench;
 import net.kozibrodka.vehicles.recipe.VehicleRecipeRegistry;
+import net.kozibrodka.vehicles.test164.ItemVehicle164;
 import net.mine_diver.unsafeevents.listener.EventListener;
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.modificationstation.stationapi.api.event.entity.EntityRegister;
 import net.modificationstation.stationapi.api.event.recipe.RecipeRegisterEvent;
@@ -64,6 +66,10 @@ public class mod_Vehicles {
     public static TemplateItem vehicle_Tiger2;
 
 
+
+    public static Item vehicle_test164;
+
+
     @EventListener
     public void registerItems(ItemRegistryEvent event) {
         vehicleFuel = (TemplateItem) new TemplateItem(Identifier.of(MOD_ID, "vehicleFuel")).setTranslationKey(MOD_ID, "vehicleFuel");
@@ -95,7 +101,7 @@ public class mod_Vehicles {
             new VehicleType(new Properties_Tiger1());
             new VehicleType(new Properties_Tiger2());
             new TruckType(new Properties_WillyJeep());
-//            new TruckType(new Properties_VWType82());
+            new TruckType(new Properties_VWType82());
         }
 
         for (int i = 0; i < VehicleType.types.size(); i++) {
@@ -113,6 +119,9 @@ public class mod_Vehicles {
             truckMapping.put(truckType.name, truckType);
             truckType.przedmiot = (TemplateItem) new ItemTruck(Identifier.of(MOD_ID, truckType.name), truckType.name).setTranslationKey(MOD_ID, truckType.name).setMaxCount(1);
         }
+
+
+        vehicle_test164 = new ItemVehicle164(Identifier.of(MOD_ID, "vehicle_test164")).setTranslationKey(MOD_ID, "vehicle_test164");
     }
 
     @EventListener

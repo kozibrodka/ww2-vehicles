@@ -1,5 +1,6 @@
 package net.kozibrodka.vehicles.properties;
 
+import net.kozibrodka.vehicles.entity.EntityPassengerSeat;
 import net.kozibrodka.vehicles.model.ModelTruck;
 import net.kozibrodka.vehicles.model.ModelVehicle;
 import net.minecraft.item.ItemStack;
@@ -20,6 +21,9 @@ public class TruckType {
           shootSound = klasa.shootSound;
           SOUND_LOOP_TIME_MAX = klasa.SOUND_LOOP_TIME_MAX;
           przedmiot = klasa.przedmiot;
+
+          numPassengers = klasa.numPassengers;
+          passengerSeats = klasa.passengerSeats;
 
           MAX_HEALTH = klasa.MAX_HEALTH;
           DEATH_TIME_MAX = klasa.DEATH_TIME_MAX;
@@ -87,6 +91,9 @@ public class TruckType {
     public float autoWidth;
     public float autoHeight;
     public float standingOko;
+
+    public int numPassengers;
+    public PassengerSeatData passengerSeats[];
 
     public double playerXOffset;
     public double playerYOffset;

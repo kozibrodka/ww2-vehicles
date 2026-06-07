@@ -1,6 +1,7 @@
 package net.kozibrodka.vehicles.recipe;
 
 import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 //import net.modificationstation.stationapi.api.recipe.StationRecipe;
 
@@ -90,4 +91,23 @@ public class VehicleShapedRecipe implements VehicleRecipeTemplate { /// StationR
 //    public ItemStack[] getOutputs() {
 //        return new ItemStack[] {output};
 //    }
+
+    public ItemStack[] getIngredients() {
+        int widthCompensation = 5 - width;
+        ItemStack[] convertedIngredients = new ItemStack[25];
+        for (int i = 0; i < ingredients.length; i++) {
+            ItemStack ingredient = ingredients[i];
+            if (ingredient == null) {
+                continue;
+            }
+            convertedIngredients[i + widthCompensation * (i / width)] = ingredient.copy();
+        }
+        for (int i = 0; i < 25; i++) {
+            if (convertedIngredients[i] == null) {
+                convertedIngredients[i] = new ItemStack(Item.SNOWBALL, 1);
+//                convertedIngredients[i] = null;
+            }
+        }
+        return convertedIngredients;
+    }
 }

@@ -1,11 +1,14 @@
-package net.kozibrodka.vehicles.entity;
+package net.kozibrodka.vehicles.test164;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.kozibrodka.sdk_api.events.ingame.mod_SdkFlasher;
 import net.kozibrodka.sdk_api.events.init.ItemCasingListener;
-import net.kozibrodka.sdk_api.events.init.KeyBindingListener;
 import net.kozibrodka.sdk_api.events.init.ww2Parts;
 import net.kozibrodka.sdk_api.events.utils.*;
+import net.kozibrodka.vehicles.entity.EntityAAShell;
+import net.kozibrodka.vehicles.entity.EntityPassengerSeat;
+import net.kozibrodka.vehicles.entity.EntityShell;
+import net.kozibrodka.vehicles.entity.RotatedAxes;
 import net.kozibrodka.vehicles.events.mod_Vehicles;
 import net.kozibrodka.vehicles.gui.GuiVehicle;
 import net.kozibrodka.vehicles.properties.VehicleType;
@@ -27,15 +30,14 @@ import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
 import org.lwjgl.input.Keyboard;
 
-import java.awt.*;
 import java.util.List;
 
-//todo rename to tank
-public class EntityVehicle extends Entity implements Inventory, WW2Tank {
+public class EntityVehicleTEST164 extends Entity implements Inventory, WW2Tank {
 
-    public EntityVehicle(World world)
+    public EntityVehicleTEST164(World world)
     {
         super(world);
+        automobile = new Properties_Tiger2_164();
         lastTurnSpeed = 0.0D;
         lastOnGround = true;
         prevMotionX = 0.0D;
@@ -56,7 +58,7 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
 
     }
 
-    public EntityVehicle(World world, double d, double d1, double d2)
+    public EntityVehicleTEST164(World world, double d, double d1, double d2)
     {
         this(world);
         setPosition(d, d1 + (double)standingEyeHeight, d2);
@@ -66,22 +68,22 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
         prevX = d;
         prevY = d1;
         prevZ = d2;
-        if(mod_Vehicles.type == null)
-        {
-            automobile = (VehicleType) VehicleType.types.get(0);
-        } else
-        {
-            automobile = mod_Vehicles.type;
-        }
+//        if(mod_Vehicles.type == null)
+//        {
+//            automobile = (VehicleType) VehicleType.types.get(0);
+//        } else
+//        {
+//            automobile = mod_Vehicles.type;
+//        }
         inventorySize = automobile.numCargoSlots + automobile.numBulletSlots + automobile.numShellSlots + 1;
         cargoItems = new ItemStack[inventorySize];
     }
 
-    public EntityVehicle(World world, double d, double d1, double d2,
-                         PlayerEntity entityplayer, int i, VehicleType vehicletype)
+    public EntityVehicleTEST164(World world, double d, double d1, double d2,
+                                PlayerEntity entityplayer, int i)
     {
         this(world);
-        automobile = vehicletype;
+//        automobile = vehicletype;
         standingEyeHeight = automobile.standingOko;
         setBoundingBoxSpacing(automobile.autoWidth, automobile.autoHeight);
         setPosition(d, d1 + (double)standingEyeHeight, d2);
@@ -93,6 +95,7 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
         prevZ = d2;
         inventorySize = automobile.numCargoSlots + automobile.numBulletSlots + automobile.numShellSlots + 1;
         cargoItems = new ItemStack[inventorySize];
+        cargoItems[0] = new ItemStack(mod_Vehicles.vehicleFuel, 64,0);
         health = automobile.MAX_HEALTH;
         engineType = i;
         if(engineType < 1)
@@ -235,7 +238,7 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
         {
             if(passenger != null)
             {
-                if(true) /// getSpeed() != 0.0D - Dla gąsienic wyłączam
+                if(getSpeed() != 0.0D)
                 {
                     double d4 = 0.0D;
                     if(vehicleFuel > 0 && minecraft.currentScreen == null && Keyboard.isKeyDown(minecraft.options.leftKey.code))
@@ -251,9 +254,7 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
                     if(d4 != 0.0D)
                     {
                         yaw += d4;
-                        if(getSpeed() != 0.0D){
-                            projectMotion(d4);
-                        }
+                        projectMotion(d4);
                     }
                     lastTurnSpeed = d4 * (double)(flag1 ? 1 : -1);
                 }
@@ -303,10 +304,6 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
         {
             multiplySpeed(0.0D);
         }
-        if(uphillTicks > 0){ /// Spowolnienie pod Górke
-            uphillTicks--;
-            multiplySpeed(0.9D); //TODO properties
-        }
         move(velocityX, velocityY, velocityZ);
         int i = flag1 ? 1 : -1;
         if(onGround && lastOnGround)
@@ -318,7 +315,6 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
             if(prevY - y < -0.01D)
             {
                 pitch = -45 * i;
-                uphillTicks = 10; /// Daje 10 ticksów spowolnienia pod górke
             } else
             {
                 pitch = 0.0F;
@@ -427,67 +423,20 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
             if(automobile.tankDestroyer)
             {
                 gunYaw = -(180);
-                gunYawShoot = -gunYaw; //todo po co? dzwine
+                gunYawShoot = -gunYaw;
             }else{
-                float passYaw = (-((passenger.yaw + 90F) - yaw)) % 360.0F;
-                while (gunYaw > 0) gunYaw -= 360F;
-                while (gunYaw < -360) gunYaw += 360F;
-
-                float checkYaw = Math.abs(gunYaw-passYaw);
-                if(checkYaw < 1F || checkYaw > 359F){ //TODO properties
-                    System.out.println("STAY");
-                    gunYaw = passYaw;
-                }else{
-                    if(gunYaw > passYaw){
-                        if(gunYaw-passYaw <= 180F){
-                            gunYaw -= 1F; ///-
-                        }else{
-                            gunYaw += 1F;
-                        }
-                    }
-                    if(gunYaw < passYaw){
-                        if(passYaw-gunYaw >= 180F){
-                            gunYaw -= 1F; ///-
-                        }else{
-                            gunYaw += 1F;
-                        }
-                    }
-                }
-                ///
+                gunYaw = -((passenger.yaw + 90F) - yaw);
                 gunYawShoot = -gunYaw;
             }
-
-            float passPitch = passenger.pitch - pitch;
-
-            if(Math.abs(passPitch - gunPitch) < 0.5F){
-                gunPitch = passPitch;
-            }else{
-                if(passPitch > gunPitch){
-                    gunPitch += 0.5F;
-                }
-                if(passPitch < gunPitch){
-                    gunPitch -= 0.5F;
-                }
+            gunPitch = passenger.pitch - pitch;
+            if(gunPitch > automobile.gunPitchMax)
+            {
+                gunPitch = automobile.gunPitchMax;
             }
-
-            if(passPitch > gunPitch){
-                gunPitch += 0.5F;
+            if(gunPitch < automobile.gunPitchMin)
+            {
+                gunPitch = automobile.gunPitchMin;
             }
-            if(passPitch < gunPitch){
-                gunPitch -= 0.5F;
-            }
-
-            while(gunPitch > automobile.gunPitchMax) gunPitch = automobile.gunPitchMax;
-            while(gunPitch < automobile.gunPitchMin) gunPitch = automobile.gunPitchMin;
-//            gunPitch = passenger.pitch - pitch;
-//            if(gunPitch > automobile.gunPitchMax)
-//            {
-//                gunPitch = automobile.gunPitchMax;
-//            }
-//            if(gunPitch < automobile.gunPitchMin)
-//            {
-//                gunPitch = automobile.gunPitchMin;
-//            }
         }
         this.wheelsYaw *= 0.8F;
         if(this.wheelsYaw > 10.0F) {
@@ -783,39 +732,39 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
         return entityplayer.getSquaredDistance(x, y, z) <= 64D;
     }
 
-//    @Override
-//    public void read(NbtCompound nbttagcompound)
-//    {
-//        NbtList nbttaglist = nbttagcompound.getList("Pos");
-//        NbtList nbttaglist1 = nbttagcompound.getList("Motion");
-//        NbtList nbttaglist2 = nbttagcompound.getList("Rotation");
-//        setPosition(0.0D, 0.0D, 0.0D);
-//        velocityX = ((NbtDouble)nbttaglist1.get(0)).value;
-//        velocityY = ((NbtDouble)nbttaglist1.get(1)).value;
-//        velocityZ = ((NbtDouble)nbttaglist1.get(2)).value;
-//        if(Math.abs(velocityX) > 10D)
-//        {
-//            velocityX = 0.0D;
-//        }
-//        if(Math.abs(velocityY) > 10D)
-//        {
-//            velocityY = 0.0D;
-//        }
-//        if(Math.abs(velocityZ) > 10D)
-//        {
-//            velocityZ = 0.0D;
-//        }
-//        prevX = lastTickX = x = ((NbtDouble)nbttaglist.get(0)).value;
-//        prevY = lastTickY = y = ((NbtDouble)nbttaglist.get(1)).value;
-//        prevZ = lastTickZ = z = ((NbtDouble)nbttaglist.get(2)).value;
-//        prevYaw = yaw = ((NbtFloat)nbttaglist2.get(0)).value;
-//        prevPitch = pitch = ((NbtFloat)nbttaglist2.get(1)).value;
-//        fallDistance = nbttagcompound.getFloat("FallDistance");
-//        fireTicks = nbttagcompound.getShort("Fire");
-//        air = nbttagcompound.getShort("Air");
-//        onGround = nbttagcompound.getBoolean("OnGround");
-//        readNbt(nbttagcompound);
-//    }
+    @Override
+    public void read(NbtCompound nbttagcompound)
+    {
+        NbtList nbttaglist = nbttagcompound.getList("Pos");
+        NbtList nbttaglist1 = nbttagcompound.getList("Motion");
+        NbtList nbttaglist2 = nbttagcompound.getList("Rotation");
+        setPosition(0.0D, 0.0D, 0.0D);
+        velocityX = ((NbtDouble)nbttaglist1.get(0)).value;
+        velocityY = ((NbtDouble)nbttaglist1.get(1)).value;
+        velocityZ = ((NbtDouble)nbttaglist1.get(2)).value;
+        if(Math.abs(velocityX) > 10D)
+        {
+            velocityX = 0.0D;
+        }
+        if(Math.abs(velocityY) > 10D)
+        {
+            velocityY = 0.0D;
+        }
+        if(Math.abs(velocityZ) > 10D)
+        {
+            velocityZ = 0.0D;
+        }
+        prevX = lastTickX = x = ((NbtDouble)nbttaglist.get(0)).value;
+        prevY = lastTickY = y = ((NbtDouble)nbttaglist.get(1)).value;
+        prevZ = lastTickZ = z = ((NbtDouble)nbttaglist.get(2)).value;
+        prevYaw = yaw = ((NbtFloat)nbttaglist2.get(0)).value;
+        prevPitch = pitch = ((NbtFloat)nbttaglist2.get(1)).value;
+        fallDistance = nbttagcompound.getFloat("FallDistance");
+        fireTicks = nbttagcompound.getShort("Fire");
+        air = nbttagcompound.getShort("Air");
+        onGround = nbttagcompound.getBoolean("OnGround");
+        readNbt(nbttagcompound);
+    }
 
     @Override
     public void writeNbt(NbtCompound nbttagcompound)
@@ -846,7 +795,7 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
     @Override
     public void readNbt(NbtCompound nbttagcompound)
     {
-        automobile = mod_Vehicles.getVehicleType(nbttagcompound.getString("Type"));
+//        automobile = mod_Vehicles.getVehicleType(nbttagcompound.getString("Type"));
         standingEyeHeight = automobile.standingOko;
         setBoundingBoxSpacing(automobile.autoWidth, automobile.autoHeight);
         setPosition(x, y, z);
@@ -971,11 +920,11 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
     private int shootDelay;
     public ItemStack gunMachineGun;
     public ItemStack gunSpecial;
-    public VehicleType automobile;
+//    public VehicleType automobile;
+    public Properties_Tiger2_164 automobile;
     public boolean shootExplosive;
     public boolean reloadKeyDown;
     public boolean rocketKeyDown;
-    public int uphillTicks;
 
     @Override
     public void firePrimaryKey(PlayerEntity entityplayer) {
@@ -1085,8 +1034,8 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
     public void inventoryKey(Minecraft minecraft, PlayerEntity entityplayer) {
         if (minecraft.currentScreen instanceof GuiVehicle) {
             minecraft.setScreen(null);
-        } else if (passenger.vehicle instanceof EntityVehicle) {
-            minecraft.setScreen(new GuiVehicle(((PlayerEntity)passenger).inventory, (EntityVehicle) passenger.vehicle));
+        } else if (passenger.vehicle instanceof EntityVehicleTEST164) {
+//            minecraft.setScreen(new GuiVehicle(((PlayerEntity)passenger).inventory, (EntityVehicleTEST164) passenger.vehicle));
         }
     }
 

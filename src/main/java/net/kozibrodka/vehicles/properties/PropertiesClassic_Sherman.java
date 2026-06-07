@@ -46,10 +46,11 @@ public class PropertiesClassic_Sherman extends Vehicle_properties{
         gunYawMin = -180;
         gunYawMax = 180;
         gunPitchMin = -45;
-        gunPitchMax = 0;
+        gunPitchMax = 2; //TODO
 
         MAX_SPEED = 0.15D; //TODO
-        TURN_SPEED_STOPPED = 3.5D; //TODO
+//        TURN_SPEED_STOPPED = 3.5D;
+        TURN_SPEED_STOPPED = 1.5D; //TODO
         TURN_SPEED_FULL = 2D;
         ACCEL_FORWARD_STOPPED = 0.005D; //TODO
         ACCEL_FORWARD_FULL = 0.001D; //TODO

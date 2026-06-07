@@ -50,10 +50,10 @@ public class VehicleRecipeRegistry {
             this.addShapedRecipeVehicle(new ItemStack(vehicleType.przedmiot, 1,1), vehicleType.itemlist1, vehicleType.itemlist2, vehicleType.itemlist3, vehicleType.itemlist4,
                     'A', ww2Parts.smallEngine,'S', vehicleType.item_body,'D', vehicleType.dyeColor,'X', vehicleType.item_wheel);
 
-            this.addShapedRecipeVehicle(new ItemStack(vehicleType.przedmiot, 1,1), vehicleType.itemlist1, vehicleType.itemlist2, vehicleType.itemlist3, vehicleType.itemlist4,
+            this.addShapedRecipeVehicle(new ItemStack(vehicleType.przedmiot, 1,2), vehicleType.itemlist1, vehicleType.itemlist2, vehicleType.itemlist3, vehicleType.itemlist4,
                     'A', ww2Parts.mediumEngine,'S', vehicleType.item_body,'D', vehicleType.dyeColor,'X', vehicleType.item_wheel);
 
-            this.addShapedRecipeVehicle(new ItemStack(vehicleType.przedmiot, 1,1), vehicleType.itemlist1, vehicleType.itemlist2, vehicleType.itemlist3, vehicleType.itemlist4,
+            this.addShapedRecipeVehicle(new ItemStack(vehicleType.przedmiot, 1,3), vehicleType.itemlist1, vehicleType.itemlist2, vehicleType.itemlist3, vehicleType.itemlist4,
                     'A', ww2Parts.largeEngine,'S', vehicleType.item_body,'D', vehicleType.dyeColor,'X', vehicleType.item_wheel);
         }
 
@@ -122,10 +122,10 @@ public class VehicleRecipeRegistry {
         return null;
     }
 
-    public List getRecipeList()
-    {
-        return vehicle_recipes;
-    }
+//    public List getRecipeList()
+//    {
+//        return vehicle_recipes;
+//    }
 
     private static final VehicleRecipeRegistry INSTANCE = new VehicleRecipeRegistry();
     public static final VehicleRecipeRegistry getInstance() {
@@ -134,5 +134,15 @@ public class VehicleRecipeRegistry {
     private List vehicle_recipes = new ArrayList();
     public List getRecipes() {
         return this.vehicle_recipes;
+    }
+
+    public ArrayList getShapedRecipes() {
+        ArrayList shapedRecipes = new ArrayList();
+        for (Object recipe : vehicle_recipes) {
+            if (recipe instanceof VehicleShapedRecipe) {
+                shapedRecipes.add(recipe);
+            }
+        }
+        return shapedRecipes;
     }
 }

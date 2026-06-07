@@ -1,18 +1,18 @@
-package net.kozibrodka.vehicles.properties;
+package net.kozibrodka.vehicles.test164;
 
 import net.kozibrodka.vehicles.events.mod_Vehicles;
 import net.kozibrodka.vehicles.model.ModelTigerII;
-import net.kozibrodka.vehicles.test164.ModelTigerII_New;
+import net.kozibrodka.vehicles.properties.Vehicle_properties;
 import net.minecraft.item.ItemStack;
 
-public class Properties_Tiger2 extends Vehicle_properties{
+public class Properties_Tiger2_164 extends Vehicle_properties164 {
 
-    public Properties_Tiger2() {
+    public Properties_Tiger2_164() {
 
         name = "TigerII";
         longName = "Panzerkampfwagen VI Tiger II - Version B";
         texture = "SkinVehicleTigerII.png";
-        model = new ModelTigerII();
+        model = new ModelVehicle164();
 //        model = new ModelTigerII_New();
         SOUND_RIDING = "vehicles:engine";
         shootSound = "vehicles:tankshell";

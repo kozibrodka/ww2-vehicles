@@ -2,6 +2,8 @@ package net.kozibrodka.vehicles.events;
 
 import net.kozibrodka.vehicles.entity.*;
 import net.kozibrodka.vehicles.render.*;
+import net.kozibrodka.vehicles.test164.EntityVehicleTEST164;
+import net.kozibrodka.vehicles.test164.RenderVehicle164;
 import net.mine_diver.unsafeevents.listener.EventListener;
 import net.modificationstation.stationapi.api.client.event.render.entity.EntityRendererRegisterEvent;
 import net.modificationstation.stationapi.api.client.event.texture.TextureRegisterEvent;
@@ -38,6 +40,7 @@ public class TextureListener {
         event.renderers.put(SdkEntityBulletMachineGun.class, new SdkRenderBulletMachineGun());
         event.renderers.put(EntityVehicle.class, new RenderVehicle());
         event.renderers.put(EntityTruck.class, new RenderTruck());
+        event.renderers.put(EntityVehicleTEST164.class, new RenderVehicle164());
     }
 
     private int registerBlockTexture(String s) {

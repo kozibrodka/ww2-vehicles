@@ -1,11 +1,10 @@
 package net.kozibrodka.vehicles.entity;
 
-import net.kozibrodka.sdk_api.events.utils.SdkTools;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 public class EntityPassengerSeat extends Entity
@@ -15,47 +14,20 @@ public class EntityPassengerSeat extends Entity
     {
         super(world);
         blocksSameBlockSpawning = true;
-        setBoundingBoxSpacing(0.8F, 1.0F);
-        standingEyeHeight = height / 2.0F - 0.17F;
+//        setBoundingBoxSpacing(0.8F, 1.0F);
+        setBoundingBoxSpacing(0.7F, 0.7F);
+//        standingEyeHeight = height / 2.0F - 0.17F;
+        standingEyeHeight = 0;
         velocityX = 0.0D;
         velocityY = 0.0D;
         velocityZ = 0.0D;
 //        getProperties();
     }
 
-    public void setPosition(double d, double d1, double d2)
-    {
-        x = d;
-        y = d1;
-        z = d2;
-        float f = width / 2.0F;
-        float f1 = height;
-        boundingBox.set(d - (double)f, (d1 - (double)standingEyeHeight) + (double)cameraOffset, d2 - (double)f, d + (double)f, (d1 - (double)standingEyeHeight) + (double)cameraOffset + (double)f1, d2 + (double)f);
-    }
-
-    protected void initDataTracker()
-    {
-    }
-
-    public Box getCollisionAgainstShape(Entity entity1)
-    {
-        return entity1.boundingBox;
-    }
-
-    public Box getBoundingBox()
-    {
-        return boundingBox;
-    }
-
-    public boolean isPushable()
-    {
-        return true;
-    }
-
     public EntityPassengerSeat(World world, double d, double d1, double d2)
     {
         this(world);
-        setPosition(d, d1 + (double)standingEyeHeight, d2);
+        setPosition(d, d1 + (double)standingEyeHeight, d2); ///??
         prevX = d;
         prevY = d1;
         prevZ = d2;
@@ -68,20 +40,115 @@ public class EntityPassengerSeat extends Entity
         relativeX = d / 16D;
         relativeY = d1 / 16D;
         relativeZ = d2 / 16D;
-        entity = entity1;
+        mother = entity1;
         setPosition(entity1.x, entity1.y, entity1.z);
     }
 
-    public double getMountedYOffset()
+    @Override
+    public void setPosition(double d, double d1, double d2)
     {
-        return playerYOffset;
+        x = d;
+        y = d1;
+        z = d2;
+        float f = width / 2.0F;
+        float f1 = height;
+        boundingBox.set(d - (double)f, (d1 - (double)standingEyeHeight) + (double)cameraOffset, d2 - (double)f, d + (double)f, (d1 - (double)standingEyeHeight) + (double)cameraOffset + (double)f1, d2 + (double)f);
     }
 
+    @Override
     public boolean damage(Entity entity1, int i)
     {
+        System.out.println(entity1 + "  " + i);
         return true;
     }
 
+
+    @Override
+    protected void initDataTracker()
+    {
+    }
+
+    @Override
+    public void onCollision(Entity otherEntity) {
+    }
+
+    @Override
+    public Box getCollisionAgainstShape(Entity entity1)
+    {
+        return entity1.boundingBox;
+    }
+
+    @Override
+    public Box getBoundingBox() /// Kolizja przy chodzeniu/poruszaniu sie
+    {
+//        return boundingBox;
+        return null; ///jedyny sposób na brak kolizji z Pojazdem
+    }
+
+    @Override
+    public boolean isPushable() /// Czy będzie pchanie -> aktywacja on onCollision
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isCollidable() /// Czy mogę kliknąć prawym myszy.
+    {
+        return !dead;
+    }
+
+    @Override
+    public double getPassengerRidingHeight()
+    {
+        if(passenger instanceof PlayerEntity){
+            return 0.0D;
+        }else{
+            return 0.3D;
+        }
+    }
+
+    public void updateFromVehiclePosition(){
+//        setPosition(mother.x, mother.y + relativeY, mother.z);
+//        setRotation(mother.yaw, mother.pitch);
+
+//        prevX = x;
+//        prevY = y;
+//        prevZ = z;
+//        prevYaw = yaw;
+//        prevPitch = pitch;
+
+
+        /// GRANICA ///
+
+        double d = relativeX;
+        double d1 = relativeY;
+        double d2 = relativeZ;
+        double d3 = Math.cos(((double)(-mother.yaw) / 180D) * 3.1415926535897931D);
+        double d4 = Math.sin(((double)(-mother.yaw) / 180D) * 3.1415926535897931D);
+
+
+        double d5 = Math.cos(((double)mother.pitch / 180D) * 3.1415926535897931D); /// GÓRA - DÓŁ
+        double d6 = Math.sin(((double)mother.pitch / 180D) * 3.1415926535897931D) * 0.5D; /// Przesunięcie PRZÓD-TYŁ
+        /// Issue: Little "freeze" on drop
+
+//            double d5 = Math.cos(((double)pitch / 180D) * 3.1415926535897931D);
+//            double d6 = Math.sin(((double)pitch / 180D) * 3.1415926535897931D);
+        /// Oryginal
+
+//            double d5 = Math.cos(((double)0 / 180D) * 3.1415926535897931D);
+//            double d6 = Math.sin(((double)0 / 180D) * 3.1415926535897931D);
+        /// Simple no drop freeze
+
+        double d7 = Math.cos(((double)mother.yaw * 3.1415926535897931D) / 180D) * 0.40000000000000002D * d5;
+        double d8 = Math.sin(((double)mother.yaw * 3.1415926535897931D) / 180D) * 0.40000000000000002D * d5;
+        double d9 = (d * d5 - d1 * d6) * d3 + d2 * d4;
+        double d10 = d * d6 + d1 * d5;
+        double d11 = (d1 * d6 - d * d5) * d4 + d2 * d3;
+        setRotation(mother.yaw, mother.pitch);
+        setPosition(mother.x + d9 + d7, mother.y + d10, mother.z + d11 + d8);
+    }
+
+    @Override
     public void markDead()
     {
         scheduleVelocityUpdate();
@@ -92,35 +159,34 @@ public class EntityPassengerSeat extends Entity
         super.markDead();
     }
 
+    @Override
     public void animateHurt()
     {
     }
 
-    public boolean isCollidable()
-    {
-        return !dead;
-    }
 
-    public void setPositionAndAnglesAvoidEntities(double d, double d1, double d2, float f,
-                                        float f1, int i)
-    {
-        field_9393_e = d;
-        field_9392_f = d1;
-        field_9391_g = d2;
-        field_9390_h = f;
-        field_9389_i = f1;
-        field_9394_d = i + 4;
-        velocityX = field_9388_j;
-        velocityY = field_9387_k;
-        velocityZ = field_9386_l;
-    }
-
-    public void setVelocityClient(double d, double d1, double d2)
-    {
-        field_9388_j = velocityX = d;
-        field_9387_k = velocityY = d1;
-        field_9386_l = velocityZ = d2;
-    }
+//    @Override
+//    public void setPositionAndAnglesAvoidEntities(double d, double d1, double d2, float f,
+//                                                  float f1, int i)
+//    {
+//        field_9393_e = d;
+//        field_9392_f = d1;
+//        field_9391_g = d2;
+//        field_9390_h = f;
+//        field_9389_i = f1;
+//        field_9394_d = i + 4;
+//        velocityX = field_9388_j;
+//        velocityY = field_9387_k;
+//        velocityZ = field_9386_l;
+//    }
+//
+//    @Override
+//    public void setVelocityClient(double d, double d1, double d2)
+//    {
+//        field_9388_j = velocityX = d;
+//        field_9387_k = velocityY = d1;
+//        field_9386_l = velocityZ = d2;
+//    }
 
     public double getSpeed()
     {
@@ -135,6 +201,7 @@ public class EntityPassengerSeat extends Entity
         }
     }
 
+    @Override
     public void tick()
     {
         super.tick();
@@ -150,9 +217,11 @@ public class EntityPassengerSeat extends Entity
 //                pressKey(8);
 //            }
 //        }
+        ///
+        updateFromVehiclePosition();
         if(world.isRemote)
         {
-            if(field_9394_d > 0)
+            if(field_9394_d > 0) /// To jest mechanika client interpelation steps... z dziwnymi nazwami....
             {
                 double d = x + (field_9393_e - x) / (double)field_9394_d;
                 double d1 = y + (field_9392_f - y) / (double)field_9394_d;
@@ -168,7 +237,7 @@ public class EntityPassengerSeat extends Entity
             }
             return;
         }
-        if(entity == null || entity.dead)
+        if(mother == null || mother.dead)
         {
             markDead();
         }
@@ -190,47 +259,51 @@ public class EntityPassengerSeat extends Entity
         updatePassengerPosition();
     }
 
-    public void updatePassengerPosition()  //updateRiderPosition
-    {
-        if(passenger == null)
-        {
-            return;
-        }
-        if(passenger == SdkTools.minecraft.player || (passenger instanceof WolfEntity))
-        {
-            double d = relativeX;
-            double d1 = getMountedYOffset() + passenger.getStandingEyeHeight() + relativeY;
-            double d2 = relativeZ;
-            double d3 = Math.cos(((double)(-yaw) / 180D) * 3.1415926535897931D);
-            double d4 = Math.sin(((double)(-yaw) / 180D) * 3.1415926535897931D);
-            double d5 = Math.cos(((double)pitch / 180D) * 3.1415926535897931D);
-            double d6 = Math.sin(((double)pitch / 180D) * 3.1415926535897931D);
-            double d7 = Math.cos(((double)yaw * 3.1415926535897931D) / 180D) * 0.40000000000000002D * d5;
-            double d8 = Math.sin(((double)yaw * 3.1415926535897931D) / 180D) * 0.40000000000000002D * d5;
-            double d9 = (d * d5 - d1 * d6) * d3 + d2 * d4;
-            double d10 = d * d6 + d1 * d5;
-            double d11 = (d1 * d6 - d * d5) * d4 + d2 * d3;
-            passenger.setPosition(x + d9 + d7, y + d10, z + d11 + d8);
-            return;
-        } else
-        {
-            return;
-        }
-    }
 
+//    @Override
+//    public void updatePassengerPosition()  //updateRiderPosition
+//    {
+//        if(passenger == null)
+//        {
+//            return;
+//        }
+//        if(passenger == SdkTools.minecraft.player || (passenger instanceof WolfEntity))
+//        {
+//            double d = relativeX;
+//            double d1 = getMountedYOffset() + passenger.getStandingEyeHeight() + relativeY;
+//            double d2 = relativeZ;
+//            double d3 = Math.cos(((double)(-yaw) / 180D) * 3.1415926535897931D);
+//            double d4 = Math.sin(((double)(-yaw) / 180D) * 3.1415926535897931D);
+//            double d5 = Math.cos(((double)pitch / 180D) * 3.1415926535897931D);
+//            double d6 = Math.sin(((double)pitch / 180D) * 3.1415926535897931D);
+//            double d7 = Math.cos(((double)yaw * 3.1415926535897931D) / 180D) * 0.40000000000000002D * d5;
+//            double d8 = Math.sin(((double)yaw * 3.1415926535897931D) / 180D) * 0.40000000000000002D * d5;
+//            double d9 = (d * d5 - d1 * d6) * d3 + d2 * d4;
+//            double d10 = d * d6 + d1 * d5;
+//            double d11 = (d1 * d6 - d * d5) * d4 + d2 * d3;
+//            passenger.setPosition(x + d9 + d7, y + d10, z + d11 + d8);
+//        } else
+//        {
+//        }
+//    }
+
+    @Override
     protected void writeNbt(NbtCompound nbttagcompound)
     {
     }
 
+    @Override
     protected void readNbt(NbtCompound nbttagcompound)
     {
     }
 
+    @Override
     public float getShadowRadius()
     {
         return 0.0F;
     }
 
+    @Override
     public boolean interact(PlayerEntity entityplayer)
     {
         if(passenger != null && (passenger instanceof PlayerEntity) && passenger != entityplayer)
@@ -269,7 +342,7 @@ public class EntityPassengerSeat extends Entity
     private double field_9386_l;
     private static int KEY_GETOUT;
     private static int KEY_INV;
-    public Entity entity;
+    public Entity mother;
     private int seatNumber;
     private double relativeX;
     private double relativeY;

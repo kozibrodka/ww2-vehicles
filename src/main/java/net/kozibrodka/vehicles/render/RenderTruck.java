@@ -21,6 +21,9 @@ public class RenderTruck extends EntityRenderer {
         GL11.glTranslatef((float)d, (float)d1, (float)d2);
         GL11.glRotatef(180F - f, 0.0F, 1.0F, 0.0F);
         GL11.glRotatef(-f2, 0.0F, 0.0F, 1.0F);
+        /// Move model (usefull for new Willy jeep)
+//        GL11.glTranslatef(4.0F, 0.0F, 0.0F);
+        ///
 //        GL11.glTranslatef((float)d, (float)d1, (float)d2);
 //        GL11.glRotatef(f + 90.0F, 0.0F, 1.0F, 0.0F);
 //        GL11.glRotatef(vehicle.prevPitch + (vehicle.axes.getPitch() - vehicle.prevPitch) * f1, 0.0F, 0.0F, 1.0F);

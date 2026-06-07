@@ -1,14 +1,14 @@
-package net.kozibrodka.vehicles.model;
+package net.kozibrodka.vehicles.test164;
 
-import net.kozibrodka.tmt.TURBO_MODEL_125.*;
-//import net.kozibrodka.tmt.TURBO_MODEL_164.*;
 
-public class ModelTigerII extends ModelVehicle
+import net.kozibrodka.tmt.TURBO_MODEL_164.*;
+
+public class ModelTigerII_New extends ModelVehicle164
 {
     int textureX;
     int textureY;
 
-    public ModelTigerII() {
+    public ModelTigerII_New() {
         this.textureX = 512;
         this.textureY = 512;
         (this.bodyModel = new ModelRendererTurbo[172])[0] = new ModelRendererTurbo((ModelBase)this, 0, 434, this.textureX, this.textureY);
@@ -672,8 +672,6 @@ public class ModelTigerII extends ModelVehicle
         this.turretModel[8] = new ModelRendererTurbo((ModelBase)this, 0, 365, this.textureX, this.textureY);
         this.turretModel[0].addFlexTrapezoid(0.0f, -45.0f, -25.0f, 31, 16, 50, 0.0f, 0.0f, -6.0f, -9.0f, -9.0f, -7.0f, -7.0f, 4);
         this.turretModel[1].addFlexTrapezoid(0.0f, -45.0f, -25.0f, 42, 16, 50, 0.0f, 0.0f, -10.0f, -9.0f, -9.0f, -8.0f, -8.0f, 4);
-//        this.turretModel[0].addFlexTrapezoid(0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-//        this.turretModel[1].addFlexTrapezoid(0,0,0,0,0,0,0,0,0,0,0,0,0,0);
         this.turretModel[1].rotateAngleY = 3.1415927f;
         this.turretModel[2].addShape3D(18.0f, -18.0f, 0.0f, new Shape2D(new Coord2D[] { new Coord2D(7.0, 0.0, 7, 0), new Coord2D(11.0, 0.0, 11, 0), new Coord2D(14.0, 1.0, 14, 1), new Coord2D(17.0, 4.0, 17, 4), new Coord2D(18.0, 7.0, 18, 7), new Coord2D(18.0, 11.0, 18, 11), new Coord2D(17.0, 14.0, 17, 14), new Coord2D(14.0, 17.0, 14, 17), new Coord2D(11.0, 18.0, 11, 18), new Coord2D(7.0, 18.0, 7, 18), new Coord2D(4.0, 17.0, 4, 17), new Coord2D(1.0, 14.0, 1, 14), new Coord2D(0.0, 11.0, 0, 11), new Coord2D(0.0, 7.0, 0, 7), new Coord2D(1.0, 4.0, 1, 4), new Coord2D(4.0, 1.0, 4, 1) }), 17.0f, 18, 18, 68, 17, 0, new float[] { 4.0f, 5.0f, 4.0f, 4.0f, 4.0f, 5.0f, 4.0f, 4.0f, 4.0f, 5.0f, 4.0f, 4.0f, 4.0f, 5.0f, 4.0f, 4.0f });
         this.turretModel[2].rotateAngleX = 1.5707964f;
