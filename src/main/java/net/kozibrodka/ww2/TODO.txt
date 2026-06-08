@@ -1,0 +1,29 @@
+TODO LIST:
+- AMI tabs - debug ready...
+
+Teraz:
+- Wychodzenie z pass seat - proste
+- Pass Seat jako "Vehicle interface" - niekonieczne w sumie
+- Api Update
+- Silniki prędkość?
+- Debug Wrench gold
+- Pass seat przekierowania DMG
+
+
+- Vehicle Living Ramming
+- Tank Leaves Ramming...
+
+- Multiplayer
+
+Car:
+- Jeżdzenie według nowego API ala atv
+- Silniki prędkości
+- PROPERTIES....
+
+
+After Release:
+- Passanger Pos - Po upadku dziwnie spowalnia - różne opcje mam?
+- Collision boxes....
+- Ewentualne Passanger seats z bronią...
+- Gui... new
+- Tank Leaves Ramming.. - niszczenie bloków przed sobą...

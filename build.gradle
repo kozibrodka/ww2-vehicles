@@ -21,7 +21,7 @@ loom {
 	mixin {
 		useLegacyMixinAp = true
 	}
-	accessWidenerPath = file("src/main/resources/vehicles.accesswidener")
+	accessWidenerPath = file("src/main/resources/ww2.accesswidener")
 }
 
 loom.runs {

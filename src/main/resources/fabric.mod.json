@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "vehicles",
+  "id": "ww2",
   "version": "${version}",
 
-  "name": "WW2 Vehicles",
+  "name": "WW2 Mod",
   "description": "This is an example description! Tell everyone what your mod is about!",
   "authors": [
     "kozibrodka"
@@ -19,23 +19,24 @@
   "environment": "*",
   "entrypoints": {
     "stationapi:event_bus": [
-      "net.kozibrodka.vehicles.events.mod_Vehicles"
+      "net.kozibrodka.ww2.events.ww2Parts",
+      "net.kozibrodka.ww2.events.mod_Vehicles"
     ],
     "stationapi:event_bus_client": [
-      "net.kozibrodka.vehicles.events.TextureListener"
+      "net.kozibrodka.ww2.events.TextureListener"
     ],
     "stationapi:event_bus_server": [
 
     ],
     "alwaysmoreitems:plugin": [
-      "net.kozibrodka.vehicles.compat.ami.AMICompat"
+      "net.kozibrodka.ww2.compat.ami.AMICompat"
     ],
     "gcapi3": [
-      "net.kozibrodka.vehicles.events.mod_Vehicles"
+      "net.kozibrodka.ww2.events.mod_Vehicles"
     ]
   },
   "mixins": [
-    "vehicles.mixins.json"
+    "ww2.mixins.json"
   ],
 
   "depends": {

@@ -1,0 +1,85 @@
+package net.kozibrodka.ww2.properties;
+
+import net.kozibrodka.ww2.events.ww2Parts;
+import net.kozibrodka.ww2.events.mod_Vehicles;
+import net.kozibrodka.ww2.model.ModelT34_Old;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+
+public class PropertiesOld_T34 extends Vehicle_properties{
+
+    public PropertiesOld_T34() {
+        name = "old_T34";
+        longName = "T-34-85";
+        texture = "SkinT34.png";
+        model = new ModelT34_Old();
+        SOUND_RIDING = "ww2:engine";
+        shootSound = "ww2:tankshell";
+        SOUND_LOOP_TIME_MAX = 20;
+        przedmiot = mod_Vehicles.vehicleOld_T34;
+        gunMachineGun = new ItemStack(mod_Vehicles.itemGunMachineGun);
+        specialWeapon = "haul";
+
+        MAX_HEALTH = 500;
+        DEATH_TIME_MAX = 10;
+        hasTurret = true;
+        hasGuns = true;
+        vehicleFuelAdd = 1000;
+        vehicleShootDelay = 3;
+        vehicleShellDelay = 70;
+        numCargoSlots = 5;
+        numBulletSlots = 5;
+        numShellSlots = 5;
+        gunDamage = 8;
+        gunVelocity = 3F;
+        gunSpread = 2F;
+        autoWidth = 2.5F;
+        autoHeight = 2.5F;
+        standingOko = 0.625F;
+
+        playerYOffset = 1.05D;
+        shellXOffset = 70;
+        shellYOffset = 20;
+        shellZOffset = 0;
+        barrelX = -48;
+        barrelY = 2;
+        barrelZ = -6;
+        gunYawMin = -180;
+        gunYawMax = 180;
+        gunPitchMin = -45;
+        gunPitchMax = 5;
+
+        MAX_SPEED = 0.22D; //TODO: 0.9 do testów kolizji
+        TURN_SPEED_STOPPED = 6D;
+        TURN_SPEED_FULL = 2.5D;
+        ACCEL_FORWARD_STOPPED = 0.006D;
+        ACCEL_FORWARD_FULL = 0.001D;
+        ACCEL_BACKWARD_STOPPED = 0.005D;
+        ACCEL_BACKWARD_FULL = 0.001D;
+        ACCEL_BRAKE = 0.04D;
+        FALL_SPEED = 0.06D;
+        ROTATION_PITCH_DELTA_MAX = 10D;
+        SPEED_MULT_WATER = 0.85D;
+        SPEED_MULT_UNMOUNTED = 0.11D;
+        SPEED_MULT_DECEL = 0.95D;
+        STOP_SPEED = 0.01D;
+        TURN_SPEED_RENDER_MULT = 2D;
+        COLLISION_SPEED_MIN = 0.1D;
+        COLLISION_DAMAGE_ENTITY = 30;
+        COLLISION_DAMAGE_SELF = 10;
+        COLLISION_DAMAGE = true;
+        COLLISION_FLIGHT_PLAYER = false;
+        COLLISION_FLIGHT_ENTITY = true;
+
+        item_track =  new ItemStack(ww2Parts.trackPiece.id, 1, 0);
+        item_body =  new ItemStack(ww2Parts.mediumTankBody.id, 1, 0);
+        item_mg =  new ItemStack(ww2Parts.machinegun.id, 1, 0);
+        item_turret =  new ItemStack(ww2Parts.mediumTankTurret.id, 1, 0);
+        item_cannon =  new ItemStack(Item.EGG.id, 1, 0);
+        dyeColor = new ItemStack(Item.DYE.id, 1, 10);
+        itemlist1 = "QW ";
+        itemlist2 = "ASD";
+        itemlist3 = " X ";
+        itemlist4 = " X ";
+    }
+}
