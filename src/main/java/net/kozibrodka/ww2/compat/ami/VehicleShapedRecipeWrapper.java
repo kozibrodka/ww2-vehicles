@@ -3,22 +3,26 @@ package net.kozibrodka.ww2.compat.ami;
 import net.glasslauncher.mods.alwaysmoreitems.api.recipe.RecipeWrapper;
 import net.kozibrodka.ww2.recipe.VehicleShapedRecipe;
 import net.minecraft.client.Minecraft;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class AnvilShapedRecipeWrapper implements RecipeWrapper {
-    private final VehicleShapedRecipe recipe;
+public class VehicleShapedRecipeWrapper implements RecipeWrapper {
+    public final VehicleShapedRecipe recipe;
 
-    public AnvilShapedRecipeWrapper(VehicleShapedRecipe recipe) {
+    public VehicleShapedRecipeWrapper(VehicleShapedRecipe recipe) {
         this.recipe = recipe;
     }
 
     @Override
     public List<?> getInputs() {
-        return List.of(recipe.getIngredients());
+        /// SUPER WYNALAZEK - EZZZ
+        return new ArrayList<>(Arrays.asList(recipe.getIngredients()));
     }
 
     @Override

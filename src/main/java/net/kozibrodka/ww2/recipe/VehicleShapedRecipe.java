@@ -3,12 +3,14 @@ package net.kozibrodka.ww2.recipe;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
+import java.util.List;
 //import net.modificationstation.stationapi.api.recipe.StationRecipe;
 
 public class VehicleShapedRecipe implements VehicleRecipeTemplate { /// StationRecipe interface
     private int width;
     private int height;
-    private ItemStack[] ingredients;
+    public ItemStack[] ingredients;
     private ItemStack output;
     public final int outputId;
 
@@ -86,32 +88,16 @@ public class VehicleShapedRecipe implements VehicleRecipeTemplate { /// StationR
         return this.width * this.height;
     }
 
-//    @Override
-//    public ItemStack[] getIngredients() {
-//        return ingredients;
-//    }
-//
-//    @Override
-//    public ItemStack[] getOutputs() {
-//        return new ItemStack[] {output};
-//    }
 
     public ItemStack[] getIngredients() {
-        int widthCompensation = 5 - width;
-        ItemStack[] convertedIngredients = new ItemStack[25];
-        for (int i = 0; i < ingredients.length; i++) {
-            ItemStack ingredient = ingredients[i];
-            if (ingredient == null) {
-                continue;
-            }
-            convertedIngredients[i + widthCompensation * (i / width)] = ingredient.copy();
-        }
-        for (int i = 0; i < 25; i++) {
-            if (convertedIngredients[i] == null) {
-                convertedIngredients[i] = new ItemStack(Item.SNOWBALL, 1);
-//                convertedIngredients[i] = null;
-            }
-        }
-        return convertedIngredients;
+        return ingredients;
+    }
+
+    public int getWidth(){
+        return width;
+    }
+
+    public int getHeight(){
+        return height;
     }
 }

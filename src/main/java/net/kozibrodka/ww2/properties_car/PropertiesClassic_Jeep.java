@@ -35,8 +35,8 @@ public class PropertiesClassic_Jeep extends Truck_properties {
         passengerSeats = new PassengerSeatData[numPassengers];
         passengerSeats[0] = new PassengerSeatData(-8D, 6D, -8D);
         passengerSeats[1] = new PassengerSeatData(8D, 6D, 8D);
-        passengerSeats[2] = new PassengerSeatData(8D, 6D, -8D);
-//        passengerSeats[2] = new PassengerSeatData(16D, 6D, -8D); ///DEBUG
+//        passengerSeats[2] = new PassengerSeatData(8D, 6D, -8D);
+        passengerSeats[2] = new PassengerSeatData(16D, 6D, -8D); ///DEBUG - collision test
 
         MAX_SPEED = 0.5D;
 //        TURN_SPEED_STOPPED = 8D;

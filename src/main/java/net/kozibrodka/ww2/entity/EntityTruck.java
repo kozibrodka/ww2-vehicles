@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Monster;
+import net.minecraft.entity.passive.PigEntity;
 import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
@@ -56,13 +57,13 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
         prevX = d;
         prevY = d1;
         prevZ = d2;
-        if(mod_Vehicles.type == null)
-        {
-            automobile = (TruckType) TruckType.types.get(0);
-        } else
-        {
-            automobile = mod_Vehicles.type_truck;
-        }
+//        if(mod_Vehicles.type == null) /// co to kurw jest v2???
+//        {
+//            automobile = (TruckType) TruckType.types.get(0);
+//        } else
+//        {
+//            automobile = mod_Vehicles.type_truck;
+//        }
         inventorySize = automobile.numCargoSlots + automobile.numBulletSlots + automobile.numShellSlots + 1;
         cargoItems = new ItemStack[inventorySize];
     }
@@ -150,7 +151,14 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
 
     @Override
     public Box getCollisionAgainstShape(Entity other) {
-//        return boundingBox; /// Dając tak, nie wypadne z wozu podczas przejeżdzania krów
+        /// System aby Auto nie podjeżdzało na niskie zwierzęta - tylko je przejeżdzało.
+        if(other instanceof LivingEntity piggy && piggy.height <= 1.0F){
+            Box ramBox = Box.create((double)0.0F, (double)0.0F, (double)0.0F, (double)0.0F, (double)0.0F, (double)0.0F);
+            ramBox.clone(piggy.boundingBox);
+            double roznica = (1.0D - (double) piggy.height) + 0.1D;
+            ramBox.maxY += roznica;
+            return ramBox;
+        }
         return other.boundingBox;
     }
 
@@ -397,6 +405,17 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
             } else
             {
                 pitch = 0.0F;
+                /// System z czołgu, nie jestem pewien czy pasuje
+//                if(uphillTicks > 0){
+//                    if(pitch > 0.0F){
+//                        pitch -= 10.0F;
+//                    }
+//                    if(pitch < 0.0F){
+//                        pitch += 10.0F;
+//                    }
+//                }else{
+//                    pitch = 0.0F;
+//                }
             }
             velocityY -= 0.001D;
         } else
@@ -434,11 +453,11 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
                     lastCollidedEntity.damage(this, automobile.COLLISION_DAMAGE_ENTITY);
                 }
             }
-            if(automobile.COLLISION_DAMAGE)
+            if(automobile.COLLISION_DAMAGE) //todo czy kolizja z Living nie zada obrażeń? czym większe entity tym więcej?
             {
                 damage(lastCollidedEntity, automobile.COLLISION_DAMAGE_SELF);
             }
-            if(automobile.COLLISION_FLIGHT_PLAYER)
+            if(automobile.COLLISION_FLIGHT_PLAYER && lastCollidedEntity == null) //todo dodaj aby colliede Entity nie było null?? czyli jedynie na "drzewie" wyjebka przez okno
             {
                 passenger.addVelocity(prevMotionX, prevMotionY + 1.0D, prevMotionZ);
                 passenger.setVehicle(null);
@@ -446,9 +465,11 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
         }
         /// Collision with living
         if(passenger != null && lastCollidedEntity instanceof LivingEntity){
+            /// todo, przy określonej wielkości entity jakieś konsekwencje dla samochodu?
             double colSpeedF = getSpeed();
             lastCollidedEntity.addVelocity(prevMotionX, prevMotionY + colSpeedF, prevMotionZ);
             if(colSpeedF >= 0.2D) {
+//                System.out.println(lastCollidedEntity);
                 lastCollidedEntity.damage(passenger, (int) (automobile.COLLISION_DAMAGE_ENTITY * (colSpeedF * 2.0D)));
                 /// damage from passenger - animals aggro - //todo czy na Car też moze zagrowac?
             }
@@ -650,10 +671,12 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
     public void handleCollision(Entity entity)
     {
         /// POKOMBINOWAĆ TRZEBA - Słoń powinien przesunąć
-        if(!(entity instanceof LivingEntity)){
-            entity.onCollision(this);
+        /// Tutaj zapogiegam odpalania onCollision dla Living, żeby siebie NAWZAJEm nie przesuwać, aczkolwiek i tak jestem zabezpieczony w mojej onCollision(), więc trochę zbędne
+        if(!(entity instanceof LivingEntity) && !(entity instanceof EntityPassengerSeat pasSeat && pasSeat.mother == this)){  /// odpali onCollision jedynie dla obcego Col Boxa
+           entity.onCollision(this);
         }
-        if(entity.passenger != this && entity.vehicle != this)
+//        entity.onCollision(this);
+        if(entity.passenger != this && entity.vehicle != this && !(entity.vehicle instanceof EntityPassengerSeat) && !(entity instanceof EntityPassengerSeat))
         {
             lastCollidedEntity = entity;
         }
@@ -784,40 +807,6 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
         return entityplayer.getSquaredDistance(x, y, z) <= 64D;
     }
 
-//    @Override
-//    public void read(NbtCompound nbttagcompound)
-//    {
-//        NbtList nbttaglist = nbttagcompound.getList("Pos");
-//        NbtList nbttaglist1 = nbttagcompound.getList("Motion");
-//        NbtList nbttaglist2 = nbttagcompound.getList("Rotation");
-//        setPosition(0.0D, 0.0D, 0.0D);
-//        velocityX = ((NbtDouble)nbttaglist1.get(0)).value;
-//        velocityY = ((NbtDouble)nbttaglist1.get(1)).value;
-//        velocityZ = ((NbtDouble)nbttaglist1.get(2)).value;
-//        if(Math.abs(velocityX) > 10D)
-//        {
-//            velocityX = 0.0D;
-//        }
-//        if(Math.abs(velocityY) > 10D)
-//        {
-//            velocityY = 0.0D;
-//        }
-//        if(Math.abs(velocityZ) > 10D)
-//        {
-//            velocityZ = 0.0D;
-//        }
-//        prevX = lastTickX = x = ((NbtDouble)nbttaglist.get(0)).value;
-//        prevY = lastTickY = y = ((NbtDouble)nbttaglist.get(1)).value;
-//        prevZ = lastTickZ = z = ((NbtDouble)nbttaglist.get(2)).value;
-//        prevYaw = yaw = ((NbtFloat)nbttaglist2.get(0)).value;
-//        prevPitch = pitch = ((NbtFloat)nbttaglist2.get(1)).value;
-//        fallDistance = nbttagcompound.getFloat("FallDistance");
-//        fireTicks = nbttagcompound.getShort("Fire");
-//        air = nbttagcompound.getShort("Air");
-//        onGround = nbttagcompound.getBoolean("OnGround");
-//        readNbt(nbttagcompound);
-//    }
-
     @Override
     public void writeNbt(NbtCompound nbttagcompound)
     {
@@ -912,7 +901,7 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
             passenger.setPosition(x + d9 + d7, y + d10, z + d11 + d8);
     }
 
-    public void updateTowedPosition()
+    public void updateTowedPosition() /// Zupełnie nie wiadomo co jescze...
     {
         if(towingEntity == null)
         {

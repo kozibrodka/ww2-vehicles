@@ -32,8 +32,8 @@ public class AMICompat implements ModPluginProvider {
     public void register(ModRegistry registry) {
 //        registry.addDescription(new ItemStack(ItemListener.hemp), "description.wolves.hemp");
 
-        registry.addRecipeCategories(new AnvilShapedRecipeCategory());
-        registry.addRecipeHandlers(new AnvilShapedRecipeHandler());
+        registry.addRecipeCategories(new VehiclelShapedRecipeCategory());
+        registry.addRecipeHandlers(new VehicleShapedRecipeHandler());
         registry.addRecipes(VehicleRecipeRegistry.getInstance().getShapedRecipes());
 
 

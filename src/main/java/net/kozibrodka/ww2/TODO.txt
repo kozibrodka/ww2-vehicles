@@ -9,9 +9,8 @@ Teraz:
 - Debug Wrench gold
 - Pass seat przekierowania DMG
 
-
-- Vehicle Living Ramming
-- Tank Leaves Ramming...
+- Nie rozumime do końca kolizji między pojazdami, np. auto przesuwa auto, ale czołg nie przesuwa auta?
+- Vehicle Living Ramming - chyba done - jeżeli dojdą CollisionBoxy to skomplikuje...
 
 - Multiplayer
 
@@ -20,10 +19,15 @@ Car:
 - Silniki prędkości
 - PROPERTIES....
 
+Tank:
+- Pass position like Car.
+
 
 After Release:
 - Passanger Pos - Po upadku dziwnie spowalnia - różne opcje mam?
 - Collision boxes....
 - Ewentualne Passanger seats z bronią...
 - Gui... new
-- Tank Leaves Ramming.. - niszczenie bloków przed sobą...
+- Tank Leaves Ramming.. - niszczenie bloków przed sobą... poprzez collision boxy dodatkowe?
+
+- TMT 1.6.4 - aby móc załadować modele...

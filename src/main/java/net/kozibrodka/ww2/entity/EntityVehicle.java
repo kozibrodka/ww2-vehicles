@@ -62,13 +62,13 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
         prevX = d;
         prevY = d1;
         prevZ = d2;
-        if(mod_Vehicles.type == null)
-        {
-            automobile = (VehicleType) VehicleType.types.get(0);
-        } else
-        {
-            automobile = mod_Vehicles.type;
-        }
+//        if(mod_Vehicles.type == null)
+//        {
+//            automobile = (VehicleType) VehicleType.types.get(0);
+//        } else
+//        {
+//            automobile = mod_Vehicles.type;
+//        }
         inventorySize = automobile.numCargoSlots + automobile.numBulletSlots + automobile.numShellSlots + 1;
         cargoItems = new ItemStack[inventorySize];
     }
@@ -155,7 +155,7 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
     }
 
     @Override
-    public boolean isPushable() //canBePushed
+    public boolean isPushable()
     {
         return true;
     }
@@ -357,9 +357,20 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
             {
                 pitch = -45 * i;
                 uphillTicks = 10; /// Daje 10 ticksów spowolnienia pod górke
+                multiplySpeed(0.75D); /// Jednorazowe spowolnienie
             } else
             {
-                pitch = 0.0F;
+//                pitch = 0.0F;
+                if(uphillTicks > 0){
+                    if(pitch > 0.0F){
+                        pitch -= 5.0F;
+                    }
+                    if(pitch < 0.0F){
+                        pitch += 5.0F;
+                    }
+                }else{
+                    pitch = 0.0F;
+                }
             }
             velocityY -= 0.001D;
         } else

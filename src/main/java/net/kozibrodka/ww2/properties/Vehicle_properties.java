@@ -1,6 +1,7 @@
 package net.kozibrodka.ww2.properties;
 
 import net.kozibrodka.ww2.model.ModelVehicle;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.modificationstation.stationapi.api.template.item.TemplateItem;
 
@@ -13,7 +14,7 @@ public class Vehicle_properties {
     public String SOUND_RIDING;
     public String shootSound;
     public int SOUND_LOOP_TIME_MAX;
-    public TemplateItem przedmiot;
+    public Item przedmiot;
     public ItemStack gunMachineGun;
 
     public int MAX_HEALTH;

@@ -5,7 +5,7 @@ import net.glasslauncher.mods.alwaysmoreitems.api.recipe.RecipeWrapper;
 import net.kozibrodka.ww2.recipe.VehicleShapedRecipe;
 import org.jetbrains.annotations.NotNull;
 
-public class AnvilShapedRecipeHandler implements RecipeHandler<VehicleShapedRecipe> {
+public class VehicleShapedRecipeHandler implements RecipeHandler<VehicleShapedRecipe> {
     @NotNull
     @Override
     public Class<VehicleShapedRecipe> getRecipeClass() {
@@ -15,13 +15,13 @@ public class AnvilShapedRecipeHandler implements RecipeHandler<VehicleShapedReci
     @NotNull
     @Override
     public String getRecipeCategoryUid() {
-        return "anvil_shaped";
+        return "vehicle_shaped";
     }
 
     @NotNull
     @Override
     public RecipeWrapper getRecipeWrapper(@NotNull VehicleShapedRecipe recipe) {
-        return new AnvilShapedRecipeWrapper(recipe);
+        return new VehicleShapedRecipeWrapper(recipe);
     }
 
     @Override

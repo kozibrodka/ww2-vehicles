@@ -17,3 +17,56 @@ item.tankBullet.name=Tank Bullet
 item.aaShellTank.name=AAV Shell
 item.vehicleBlowTorch.name=Vehicle Blowtorch
 item.itemGunMachineGun.name=mg_tank
+
+
+
+
+
+item.@.biplaneWing.name=Biplane Wing
+item.woodenTail.name=Wooden Tail
+item.woodenPropeller.name=Wooden Propeller
+item.triplaneWing.name=Triplane Wing
+item.woodenCockpit.name=Wooden Cockpit
+item.wheel.name=Wheel
+item.metalWingMG.name=Metal Wing MG
+item.metalTail.name=Metal Tail
+item.bombBay.name=Bomb Bay
+item.metalNose.name=Metal Nose
+item.metalWing.name=Metal Wing
+item.metalCockpit.name=Metal Cockpit
+item.advancedMetalCockpit.name=Advanced Metal Cockpit
+item.passengerBay.name=Passenger Bay
+item.metalPropeller.name=Metal Propeller
+item.metalWingpPropv4.name=Metal Wing Prop v4
+item.metalWingpPropv6.name=Metal Wing Prop v6
+item.metalWingpPropv8.name=Metal Wing Prop v8
+item.metalWingpPropRot.name=Metal Wing Prop Rot
+item.vehicleSeat.name=Vehicle Seat
+
+item.@.smallEngine.name=V4 Engine
+item.mediumEngine.name=V6 Engine
+item.largeEngine.name=V8 Engine
+item.rotaryEngine.name=Rotary Engine
+item.piston.name=Engine Piston
+item.machinegun.name=Machine Gun
+item.symbolGerman.name=Symbol
+item.symbolAmerican.name=Symbol
+item.symbolBritish.name=Symbol
+item.symbolRussian.name=Symbol
+
+item.@.redstoneCoil.name=Redstone Coil
+item.denseredRedstoneCoil.name=Densered Redstone Coil
+item.largeWheel.name=Large Wheel
+item.smallCarChassis.name=Small Car Chassis
+item.lightTankBody.name=Light Tank Body
+item.mediumTankBody.name=Medium Tank Body
+item.heavyTankBody.name=Heavy Tank Body
+item.advancedTankBody.name=Advanced Tank Body
+item.tankBarrel.name=Tank Barrel
+item.gunShield.name=Gun Shield
+item.lightTankTurret.name=Light Tank Turret
+item.mediumTankTurret.name=Medium Tank Turret
+item.heavyTankTurret.name=Heavy Tank Turret
+item.trackPiece.name=Track Piece
+item.towBar.name=Towbar
+item.caterpillarTrack.name=Caterpillar Track

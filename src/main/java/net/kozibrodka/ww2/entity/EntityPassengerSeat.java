@@ -68,7 +68,8 @@ public class EntityPassengerSeat extends Entity
     }
 
     @Override
-    public void onCollision(Entity otherEntity) {
+    public void onCollision(Entity otherEntity) { /// tutaj mogę wpisać pszesuwanie mnie oraz entity z którym mam kolizje
+        return;
     }
 
     @Override
@@ -77,17 +78,19 @@ public class EntityPassengerSeat extends Entity
         return entity1.boundingBox;
     }
 
+    /// todo Zdebuguj a aucie "hasCollided" zobacz czy to odpala się kiedy zatrzymuje...
     @Override
     public Box getBoundingBox() /// Kolizja przy chodzeniu/poruszaniu sie
     {
-//        return boundingBox;
-        return null; ///jedyny sposób na brak kolizji z Pojazdem
+        return boundingBox;
+//        return null; ///brak kolizji z Pojazdem, ale cały czas bierze go pod uwagę - czyli może aktywować "hasCollided"
     }
 
     @Override
     public boolean isPushable() /// Czy będzie pchanie -> aktywacja on onCollision
     {
-        return false;
+//        return false;
+        return true; /// Zostawiam true - aby wybiórczo w onCollision() dać kolizje na pojazd matkę.
     }
 
     @Override
@@ -316,7 +319,7 @@ public class EntityPassengerSeat extends Entity
         return true;
     }
 
-    public boolean canPlayerUse(PlayerEntity entityplayer) //? czemu sie nie swieci
+    public boolean canPlayerUse(PlayerEntity entityplayer) //? czemu sie nie swieci //todo zla nazwa
     {
         if(dead)
         {

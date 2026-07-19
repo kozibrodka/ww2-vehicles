@@ -73,7 +73,7 @@ public class PropertiesClassic_Sherman extends Vehicle_properties {
         COLLISION_DAMAGE = true;
         COLLISION_FLIGHT_PLAYER = false;
         COLLISION_FLIGHT_ENTITY = true;
-        UPHILL_SLOWDOWN = 0.9D;
+        UPHILL_SLOWDOWN = 0.9D; //todo tak samo jak auto na razie
 
         item_track =  new ItemStack(ww2Parts.trackPiece.id, 1, 0);
         item_body =  new ItemStack(ww2Parts.lightTankBody.id, 1, 0);

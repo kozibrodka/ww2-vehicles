@@ -1,6 +1,7 @@
 package net.kozibrodka.ww2.properties;
 
 import net.kozibrodka.ww2.model.ModelTruck;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.modificationstation.stationapi.api.template.item.TemplateItem;
 
@@ -76,7 +77,7 @@ public class TruckType {
     public String texture;
     public ModelTruck model;
     public String SOUND_RIDING;
-    public TemplateItem przedmiot;
+    public Item przedmiot;
     public String shootSound;
     public int SOUND_LOOP_TIME_MAX;
     public static List types = new ArrayList();

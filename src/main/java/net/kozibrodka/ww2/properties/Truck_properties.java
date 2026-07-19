@@ -1,8 +1,8 @@
 package net.kozibrodka.ww2.properties;
 
 import net.kozibrodka.ww2.model.ModelTruck;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.modificationstation.stationapi.api.template.item.TemplateItem;
 
 public class Truck_properties {
 
@@ -13,7 +13,7 @@ public class Truck_properties {
     public String SOUND_RIDING;
     public String shootSound;
     public int SOUND_LOOP_TIME_MAX;
-    public TemplateItem przedmiot;
+    public Item przedmiot;
 
     public int MAX_HEALTH;
     public int DEATH_TIME_MAX; //czas do eksplozji

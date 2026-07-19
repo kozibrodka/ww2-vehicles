@@ -137,6 +137,7 @@ public class VehicleRecipeRegistry {
         return this.vehicle_recipes;
     }
 
+    /// for AMI class only
     public ArrayList getShapedRecipes() {
         ArrayList shapedRecipes = new ArrayList();
         for (Object recipe : vehicle_recipes) {

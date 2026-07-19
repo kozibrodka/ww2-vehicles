@@ -12,12 +12,16 @@ import org.spongepowered.asm.mixin.Mixin;
 public class LivingMixin extends Entity{
 
 
-
+    /// Mixin so that LivingEntity wont push Cars while in PassangerSeat
     @Override
     public void onCollision(Entity otherEntity){
-        if(this.vehicle instanceof EntityPassengerSeat && otherEntity instanceof EntityTruck){
+        if(this.vehicle instanceof EntityPassengerSeat && (otherEntity instanceof EntityTruck || otherEntity instanceof EntityPassengerSeat)){
             return; //TODO test mixina
         }
+//        /// Living Entities wont push Trucks
+//        if(otherEntity instanceof EntityTruck){
+//            return;
+//        }
         super.onCollision(otherEntity);
     }
 

@@ -29,6 +29,8 @@ public class TextureListener {
         mod_Vehicles.vehicleBlowTorch.setTexture(Identifier.of(MOD_ID, "item/blowtorch"));
         mod_Vehicles.itemGunMachineGun.setTexture(Identifier.of(MOD_ID, "item/PlaneGun"));
 
+        mod_Vehicles.wrenchGoldDebug.setTexture(Identifier.of(MOD_ID, "item/itemWrenchGold"));
+
         veh_work_top = registerBlockTexture("block/VehicleWorkbenchTop");
         veh_work_bottom = registerBlockTexture("block/WorkSide");
         veh_work_side = registerBlockTexture("block/WorkBot");

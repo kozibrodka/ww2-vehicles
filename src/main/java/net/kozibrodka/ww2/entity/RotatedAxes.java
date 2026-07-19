@@ -1,7 +1,7 @@
 package net.kozibrodka.ww2.entity;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
-
+//todo no usages? remove?
 public class RotatedAxes {
 
     private float rotationYaw;
