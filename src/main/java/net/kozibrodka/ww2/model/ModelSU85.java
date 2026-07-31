@@ -2,7 +2,7 @@ package net.kozibrodka.ww2.model;
 
 import net.kozibrodka.tmt.TURBO_MODEL_125.*;
 
-public class ModelSU85 extends ModelVehicle
+public class ModelSU85 extends ModelTank
 {
     int textureX;
     int textureY;

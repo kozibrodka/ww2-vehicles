@@ -20,7 +20,6 @@ public class Properties_Tiger2 extends Vehicle_properties{
         gunMachineGun = new ItemStack(mod_Vehicles.itemGunMachineGun);
 
         MAX_HEALTH = 1100;
-        DEATH_TIME_MAX = 100;
         hasTurret = true;
         hasGuns = true;
         tankDestroyer = false;
@@ -31,9 +30,6 @@ public class Properties_Tiger2 extends Vehicle_properties{
         numCargoSlots = 5;
         numBulletSlots = 5;
         numShellSlots = 5;
-        gunDamage = 3F;
-        gunVelocity = 3F;
-        gunSpread = 1F;
         autoWidth = 2.5F;
         autoHeight = 3.2F;
         standingOko = 0.625F;

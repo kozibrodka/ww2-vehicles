@@ -20,7 +20,6 @@ public class PropertiesOld_Panzer4G extends Vehicle_properties{
         gunMachineGun = new ItemStack(mod_Vehicles.itemGunMachineGun);
 
         MAX_HEALTH = 500;
-        DEATH_TIME_MAX = 100;
         hasTurret = true;
         hasGuns = true;
         vehicleFuelAdd = 1000;
@@ -29,9 +28,6 @@ public class PropertiesOld_Panzer4G extends Vehicle_properties{
         numCargoSlots = 5;
         numBulletSlots = 5;
         numShellSlots = 5;
-        gunDamage = 10;
-        gunVelocity = 3F;
-        gunSpread = 1F;
         autoWidth = 2.5F;
         autoHeight = 2.5F;
         standingOko = 0.625F;

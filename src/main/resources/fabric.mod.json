@@ -14,13 +14,16 @@
   },
 
   "license": "CC0-1.0",
-  "icon": "assets/vehicles/iconM4.png",
+  "icon": "assets/ww2/iconM4.png",
 
   "environment": "*",
   "entrypoints": {
     "stationapi:event_bus": [
       "net.kozibrodka.ww2.events.ww2Parts",
-      "net.kozibrodka.ww2.events.mod_Vehicles"
+      "net.kozibrodka.ww2.events.mod_Vehicles",
+      "net.kozibrodka.ww2.events.RecipeListener",
+      "net.kozibrodka.ww2.events.GuiListener",
+      "net.kozibrodka.ww2.events.PacketListener"
     ],
     "stationapi:event_bus_client": [
       "net.kozibrodka.ww2.events.TextureListener"

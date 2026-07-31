@@ -1,5 +1,6 @@
 package net.kozibrodka.ww2.properties_tank;
 
+import net.kozibrodka.sdk_api.utils.SdkEnvTool;
 import net.kozibrodka.ww2.events.ww2Parts;
 import net.kozibrodka.ww2.events.mod_Vehicles;
 import net.kozibrodka.ww2.model_tank.ModelSherman_Classic;
@@ -13,7 +14,9 @@ public class PropertiesClassic_Sherman extends Vehicle_properties {
         name = "classic_Sherman";
         longName = "Sherman";
         texture = "Sherman.png";
-        model = new ModelSherman_Classic();
+        if(SdkEnvTool.isEnvClient()) {
+            model = new ModelSherman_Classic();
+        }
         SOUND_RIDING = "ww2:engine";
         shootSound = "ww2:tankshell";
         SOUND_LOOP_TIME_MAX = 20;
@@ -21,7 +24,6 @@ public class PropertiesClassic_Sherman extends Vehicle_properties {
         gunMachineGun = new ItemStack(mod_Vehicles.itemGunMachineGun);
 
         MAX_HEALTH = 500;
-        DEATH_TIME_MAX = 100;
         hasTurret = true;
         hasGuns = true;
         vehicleFuelAdd = 1000;
@@ -30,14 +32,12 @@ public class PropertiesClassic_Sherman extends Vehicle_properties {
         numCargoSlots = 5;
         numBulletSlots = 5;
         numShellSlots = 5;
-        gunDamage = 10;
-        gunVelocity = 3F;
-        gunSpread = 1F;
         autoWidth = 2.5F;
         autoHeight = 3.0F;
         standingOko = 0F;
 
         playerYOffset = 2.2D;
+        playerXOffset = -0.5D;
         shellXOffset = 75;
         shellYOffset = 45;
         shellZOffset = 0;
@@ -49,7 +49,15 @@ public class PropertiesClassic_Sherman extends Vehicle_properties {
         gunPitchMin = -45;
         gunPitchMax = 2; //TODO
         turretPitchSpeed = 0.5F; //TODO
-        turretYawSpeed = 1.0F; //TODO
+        turretYawSpeed = 1.5F; //TODO (1.0F)
+
+        cannonDamage = 10; //toodo wszystko
+        cannonVehicleDamage = 100;
+        cannonPenetration = 3.5F;
+        cannonMuzzleVelocity = 3.0F;
+        cannonSpread = 1.0F;
+        cannonBulletDrop = 0.005F; //0.005F;
+        cannonExploPower = 3.0F;
 
         MAX_SPEED = 0.15D; //TODO
 //        TURN_SPEED_STOPPED = 3.5D;
@@ -75,7 +83,7 @@ public class PropertiesClassic_Sherman extends Vehicle_properties {
         COLLISION_FLIGHT_ENTITY = true;
         UPHILL_SLOWDOWN = 0.9D; //todo tak samo jak auto na razie
 
-        item_track =  new ItemStack(ww2Parts.trackPiece.id, 1, 0);
+        item_track =  new ItemStack(ww2Parts.caterpillarTrack.id, 1, 0);
         item_body =  new ItemStack(ww2Parts.lightTankBody.id, 1, 0);
         item_mg =  new ItemStack(ww2Parts.machinegun.id, 1, 0);
         item_turret =  new ItemStack(ww2Parts.lightTankTurret.id, 1, 0);

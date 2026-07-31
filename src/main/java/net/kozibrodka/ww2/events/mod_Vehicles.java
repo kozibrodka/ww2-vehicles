@@ -1,7 +1,5 @@
 package net.kozibrodka.ww2.events;
 
-
-import net.fabricmc.loader.api.FabricLoader;
 import net.glasslauncher.mods.gcapi3.api.ConfigRoot;
 import net.kozibrodka.ww2.entity.*;
 import net.kozibrodka.ww2.item.ItemTruck;
@@ -18,7 +16,7 @@ import net.kozibrodka.ww2.test164.ItemVehicle164;
 import net.mine_diver.unsafeevents.listener.EventListener;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
-import net.modificationstation.stationapi.api.event.entity.EntityRegister;
+import net.modificationstation.stationapi.api.event.entity.EntityRegisterEvent;
 import net.modificationstation.stationapi.api.event.recipe.RecipeRegisterEvent;
 import net.modificationstation.stationapi.api.event.registry.BlockRegistryEvent;
 import net.modificationstation.stationapi.api.event.registry.EntityHandlerRegistryEvent;
@@ -35,7 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class mod_Vehicles {
-
+    //todo rename
     @ConfigRoot(value = "VehiclesCFG", visibleName = "WW2 Vehicles Config")
     public static final VehiclesCFG vehiclesGlass = new VehiclesCFG();
 
@@ -76,8 +74,8 @@ public class mod_Vehicles {
     public void registerItems(ItemRegistryEvent event) { //TODO move all items to ww2Parts Listener? - chyba tak
 
         vehicleFuel =  new TemplateItem(Identifier.of(MOD_ID, "vehicleFuel")).setTranslationKey(MOD_ID, "vehicleFuel");
-        tankShell = new TemplateItem(Identifier.of(MOD_ID, "tankShell")).setTranslationKey(MOD_ID, "tankShell");
-        tankShellHE = new TemplateItem(Identifier.of(MOD_ID, "tankShellHE")).setTranslationKey(MOD_ID, "tankShellHE");
+        tankShell = new TemplateItem(Identifier.of(MOD_ID, "tankShell")).setTranslationKey(MOD_ID, "tankShell").setMaxCount(16);
+        tankShellHE = new TemplateItem(Identifier.of(MOD_ID, "tankShellHE")).setTranslationKey(MOD_ID, "tankShellHE").setMaxCount(16);
         tankBullet = new TemplateItem(Identifier.of(MOD_ID, "tankBullet")).setTranslationKey(MOD_ID, "tankBullet");
         aaShellTank = new TemplateItem(Identifier.of(MOD_ID, "aaShellTank")).setTranslationKey(MOD_ID, "aaShellTank");
         vehicleBlowTorch = new TemplateItem(Identifier.of(MOD_ID, "vehicleBlowTorch")).setTranslationKey(MOD_ID, "vehicleBlowTorch").setMaxCount(1).setMaxDamage(64);;
@@ -111,7 +109,7 @@ public class mod_Vehicles {
 
         for (int i = 0; i < VehicleType.types.size(); i++) {
             VehicleType vehicletype = (VehicleType) VehicleType.types.get(i);
-            System.out.println("mod_Vehicles added tank : " + vehicletype.name);
+            System.out.println("mod_WW2 added tank: " + vehicletype.name);
 
             vehicleMapping.put(vehicletype.name, vehicletype);
             vehicletype.przedmiot = new ItemVehicle(Identifier.of(MOD_ID, vehicletype.name), vehicletype.name).setTranslationKey(MOD_ID, vehicletype.name).setMaxCount(1);
@@ -119,7 +117,7 @@ public class mod_Vehicles {
 
         for (int i = 0; i < TruckType.types.size(); i++) {
             TruckType truckType = (TruckType) TruckType.types.get(i);
-            System.out.println("mod_Vehicles added truck : " + truckType.name);
+            System.out.println("mod_WW2 added truck: " + truckType.name);
 
             truckMapping.put(truckType.name, truckType);
             truckType.przedmiot = new ItemTruck(Identifier.of(MOD_ID, truckType.name), truckType.name).setTranslationKey(MOD_ID, truckType.name).setMaxCount(1);
@@ -138,21 +136,25 @@ public class mod_Vehicles {
 
 
     @EventListener
-    public static void registerEntities(EntityRegister event) {
-        event.register(EntityShell.class, String.valueOf(Identifier.of(MOD_ID, "EntityShell")));
-        event.register(EntityAAShell.class, String.valueOf(Identifier.of(MOD_ID, "EntityAAShellTank")));
-        event.register(SdkEntityBulletMachineGun.class, String.valueOf(Identifier.of(MOD_ID, "SdkEntityBulletMachineGun")));
-        event.register(EntityVehicle.class, String.valueOf(Identifier.of(MOD_ID, "EntityVehicle")));
-        event.register(EntityTruck.class, String.valueOf(Identifier.of(MOD_ID, "EntityTruck")));
+    public static void registerEntities(EntityRegisterEvent event) {
+        event.register(Identifier.of(MOD_ID, "Shell_OLD"), EntityShell_OLD.class);
+        event.register(Identifier.of(MOD_ID, "Shell"), SdkEntityTankShell.class);
+        event.register(Identifier.of(MOD_ID, "AAShellTank"), EntityAAShell.class);
+        event.register(Identifier.of(MOD_ID, "SdkBulletMachineGun"), SdkEntityBulletMachineGun.class);
+        event.register(Identifier.of(MOD_ID, "Tank"), EntityTank.class);
+        event.register(Identifier.of(MOD_ID, "Truck"), EntityTruck.class);
+        event.register(Identifier.of(MOD_ID, "PassSeatVehicle"), EntityPassengerSeat.class);
     }
 
     @EventListener
     public static void registerMobHandlers(EntityHandlerRegistryEvent event) {
-        Registry.register(event.registry, MOD_ID.id("EntityShell"), EntityShell::new);
-        Registry.register(event.registry, MOD_ID.id("EntityAAShellTank"), EntityAAShell::new);
-        Registry.register(event.registry, MOD_ID.id("SdkEntityBulletMachineGun"), SdkEntityBulletMachineGun::new);
-        Registry.register(event.registry, MOD_ID.id("EntityVehicle"), EntityVehicle::new);
-        Registry.register(event.registry, MOD_ID.id("EntityTruck"), EntityTruck::new);
+        Registry.register(event.registry, MOD_ID.id("Shell_OLD"), EntityShell_OLD::new);
+        Registry.register(event.registry, MOD_ID.id("Shell"), SdkEntityTankShell::new);
+        Registry.register(event.registry, MOD_ID.id("AAShellTank"), EntityAAShell::new);
+        Registry.register(event.registry, MOD_ID.id("SdkBulletMachineGun"), SdkEntityBulletMachineGun::new);
+        Registry.register(event.registry, MOD_ID.id("Tank"), EntityTank::new);
+        Registry.register(event.registry, MOD_ID.id("Truck"), EntityTruck::new);
+        Registry.register(event.registry, MOD_ID.id("PassSeatVehicle"), EntityPassengerSeat::new);
     }
 
     @EventListener

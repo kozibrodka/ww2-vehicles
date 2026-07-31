@@ -52,6 +52,7 @@ public class CraftingInventoryVehicle extends ScreenHandler {
 //        return null;
 //    }
 
+    @Override
     public void onSlotUpdate(Inventory iinventory)
     {
 //        craftResult.setInventoryItem(0, RecipeRegistry.getInstance().getCraftingOutput(craftMatrix));
@@ -59,6 +60,7 @@ public class CraftingInventoryVehicle extends ScreenHandler {
     }
 
 
+    @Override
     public void onClosed(PlayerEntity entityplayer)
     {
         super.onClosed(entityplayer);
@@ -73,6 +75,7 @@ public class CraftingInventoryVehicle extends ScreenHandler {
 
     }
 
+    @Override
     public boolean canUse(PlayerEntity entityplayer)
     {
         if(world.getBlockId(xTile, yTile, zTile) != mod_Vehicles.vehicleWorkbench.id)

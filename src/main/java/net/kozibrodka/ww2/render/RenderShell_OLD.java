@@ -1,7 +1,6 @@
 package net.kozibrodka.ww2.render;
 
 import net.kozibrodka.ww2.entity.EntityShell_OLD;
-import net.kozibrodka.ww2.entity.SdkEntityTankShell;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.entity.Entity;
@@ -9,14 +8,14 @@ import net.minecraft.util.math.MathHelper;
 import org.lwjgl.opengl.GL11;
 
 
-public class RenderShell extends EntityRenderer
+public class RenderShell_OLD extends EntityRenderer
 {
 
-    public RenderShell()
+    public RenderShell_OLD()
     {
     }
 
-    public void renderArrow(SdkEntityTankShell entityshell, double d, double d1, double d2,
+    public void renderArrow(EntityShell_OLD entityshell, double d, double d1, double d2,
                             float f, float f1)
     {
         bindTexture("/assets/ww2/stationapi/textures/mob/bullet.png");
@@ -36,12 +35,12 @@ public class RenderShell extends EntityRenderer
         float f9 = (float)(10 + i * 10) / 32F;
         float f10 = 0.05625F;
         GL11.glEnable(32826 /*GL_RESCALE_NORMAL_EXT*/);
-//        float f11 = (float)entityshell.arrowShake - f1;
-//        if(f11 > 0.0F)
-//        {
-//            float f12 = -MathHelper.sin(f11 * 3F) * f11;
-//            GL11.glRotatef(f12, 0.0F, 0.0F, 1.0F);
-//        }
+        float f11 = (float)entityshell.arrowShake - f1;
+        if(f11 > 0.0F)
+        {
+            float f12 = -MathHelper.sin(f11 * 3F) * f11;
+            GL11.glRotatef(f12, 0.0F, 0.0F, 1.0F);
+        }
         GL11.glRotatef(45F, 1.0F, 0.0F, 0.0F);
         GL11.glScalef(f10, f10, f10);
         GL11.glTranslatef(-4F, 0.0F, 0.0F);
@@ -79,6 +78,6 @@ public class RenderShell extends EntityRenderer
     public void render(Entity entity, double d, double d1, double d2,
                        float f, float f1)
     {
-        renderArrow((SdkEntityTankShell) entity, d, d1, d2, f, f1);
+        renderArrow((EntityShell_OLD)entity, d, d1, d2, f, f1);
     }
 }

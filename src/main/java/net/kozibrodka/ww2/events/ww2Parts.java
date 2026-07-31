@@ -48,10 +48,11 @@ public class ww2Parts {
             rotaryEngine =  new TemplateItem(Identifier.of(MOD_ID, "rotaryEngine")).setTranslationKey(MOD_ID, "rotaryEngine").setMaxCount(4);
             piston =  new TemplateItem(Identifier.of(MOD_ID, "piston")).setTranslationKey(MOD_ID, "piston").setMaxCount(16);
             machinegun =  new TemplateItem(Identifier.of(MOD_ID, "machinegun")).setTranslationKey(MOD_ID, "machinegun").setMaxCount(8);
-            symbolGerman =  new TemplateItem(Identifier.of(MOD_ID, "symbolGerman")).setTranslationKey(MOD_ID, "symbolGerman");
-            symbolAmerican =  new TemplateItem(Identifier.of(MOD_ID, "symbolAmerican")).setTranslationKey(MOD_ID, "symbolAmerican");
-            symbolBritish =  new TemplateItem(Identifier.of(MOD_ID, "symbolBritish")).setTranslationKey(MOD_ID, "symbolBritish");
-            symbolRussian =  new TemplateItem(Identifier.of(MOD_ID, "symbolRussian")).setTranslationKey(MOD_ID, "symbolRussian");
+            /// na razie nie używam i tak
+//            symbolGerman =  new TemplateItem(Identifier.of(MOD_ID, "symbolGerman")).setTranslationKey(MOD_ID, "symbolGerman");
+//            symbolAmerican =  new TemplateItem(Identifier.of(MOD_ID, "symbolAmerican")).setTranslationKey(MOD_ID, "symbolAmerican");
+//            symbolBritish =  new TemplateItem(Identifier.of(MOD_ID, "symbolBritish")).setTranslationKey(MOD_ID, "symbolBritish");
+//            symbolRussian =  new TemplateItem(Identifier.of(MOD_ID, "symbolRussian")).setTranslationKey(MOD_ID, "symbolRussian");
         }
         if(true) {
             redstoneCoil =  new TemplateItem(Identifier.of(MOD_ID, "redstoneCoil")).setTranslationKey(MOD_ID, "redstoneCoil").setMaxCount(16);

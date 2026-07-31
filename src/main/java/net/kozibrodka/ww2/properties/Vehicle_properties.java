@@ -1,16 +1,15 @@
 package net.kozibrodka.ww2.properties;
 
-import net.kozibrodka.ww2.model.ModelVehicle;
+import net.kozibrodka.ww2.model.ModelTank;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.modificationstation.stationapi.api.template.item.TemplateItem;
 
 public class Vehicle_properties {
 
     public String name;
     public String longName;
     public String texture;
-    public ModelVehicle model;
+    public ModelTank model;
     public String SOUND_RIDING;
     public String shootSound;
     public int SOUND_LOOP_TIME_MAX;
@@ -18,7 +17,6 @@ public class Vehicle_properties {
     public ItemStack gunMachineGun;
 
     public int MAX_HEALTH;
-    public int DEATH_TIME_MAX; //czas do eksplozji
     public boolean hasTurret;
     public boolean hasGuns;
     public boolean tankDestroyer;
@@ -31,9 +29,6 @@ public class Vehicle_properties {
     public int numBulletSlots;
     public int numShellSlots;
     public int gunFlakRange;
-    public float gunDamage;
-    public float gunVelocity;
-    public float gunSpread;
     public float autoWidth;
     public float autoHeight;
     public float standingOko;
@@ -53,6 +48,14 @@ public class Vehicle_properties {
     public float gunPitchMax;
     public float turretYawSpeed;
     public float turretPitchSpeed;
+
+    public int cannonDamage;
+    public int cannonVehicleDamage;
+    public float cannonPenetration;
+    public float cannonMuzzleVelocity;
+    public float cannonSpread;
+    public float cannonBulletDrop;
+    public float cannonExploPower;
 
     public ItemStack dyeColor;
     public ItemStack item_track;

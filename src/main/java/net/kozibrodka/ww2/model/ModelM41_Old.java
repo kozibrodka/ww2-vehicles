@@ -2,7 +2,7 @@ package net.kozibrodka.ww2.model;
 
 import net.kozibrodka.tmt.TURBO_MODEL_125.*;
 
-public class ModelM41_Old extends ModelVehicle {
+public class ModelM41_Old extends ModelTank {
     public ModelM41_Old() {
         short textureX = 512;
         short textureY = 512;

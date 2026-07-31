@@ -1,6 +1,6 @@
 package net.kozibrodka.ww2.item;
 
-import net.kozibrodka.ww2.entity.EntityVehicle;
+import net.kozibrodka.ww2.entity.EntityTank;
 import net.kozibrodka.ww2.events.mod_Vehicles;
 import net.kozibrodka.ww2.properties.VehicleType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -55,7 +55,7 @@ public class ItemVehicle extends TemplateItem {
             if(!world.isRemote)
             {
                 int l = itemstack.getDamage();
-                world.spawnEntity(new EntityVehicle(world, (double)i + 0.5D, (double)j + 1.5D, (double)k + 0.5D, entityplayer, l, vehicletype));
+                world.spawnEntity(new EntityTank(world, (double)i + 0.5D, (double)j + 1.5D, (double)k + 0.5D, entityplayer, l, vehicletype));
 //                                Class class1 = mod_Vehicles.getVehicleClass(vehicleType);
 //                Constructor constructor = null;
 //                try {

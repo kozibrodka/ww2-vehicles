@@ -1,8 +1,8 @@
 package net.kozibrodka.ww2.item;
 
-import net.kozibrodka.sdk_api.events.utils.SdkEntityBullet;
-import net.kozibrodka.sdk_api.events.utils.SdkEntityBulletCasing;
-import net.kozibrodka.sdk_api.events.utils.SdkItemGun;
+import net.kozibrodka.sdk_api.utils.SdkEntityBullet;
+import net.kozibrodka.sdk_api.utils.SdkEntityCasing;
+import net.kozibrodka.sdk_api.utils.SdkItemGun;
 import net.kozibrodka.ww2.entity.SdkEntityBulletMachineGun;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
@@ -25,11 +25,13 @@ public class SdkItemGunMachineGun extends SdkItemGun {
         penetration = 2;
     }
 
+    @Override
     public SdkEntityBullet getBulletEntity(World world, Entity entity, float f, float f1, float f2, float f3, float f4) {
         return new SdkEntityBulletMachineGun(world, entity, this, f, f1, f2, f3, f4);
     }
 
-    public SdkEntityBulletCasing getBulletCasingEntity(World world, Entity entity, float f) {
+    @Override
+    public SdkEntityCasing getBulletCasingEntity(World world, Entity entity, float f) {
         return null;
     }
 }

@@ -20,7 +20,6 @@ public class PropertiesOld_Hummel extends Vehicle_properties{
         gunMachineGun = new ItemStack(mod_Vehicles.itemGunMachineGun);
 
         MAX_HEALTH = 300;
-        DEATH_TIME_MAX = 100;
         hasTurret = true;
         hasGuns = true;
         tankDestroyer = true;
@@ -30,9 +29,6 @@ public class PropertiesOld_Hummel extends Vehicle_properties{
         numCargoSlots = 5;
         numBulletSlots = 5;
         numShellSlots = 5;
-        gunDamage = 14;
-        gunVelocity = 4F;
-        gunSpread = 0.5F;
         autoWidth = 2.5F;
         autoHeight = 2.5F;
         standingOko = 0.625F;

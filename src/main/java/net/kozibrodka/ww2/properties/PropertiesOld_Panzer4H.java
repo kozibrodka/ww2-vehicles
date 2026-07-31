@@ -19,7 +19,6 @@ public class PropertiesOld_Panzer4H extends Vehicle_properties{
         gunMachineGun = new ItemStack(mod_Vehicles.itemGunMachineGun);
 
         MAX_HEALTH = 500;
-        DEATH_TIME_MAX = 100;
         hasTurret = true;
         hasGuns = true;
         vehicleFuelAdd = 1000;
@@ -28,9 +27,6 @@ public class PropertiesOld_Panzer4H extends Vehicle_properties{
         numCargoSlots = 5;
         numBulletSlots = 5;
         numShellSlots = 5;
-        gunDamage = 10;
-        gunVelocity = 3F;
-        gunSpread = 1F;
         autoWidth = 2.5F;
         autoHeight = 2.5F;
         standingOko = 0.625F;
@@ -46,6 +42,14 @@ public class PropertiesOld_Panzer4H extends Vehicle_properties{
         gunYawMax = 180;
         gunPitchMin = -45;
         gunPitchMax = 7;
+
+        cannonDamage = 0; //toodo wszystko
+        cannonVehicleDamage = 0;
+        cannonPenetration = 0.0F;
+        cannonMuzzleVelocity = 0.0F;
+        cannonSpread = 0.0F;
+        cannonBulletDrop = 0.000F;
+        cannonExploPower = 0.0F;
 
         MAX_SPEED = 0.18D;
         TURN_SPEED_STOPPED = 5D;

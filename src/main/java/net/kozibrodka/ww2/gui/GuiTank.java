@@ -1,19 +1,20 @@
 package net.kozibrodka.ww2.gui;
 
-import net.kozibrodka.ww2.entity.EntityVehicle;
+import net.kozibrodka.ww2.entity.EntityTank;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import org.lwjgl.opengl.GL11;
 
-public class GuiVehicle extends HandledScreen
+public class GuiTank extends HandledScreen
 {
 
-    public GuiVehicle(PlayerInventory inventoryplayer, EntityVehicle entityvehicle)
+    public GuiTank(PlayerInventory inventoryplayer, EntityTank entityvehicle)
     {
-        super(new InventoryVehicle(inventoryplayer, entityvehicle));
+        super(new InventoryTank(inventoryplayer, entityvehicle));
         vehicle = entityvehicle;
     }
 
+    @Override
     protected void drawForeground()
     {
         textRenderer.draw(vehicle.automobile.longName, 60, 6, 0x404040);
@@ -32,6 +33,7 @@ public class GuiVehicle extends HandledScreen
         }
     }
 
+    @Override
     protected void drawBackground(float f)
     {
         int i = minecraft.textureManager.getTextureId("/assets/ww2/stationapi/textures/gui/vehicle.png");
@@ -62,5 +64,5 @@ public class GuiVehicle extends HandledScreen
 
     }
 
-    private EntityVehicle vehicle;
+    private EntityTank vehicle;
 }

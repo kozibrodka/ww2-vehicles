@@ -25,7 +25,6 @@ public class TruckType {
           passengerSeats = klasa.passengerSeats;
 
           MAX_HEALTH = klasa.MAX_HEALTH;
-          DEATH_TIME_MAX = klasa.DEATH_TIME_MAX;
           vehicleFuelAdd = klasa.vehicleFuelAdd;
           numCargoSlots = klasa.numCargoSlots;
           numBulletSlots = klasa.numBulletSlots;
@@ -83,7 +82,6 @@ public class TruckType {
     public static List types = new ArrayList();
 
     public int MAX_HEALTH;
-    public int DEATH_TIME_MAX;
     public int vehicleFuelAdd;
     public int numCargoSlots;
     public int numBulletSlots;

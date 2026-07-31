@@ -3,7 +3,7 @@ package net.kozibrodka.ww2.model;
 import net.kozibrodka.tmt.TURBO_MODEL_125.*;
 //import net.kozibrodka.tmt.TURBO_MODEL_164.*;
 
-public class ModelTigerII extends ModelVehicle
+public class ModelTigerII extends ModelTank
 {
     int textureX;
     int textureY;

@@ -66,10 +66,10 @@ public class TextureListener {
             ww2Parts.rotaryEngine.setTexture(Identifier.of(MOD_ID, "item/part/RotaryEngine"));
             ww2Parts.piston.setTexture(Identifier.of(MOD_ID, "item/part/EnginePiston"));
             ww2Parts.machinegun.setTexture(Identifier.of(MOD_ID, "item/part/Machinegun"));
-            ww2Parts.symbolGerman.setTexture(Identifier.of(MOD_ID, "item/part/SymbolGerman"));
-            ww2Parts.symbolAmerican.setTexture(Identifier.of(MOD_ID, "item/part/SymbolAmerican"));
-            ww2Parts.symbolBritish.setTexture(Identifier.of(MOD_ID, "item/part/SymbolBritish"));
-            ww2Parts.symbolRussian.setTexture(Identifier.of(MOD_ID, "item/part/SymbolRussian"));
+//            ww2Parts.symbolGerman.setTexture(Identifier.of(MOD_ID, "item/part/SymbolGerman"));
+//            ww2Parts.symbolAmerican.setTexture(Identifier.of(MOD_ID, "item/part/SymbolAmerican"));
+//            ww2Parts.symbolBritish.setTexture(Identifier.of(MOD_ID, "item/part/SymbolBritish"));
+//            ww2Parts.symbolRussian.setTexture(Identifier.of(MOD_ID, "item/part/SymbolRussian"));
         }
         if(FabricLoader.getInstance().isModLoaded("ww2")) {
             ww2Parts.redstoneCoil.setTexture(Identifier.of(MOD_ID, "item/part/RedstoneCoil"));
@@ -93,10 +93,11 @@ public class TextureListener {
 
     @EventListener
     public static void registerEntityRenderers(EntityRendererRegisterEvent event) {
-        event.renderers.put(EntityShell.class, new RenderShell());
+        event.renderers.put(EntityShell_OLD.class, new RenderShell_OLD());
+        event.renderers.put(SdkEntityTankShell.class, new RenderShell());
         event.renderers.put(EntityAAShell.class, new RenderAAShell());
         event.renderers.put(SdkEntityBulletMachineGun.class, new SdkRenderBulletMachineGun());
-        event.renderers.put(EntityVehicle.class, new RenderVehicle());
+        event.renderers.put(EntityTank.class, new RenderTank());
         event.renderers.put(EntityTruck.class, new RenderTruck());
         event.renderers.put(EntityVehicleTEST164.class, new RenderVehicle164());
     }

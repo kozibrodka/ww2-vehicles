@@ -22,6 +22,7 @@ public class ItemTruck extends TemplateItem {
         vehicleType = s;
     }
 
+    @Override
     public ItemStack use(ItemStack itemstack, World world, PlayerEntity entityplayer)
     {
         float f = 1.0F;
@@ -53,8 +54,8 @@ public class ItemTruck extends TemplateItem {
             TruckType vehicletype = mod_Vehicles.getTruckType(vehicleType);
             if(!world.isRemote)
             {
-                int l = itemstack.getDamage();
-                world.spawnEntity(new EntityTruck(world, (double)i + 0.5D, (double)j + 1.5D, (double)k + 0.5D, entityplayer, l, vehicletype));
+                int engineTier = itemstack.getDamage();
+                world.spawnEntity(new EntityTruck(world, (double)i + 0.5D, (double)j + 1.5D, (double)k + 0.5D, entityplayer, engineTier, vehicletype));
 //                                Class class1 = mod_Vehicles.getVehicleClass(vehicleType);
 //                Constructor constructor = null;
 //                try {
@@ -69,7 +70,7 @@ public class ItemTruck extends TemplateItem {
 //                } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
 //                    e.printStackTrace();
 //                }
-
+                /// zostawiam tylko, żeby sobie spojrzeć jak konsktruktor się tworzy w ten sposób
             }
             itemstack.count--;
         }

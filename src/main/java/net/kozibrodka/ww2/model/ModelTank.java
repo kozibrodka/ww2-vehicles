@@ -1,9 +1,9 @@
 package net.kozibrodka.ww2.model;
 
 import net.kozibrodka.tmt.TURBO_MODEL_125.*;
-import net.kozibrodka.ww2.entity.EntityVehicle;
+import net.kozibrodka.ww2.entity.EntityTank;
 
-public class ModelVehicle extends ModelBase {
+public class ModelTank extends ModelBase {
     
     public ModelRendererTurbo[] bodyModel = new ModelRendererTurbo[0];
     public ModelRendererTurbo[] bodyDoorOpenModel = new ModelRendererTurbo[0];
@@ -25,7 +25,7 @@ public class ModelVehicle extends ModelBase {
 
 //    public CollisionBox[] collisionBoxes;
 
-    public void render(float f, float f1, float f2, float f3, float f4, float f5, EntityVehicle vehicle) {
+    public void render(float f, float f1, float f2, float f3, float f4, float f5, EntityTank vehicle) {
         int i;
         for(i = 0; i < this.bodyModel.length; ++i) {
             this.bodyModel[i].render(f5);
@@ -74,7 +74,7 @@ public class ModelVehicle extends ModelBase {
         }
         if(leftTrackWheelModels != null) {
             for (i = 0; i < this.leftTrackWheelModels.length; ++i) {
-                this.leftTrackWheelModels[i].rotateAngleZ = -vehicle.wheelsAngle;
+                this.leftTrackWheelModels[i].rotateAngleZ = -vehicle.wheelsAngle; //TODO na pewno źle to działa.
                 this.leftTrackWheelModels[i].render(f5);
             }
         }
@@ -89,7 +89,7 @@ public class ModelVehicle extends ModelBase {
     }
 
 
-    public void renderGun(float f, float f1, float f2, float f3, float f4, float f5, EntityVehicle vehicle, float gunYaw, float gunPitch) {
+    public void renderGun(float f, float f1, float f2, float f3, float f4, float f5, EntityTank vehicle, float gunYaw, float gunPitch) {
         int i;
         for(i = 0; i < this.gunModel.length; ++i) {
             this.gunModel[i].rotateAngleX = gunPitch * (float)Math.PI / 180.0F;
@@ -105,7 +105,7 @@ public class ModelVehicle extends ModelBase {
 
     }
 
-    public void renderTurret(float f, float f1, float f2, float f3, float f4, float f5, EntityVehicle vehicle, float gunYaw, float gunPitch) {
+    public void renderTurret(float f, float f1, float f2, float f3, float f4, float f5, EntityTank vehicle, float gunYaw, float gunPitch) {
         int i;
         for(i = 0; i < this.turretModel.length; ++i) {
             this.turretModel[i].render(f5);

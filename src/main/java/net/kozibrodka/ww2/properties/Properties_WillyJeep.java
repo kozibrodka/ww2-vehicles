@@ -20,7 +20,6 @@ public class Properties_WillyJeep extends Truck_properties{
         przedmiot = mod_Vehicles.vehicle_WillyJeep;
 
         MAX_HEALTH = 200;
-        DEATH_TIME_MAX = 100;
         vehicleFuelAdd = 1000;
         numCargoSlots = 5;
         autoWidth = 1.5F;

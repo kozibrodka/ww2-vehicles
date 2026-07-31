@@ -1,5 +1,6 @@
 package net.kozibrodka.ww2.properties_car;
 
+import net.kozibrodka.sdk_api.utils.SdkEnvTool;
 import net.kozibrodka.ww2.events.ww2Parts;
 import net.kozibrodka.ww2.events.mod_Vehicles;
 import net.kozibrodka.ww2.model_car.ModelKubel_Classic;
@@ -14,14 +15,15 @@ public class PropertiesClassic_Kubelwagen extends Truck_properties {
         name = "classic_Kubel";
         longName = "Kubelwagen";
         texture = "kubelwagen.png";
-        model = new ModelKubel_Classic();
+        if(SdkEnvTool.isEnvClient()) {
+            model = new ModelKubel_Classic();
+        }
         SOUND_RIDING = "ww2:engine";
         shootSound = "ww2:tankshell";
         SOUND_LOOP_TIME_MAX = 20;
         przedmiot = mod_Vehicles.vehicleClassic_Kubelwagen;
 
         MAX_HEALTH = 250;
-        DEATH_TIME_MAX = 100;
         vehicleFuelAdd = 1000;
         numCargoSlots = 5;
         autoWidth = 1.8F;

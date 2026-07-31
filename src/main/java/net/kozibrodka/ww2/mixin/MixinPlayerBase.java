@@ -1,6 +1,6 @@
 package net.kozibrodka.ww2.mixin;
 
-import net.kozibrodka.ww2.entity.EntityVehicle;
+import net.kozibrodka.ww2.entity.EntityTank;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -27,7 +27,7 @@ public abstract class MixinPlayerBase extends LivingEntity {
 
     @Inject(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;increaseStat(Lnet/minecraft/stat/Stat;I)V"), cancellable = true)
     private void InjectedDMG2(Entity arg, int i, CallbackInfoReturnable<Boolean> cir){
-        if(this.vehicle instanceof EntityVehicle){ //todo przenies do api
+        if(this.vehicle instanceof EntityTank){ //todo przenies do api
             System.out.println("negacja DMG w człogu");
             cir.setReturnValue(damage(null,0));
         }

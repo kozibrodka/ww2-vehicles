@@ -14,6 +14,7 @@ public class GuiTruck extends HandledScreen
         vehicle = entityvehicle;
     }
 
+    @Override
     protected void drawForeground()
     {
         textRenderer.draw(vehicle.automobile.longName, 60, 6, 0x404040);
@@ -32,6 +33,7 @@ public class GuiTruck extends HandledScreen
         }
     }
 
+    @Override
     protected void drawBackground(float f)
     {
         int i = minecraft.textureManager.getTextureId("/assets/ww2/stationapi/textures/gui/vehicle.png");

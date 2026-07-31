@@ -1,6 +1,6 @@
 package net.kozibrodka.ww2.entity;
 
-import net.kozibrodka.sdk_api.events.utils.*;
+import net.kozibrodka.sdk_api.utils.*;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -15,10 +15,10 @@ import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
 import java.util.List;
 
-public class EntityShell extends Entity
+public class EntityShell_OLD extends Entity
 {
 
-    public EntityShell(World world)
+    public EntityShell_OLD(World world)
     {
         super(world);
         xTile = -1;
@@ -32,8 +32,8 @@ public class EntityShell extends Entity
         damageShell = 10;
     }
 
-    public EntityShell(World world, double d, double d1, double d2,
-                       double d3, double d4, double d5, boolean he, float dmg, float vel, float spr)
+    public EntityShell_OLD(World world, double d, double d1, double d2,
+                           double d3, double d4, double d5, boolean he, float dmg, float vel, float spr)
     {
         super(world);
         xTile = -1;
@@ -60,7 +60,7 @@ public class EntityShell extends Entity
         setArrowHeading(velocityX, velocityY, velocityZ, muzzleVel, spreadVal);
     }
 
-    public EntityShell(World world, double d, double d1, double d2)
+    public EntityShell_OLD(World world, double d, double d1, double d2)
     {
         super(world);
         xTile = -1;
@@ -76,7 +76,7 @@ public class EntityShell extends Entity
         damageShell = 10;
     }
 
-    public EntityShell(World world, LivingEntity entityliving)
+    public EntityShell_OLD(World world, LivingEntity entityliving)
     {
         super(world);
         xTile = -1;
@@ -101,6 +101,7 @@ public class EntityShell extends Entity
         damageShell = 10;
     }
 
+    @Override
     protected void initDataTracker()
     {
     }
@@ -127,6 +128,7 @@ public class EntityShell extends Entity
         timeTillDeath = 0;
     }
 
+    @Override
     public void setVelocityClient(double d, double d1, double d2)
     {
         velocityX = d;
@@ -140,10 +142,12 @@ public class EntityShell extends Entity
         }
     }
 
+    @Override
     public boolean shouldRender(double d) {
         return true;
     }
 
+    @Override
     public void tick()
     {
         super.tick();
@@ -283,6 +287,7 @@ public class EntityShell extends Entity
         setPosition(x, y, z);
     }
 
+    @Override
     public void writeNbt(NbtCompound nbttagcompound)
     {
         nbttagcompound.putShort("xTile", (short)xTile);
@@ -290,6 +295,7 @@ public class EntityShell extends Entity
         nbttagcompound.putShort("zTile", (short)zTile);
     }
 
+    @Override
     public void readNbt(NbtCompound nbttagcompound)
     {
         xTile = nbttagcompound.getShort("xTile");
@@ -348,6 +354,7 @@ public class EntityShell extends Entity
 //        }
 //    }
 
+    @Override
     public float getShadowRadius()
     {
         return 0.0F;
@@ -357,8 +364,8 @@ public class EntityShell extends Entity
     private int xTile;
     private int yTile;
     private int zTile;
-    private int inTile;
-    private boolean inGround;
+    private final int inTile;
+    private final boolean inGround;
     public int arrowShake;
     public LivingEntity owner;
     private int timeTillDeath;

@@ -1,9 +1,9 @@
 package net.kozibrodka.ww2.model_tank;
 
 import net.kozibrodka.tmt.TURBO_MODEL_125.*;
-import net.kozibrodka.ww2.model.ModelVehicle;
+import net.kozibrodka.ww2.model.ModelTank;
 
-public class ModelPanzer_Classic extends ModelVehicle {
+public class ModelPanzer_Classic extends ModelTank {
     public ModelPanzer_Classic(){
         short c = 256;
         short c1 = 256;

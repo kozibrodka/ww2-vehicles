@@ -2,6 +2,7 @@ package net.kozibrodka.ww2.mixin;
 
 import net.kozibrodka.ww2.entity.EntityPassengerSeat;
 import net.kozibrodka.ww2.entity.EntityTruck;
+import net.kozibrodka.ww2.entity.EntityTank;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
@@ -9,8 +10,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.Dimension;
-import net.minecraft.world.storage.WorldStorage;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -82,6 +81,11 @@ public class WorldMixin{
                 return false;
             }
             if(objectEntity instanceof LivingEntity livin && livin.vehicle instanceof EntityPassengerSeat passSeat2 && passSeat2.mother == movingEntity){
+                return false;
+            }
+        }
+        if(movingEntity instanceof EntityTank){
+            if(objectEntity == movingEntity.passenger || objectEntity instanceof ItemEntity){
                 return false;
             }
         }

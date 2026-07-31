@@ -13,16 +13,19 @@ public class GuiVehicleCrafting extends HandledScreen {
         this.backgroundHeight = 184;
     }
 
+    @Override
     public void removed() {
         super.removed();
         this.handler.onClosed(minecraft.player);
     }
 
+    @Override
     protected void drawForeground() {
         this.textRenderer.draw("Vehicle Crafting", 6, 6, 4210752);
         this.textRenderer.draw("Inventory", 8, this.backgroundHeight - 96 + 2, 4210752);
     }
 
+    @Override
     protected void drawBackground(float f) {
         int i = minecraft.textureManager.getTextureId("/assets/ww2/stationapi/textures/gui/vehicleCrafting.png");
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);

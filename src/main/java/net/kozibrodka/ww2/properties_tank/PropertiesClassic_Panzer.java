@@ -1,5 +1,6 @@
 package net.kozibrodka.ww2.properties_tank;
 
+import net.kozibrodka.sdk_api.utils.SdkEnvTool;
 import net.kozibrodka.ww2.events.ww2Parts;
 import net.kozibrodka.ww2.events.mod_Vehicles;
 import net.kozibrodka.ww2.model_tank.ModelPanzer_Classic;
@@ -13,7 +14,9 @@ public class PropertiesClassic_Panzer extends Vehicle_properties {
         name = "classic_Panzer";
         longName = "Panzer";
         texture = "Panzer.png";
-        model = new ModelPanzer_Classic();
+        if(SdkEnvTool.isEnvClient()) {
+            model = new ModelPanzer_Classic();
+        }
         SOUND_RIDING = "ww2:engine";
         shootSound = "ww2:tankshell";
         SOUND_LOOP_TIME_MAX = 20;
@@ -21,7 +24,6 @@ public class PropertiesClassic_Panzer extends Vehicle_properties {
         gunMachineGun = new ItemStack(mod_Vehicles.itemGunMachineGun);
 
         MAX_HEALTH = 500;
-        DEATH_TIME_MAX = 100;
         hasTurret = true;
         hasGuns = true;
         vehicleFuelAdd = 1000;
@@ -30,9 +32,6 @@ public class PropertiesClassic_Panzer extends Vehicle_properties {
         numCargoSlots = 5;
         numBulletSlots = 5;
         numShellSlots = 5;
-        gunDamage = 12;
-        gunVelocity = 3F;
-        gunSpread = 1F;
         autoWidth = 2.5F;
         autoHeight = 3.0F;
         standingOko = 0F;
@@ -48,6 +47,14 @@ public class PropertiesClassic_Panzer extends Vehicle_properties {
         gunYawMax = 180;
         gunPitchMin = -45;
         gunPitchMax = 0;
+
+        cannonDamage = 12; //toodo wszystko
+        cannonVehicleDamage = 10;
+        cannonPenetration = 0.0F;
+        cannonMuzzleVelocity = 3.0F;
+        cannonSpread = 1.0F;
+        cannonBulletDrop = 0.005F; //0.005F;
+        cannonExploPower = 3.0F;
 
         MAX_SPEED = 0.15D;
         TURN_SPEED_STOPPED = 3.5D;

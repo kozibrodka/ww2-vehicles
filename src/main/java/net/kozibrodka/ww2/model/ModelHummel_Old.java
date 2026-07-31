@@ -2,7 +2,7 @@ package net.kozibrodka.ww2.model;
 
 import net.kozibrodka.tmt.TURBO_MODEL_125.*;
 
-public class ModelHummel_Old extends ModelVehicle {
+public class ModelHummel_Old extends ModelTank {
     public ModelHummel_Old() {
         short textureX = 512;
         short textureY = 512;

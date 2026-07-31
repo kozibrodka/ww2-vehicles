@@ -16,7 +16,6 @@ public class Truck_properties {
     public Item przedmiot;
 
     public int MAX_HEALTH;
-    public int DEATH_TIME_MAX; //czas do eksplozji
     public int vehicleFuelAdd;
     public int numCargoSlots;
     public int numBulletSlots;

@@ -3,7 +3,7 @@ package net.kozibrodka.ww2.model;
 import net.kozibrodka.tmt.TURBO_MODEL_125.*;
 
 
-public class ModelPanzer4_Old extends ModelVehicle {
+public class ModelPanzer4_Old extends ModelTank {
     public ModelPanzer4_Old() {
         short textureX = 512;
         short textureY = 512;

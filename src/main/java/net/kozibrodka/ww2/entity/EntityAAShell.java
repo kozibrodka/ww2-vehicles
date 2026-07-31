@@ -1,8 +1,10 @@
 package net.kozibrodka.ww2.entity;
 
-import net.kozibrodka.sdk_api.events.ingame.mod_SdkGuns;
-import net.kozibrodka.sdk_api.events.utils.SdkTools;
-import net.kozibrodka.sdk_api.events.utils.WW2Plane;
+import net.kozibrodka.sdk_api.events.SdkGlass;
+import net.kozibrodka.sdk_api.ingame.mod_SdkGuns;
+import net.kozibrodka.sdk_api.utils.SdkTools;
+import net.kozibrodka.sdk_api.utils.SdkToolsRender;
+import net.kozibrodka.sdk_api.utils.WW2Plane;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -180,15 +182,15 @@ public class EntityAAShell extends Entity
                 y -= (velocityY / (double)f1) * 0.05000000074505806D;
                 z -= (velocityZ / (double)f1) * 0.05000000074505806D;
                 world.playSound(this, "ww2:bullethit", 1.0F, 1.2F / (random.nextFloat() * 0.2F + 0.9F));
-                if (inTile == Block.GLASS.id && mod_SdkGuns.bulletsDestroyGlass) {
-                    SdkTools.minecraft.particleManager.addBlockBreakParticles(xTile, yTile, zTile, Block.GLASS.id & 0xff, Block.GLASS.id >> 8 & 0xff);
-                    SdkTools.minecraft.soundManager.playSound(Block.GLASS.soundGroup.getBreakSound(), (float) xTile + 0.5F, (float) yTile + 0.5F, (float) zTile + 0.5F, (Block.GLASS.soundGroup.getVolume() + 1.0F) / 2.0F, Block.GLASS.soundGroup.getPitch() * 0.8F);
+                if (inTile == Block.GLASS.id && SdkGlass.sdk_apiGlass.bulletsDestroyGlass) {
+                    SdkToolsRender.minecraft.particleManager.addBlockBreakParticles(xTile, yTile, zTile, Block.GLASS.id & 0xff, Block.GLASS.id >> 8 & 0xff);
+                    SdkToolsRender.minecraft.soundManager.playSound(Block.GLASS.soundGroup.getBreakSound(), (float) xTile + 0.5F, (float) yTile + 0.5F, (float) zTile + 0.5F, (Block.GLASS.soundGroup.getVolume() + 1.0F) / 2.0F, Block.GLASS.soundGroup.getPitch() * 0.8F);
                     world.setBlock(xTile, yTile, zTile, 0);
                     Block.GLASS.onMetadataChange(world, xTile, yTile, zTile, world.getBlockMeta(xTile, yTile, zTile));
                 }
-                if (inTile == Block.LEAVES.id && mod_SdkGuns.bulletsDestroyGlass) {
-                    SdkTools.minecraft.particleManager.addBlockBreakParticles(xTile, yTile, zTile, Block.LEAVES.id & 0xff, Block.LEAVES.id >> 8 & 0xff);
-                    SdkTools.minecraft.soundManager.playSound(Block.LEAVES.soundGroup.getBreakSound(), (float) xTile + 0.5F, (float) yTile + 0.5F, (float) zTile + 0.5F, (Block.LEAVES.soundGroup.getVolume() + 1.0F) / 2.0F, Block.LEAVES.soundGroup.getPitch() * 0.8F);
+                if (inTile == Block.LEAVES.id && SdkGlass.sdk_apiGlass.bulletsDestroyGlass) {
+                    SdkToolsRender.minecraft.particleManager.addBlockBreakParticles(xTile, yTile, zTile, Block.LEAVES.id & 0xff, Block.LEAVES.id >> 8 & 0xff);
+                    SdkToolsRender.minecraft.soundManager.playSound(Block.LEAVES.soundGroup.getBreakSound(), (float) xTile + 0.5F, (float) yTile + 0.5F, (float) zTile + 0.5F, (Block.LEAVES.soundGroup.getVolume() + 1.0F) / 2.0F, Block.LEAVES.soundGroup.getPitch() * 0.8F);
                     world.setBlock(xTile, yTile, zTile, 0);
                     Block.LEAVES.onMetadataChange(world, xTile, yTile, zTile, world.getBlockMeta(xTile, yTile, zTile));
                 }
@@ -222,7 +224,7 @@ public class EntityAAShell extends Entity
                 entitysmokefx.velocityY = random.nextGaussian() / 20D;
                 entitysmokefx.velocityZ = random.nextGaussian() / 20D;
                 entitysmokefx.renderDistanceMultiplier = 200D;
-                SdkTools.minecraft.particleManager.addParticle(entitysmokefx);
+                SdkToolsRender.minecraft.particleManager.addParticle(entitysmokefx);
 //                ModLoader.getMinecraftInstance().effectRenderer.addEffect(entitysmokefx);
             }
 

@@ -1,9 +1,8 @@
 package net.kozibrodka.ww2.properties;
 
-import net.kozibrodka.ww2.model.ModelVehicle;
+import net.kozibrodka.ww2.model.ModelTank;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.modificationstation.stationapi.api.template.item.TemplateItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,6 @@ public class VehicleType {
           gunMachineGun = klasa.gunMachineGun;
 
           MAX_HEALTH = klasa.MAX_HEALTH;
-          DEATH_TIME_MAX = klasa.DEATH_TIME_MAX;
           hasTurret = klasa.hasTurret;
           hasGuns = klasa.hasGuns;
           tankDestroyer = klasa.tankDestroyer;
@@ -49,15 +47,20 @@ public class VehicleType {
           gunYawMax = klasa.gunYawMax;
           gunPitchMin = klasa.gunPitchMin;
           gunPitchMax = klasa.gunPitchMax;
-          gunDamage = klasa.gunDamage;
-          gunVelocity = klasa.gunVelocity;
-          gunSpread = klasa.gunSpread;
           autoWidth = klasa.autoWidth;
           autoHeight = klasa.autoHeight;
           standingOko = klasa.standingOko;
           gunFlakRange = klasa.gunFlakRange;
           turretPitchSpeed = klasa.turretPitchSpeed;
           turretYawSpeed = klasa.turretYawSpeed;
+
+          cannonDamage = klasa.cannonDamage;
+          cannonVehicleDamage = klasa.cannonVehicleDamage;
+          cannonPenetration = klasa.cannonPenetration;
+          cannonMuzzleVelocity = klasa.cannonMuzzleVelocity;
+          cannonSpread = klasa.cannonSpread;
+          cannonBulletDrop = klasa.cannonBulletDrop;
+          cannonExploPower = klasa.cannonExploPower;
 
           dyeColor = klasa.dyeColor;
           item_track = klasa.item_track;
@@ -99,7 +102,7 @@ public class VehicleType {
     public String name;
     public String longName;
     public String texture;
-    public ModelVehicle model;
+    public ModelTank model;
     public String SOUND_RIDING;
     public Item przedmiot;
     public ItemStack gunMachineGun;
@@ -108,7 +111,6 @@ public class VehicleType {
     public static List types = new ArrayList();
 
     public int MAX_HEALTH;
-    public int DEATH_TIME_MAX;
     public boolean hasTurret;
     public boolean hasGuns;
     public boolean tankDestroyer;
@@ -120,9 +122,6 @@ public class VehicleType {
     public int numCargoSlots;
     public int numBulletSlots;
     public int numShellSlots;
-    public float gunDamage;
-    public float gunVelocity;
-    public float gunSpread;
     public float autoWidth;
     public float autoHeight;
     public float standingOko;
@@ -143,6 +142,14 @@ public class VehicleType {
     public float gunPitchMax;
     public float turretYawSpeed;
     public float turretPitchSpeed;
+
+    public int cannonDamage;
+    public int cannonVehicleDamage;
+    public float cannonPenetration;
+    public float cannonMuzzleVelocity;
+    public float cannonSpread;
+    public float cannonBulletDrop;
+    public float cannonExploPower;
 
     public ItemStack dyeColor;
     public ItemStack item_track;

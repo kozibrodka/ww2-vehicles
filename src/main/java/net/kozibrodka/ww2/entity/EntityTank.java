@@ -1,14 +1,11 @@
 package net.kozibrodka.ww2.entity;
 
-import net.fabricmc.loader.api.FabricLoader;
-import net.kozibrodka.sdk_api.events.ingame.mod_SdkFlasher;
-import net.kozibrodka.sdk_api.events.init.ItemCasingListener;
-import net.kozibrodka.sdk_api.events.init.ww2Parts;
-import net.kozibrodka.sdk_api.events.utils.*;
+import net.kozibrodka.sdk_api.ingame.mod_SdkFlasher;
+import net.kozibrodka.sdk_api.utils.*;
 import net.kozibrodka.ww2.events.mod_Vehicles;
-import net.kozibrodka.ww2.gui.GuiVehicle;
+import net.kozibrodka.ww2.events.ww2Parts;
+import net.kozibrodka.ww2.gui.InventoryTank;
 import net.kozibrodka.ww2.properties.VehicleType;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
@@ -23,14 +20,15 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
-import org.lwjgl.input.Keyboard;
+import net.modificationstation.stationapi.api.gui.screen.container.GuiHelper;
+import net.modificationstation.stationapi.api.util.Identifier;
+import net.modificationstation.stationapi.api.util.Namespace;
 
 import java.util.List;
 
-//todo rename to tank
-public class EntityVehicle extends Entity implements Inventory, WW2Tank {
+public class EntityTank extends Entity implements Inventory, WW2Tank, SdkVehicle {
 
-    public EntityVehicle(World world)
+    public EntityTank(World world)
     {
         super(world);
         lastTurnSpeed = 0.0D;
@@ -40,7 +38,6 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
         prevMotionZ = 0.0D;
         lastCollidedEntity = null;
         blocksSameBlockSpawning = true;  //preventEntitySpawning
-        deathTime = -13;
         soundLoopTime = 0;
 //        standingEyeHeight = 0.625F;
         stepHeight = 1.0F; //stepHeight
@@ -52,7 +49,7 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
 
     }
 
-    public EntityVehicle(World world, double d, double d1, double d2)
+    public EntityTank(World world, double d, double d1, double d2)
     {
         this(world);
         setPosition(d, d1 + (double)standingEyeHeight, d2);
@@ -69,12 +66,12 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
 //        {
 //            automobile = mod_Vehicles.type;
 //        }
-        inventorySize = automobile.numCargoSlots + automobile.numBulletSlots + automobile.numShellSlots + 1;
-        cargoItems = new ItemStack[inventorySize];
+//        inventorySize = automobile.numCargoSlots + automobile.numBulletSlots + automobile.numShellSlots + 1;
+//        cargoItems = new ItemStack[inventorySize];
     }
 
-    public EntityVehicle(World world, double d, double d1, double d2,
-                         PlayerEntity entityplayer, int i, VehicleType vehicletype)
+    public EntityTank(World world, double d, double d1, double d2,
+                      PlayerEntity entityplayer, int i, VehicleType vehicletype)
     {
         this(world);
         automobile = vehicletype;
@@ -143,9 +140,16 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
     }
 
     @Override
-    public Box getCollisionAgainstShape(Entity entity)
-    {
-        return entity.boundingBox;
+    public Box getCollisionAgainstShape(Entity other) {
+        /// System aby Auto nie podjeżdzało na niskie zwierzęta - tylko je przejeżdzało.
+        if(other instanceof LivingEntity piggy && piggy.height <= 1.0F){
+            Box ramBox = Box.create((double)0.0F, (double)0.0F, (double)0.0F, (double)0.0F, (double)0.0F, (double)0.0F);
+            ramBox.clone(piggy.boundingBox);
+            double roznica = (1.0D - (double) piggy.height) + 0.1D;
+            ramBox.maxY += roznica;
+            return ramBox;
+        }
+        return other.boundingBox;
     }
 
     @Override
@@ -163,7 +167,7 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
     @Override
     public boolean damage(Entity entity, int i)
     {
-        if(automobile.MAX_HEALTH != -1)
+        if(health > 0)
         {
             if(entity instanceof LivingEntity){
                 if(entity instanceof Monster){
@@ -179,7 +183,7 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
 
             if(health <= 0)
             {
-                onDeath();
+                destroyVehicle();
             }
         }
         return true;
@@ -188,14 +192,6 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
     public void onHurt()
     {
         world.playSound(this, "ww2:mechhurt", 1.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
-    }
-
-    public void onDeath()
-    {
-        if(deathTime == -13)
-        {
-            deathTime = automobile.DEATH_TIME_MAX;
-        }
     }
 
     @Override
@@ -207,7 +203,7 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
     @Override
     public float getShadowRadius()
     {
-        return 0.0F;
+        return 0.0F; //todo shadow size? + car?
     }
 
     @Override
@@ -215,7 +211,7 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
     {
         if(entityplayer.getHand() != null && entityplayer.getHand().itemId == mod_Vehicles.vehicleBlowTorch.id)
         {
-            if(health > 0 && health < automobile.MAX_HEALTH)
+            if(health > 0 && health < automobile.MAX_HEALTH) //TODO: przenieś do ItemClasy
             {
                 world.playSound(this, "ww2:blowtorch", 1.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
                 health = Math.min(health + 10, automobile.MAX_HEALTH);
@@ -228,7 +224,7 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
             }
             return true;
         }
-        if(entityplayer.getHand() != null && entityplayer.getHand().itemId == ItemCasingListener.itemWrenchGold.id)
+        if(entityplayer.getHand() != null && entityplayer.getHand().itemId == mod_Vehicles.wrenchGoldDebug.id)
         {
             System.out.println("TYPE: " + automobile.name);
             System.out.println("ENGINE: " + engineType);
@@ -273,15 +269,14 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
         {
             if(passenger != null)
             {
-                if(true) /// getSpeed() != 0.0D - Dla gąsienic wyłączam
-                {
+                /// LEWO-PRAWO
                     double d4 = 0.0D;
-                    if(vehicleFuel > 0 && minecraft.currentScreen == null && Keyboard.isKeyDown(minecraft.options.leftKey.code))
+                    if(vehicleFuel > 0 && clientLEFT)
                     {
                         d4 = -getTurnSpeed() * (double)(flag1 ? 1 : -1);
                         wheelsYaw = (float)((double)wheelsYaw - 0.5D * getTurnSpeed());
                     } else
-                    if(vehicleFuel > 0 && minecraft.currentScreen == null && Keyboard.isKeyDown(minecraft.options.rightKey.code))
+                    if(vehicleFuel > 0 && clientRIGHT)
                     {
                         d4 = getTurnSpeed() * (double)(flag1 ? 1 : -1);
                         wheelsYaw = (float)((double)wheelsYaw + 0.5D * getTurnSpeed());
@@ -294,22 +289,19 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
                         }
                     }
                     lastTurnSpeed = d4 * (double)(flag1 ? 1 : -1);
-                }
-                double d5 = 0.0D;
-                if(passenger != null && minecraft.currentScreen == null)
-                {
-                    if(vehicleFuel > 0 && Keyboard.isKeyDown(minecraft.options.forwardKey.code))
+                /// PRZÓD-TYŁ
+                    double d5 = 0.0D;
+                    if(vehicleFuel > 0 && clientFORWARD)
                     {
                         d5 = -(flag1 ? getAccelForward() : automobile.ACCEL_BRAKE);
                         vehicleFuel--;
                         flag = true;
                     }else
-                    if(vehicleFuel > 0 && Keyboard.isKeyDown(minecraft.options.backKey.code))
+                    if(vehicleFuel > 0 && clientBACK)
                     {
                         d5 = flag1 ? automobile.ACCEL_BRAKE : getAccelBackward();
                         flag = true;
                     }
-                }
                 if(d5 != 0.0D)
                 {
                     double d7 = ((double)yaw * 3.1415926535897931D) / 180D;
@@ -318,6 +310,7 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
                     velocityX += d5 * d8;
                     velocityZ += d5 * d9;
                 }
+                ///
             }
             if(!flag)
             {
@@ -392,6 +385,7 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
             }
 
         }
+        /// Spowolnienie na tyle duże, że kwalfikowane jako kolizja
         if(passenger != null && getPrevSpeed() - getSpeed() > automobile.COLLISION_SPEED_MIN)
         {
             if(lastCollidedEntity != null && !(lastCollidedEntity instanceof ItemEntity))
@@ -436,7 +430,7 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
         {
             passenger = null;
         }
-        if(random.nextInt(automobile.MAX_HEALTH) > health * 2)
+        if(random.nextInt(automobile.MAX_HEALTH) > health * 2) /// Particles
         {
             if(health < automobile.MAX_HEALTH/8)
                 spawnParticles("flame", 2, false);
@@ -445,31 +439,9 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
             if(health < automobile.MAX_HEALTH)
                 spawnParticles("smoke", 4, false);
         }
-        if(health > 0 && deathTime != -13)
+        if(passenger != null) /// Dźwięk + Secondary Fire
         {
-            deathTime = -13;
-        }
-        if(deathTime >= 0)
-        {
-            if(deathTime == 0)
-            {
-                Explosion explosion = new Explosion(world, null, x, (float)y, (float)z, 3F);
-                explosion.explode();
-                world.playSound(x, y, z, "random.explode", 4F, (1.0F + (world.random.nextFloat() - world.random.nextFloat()) * 0.2F) * 0.7F);
-                spawnParticles("explode", 64, true);
-                spawnParticles("smoke", 64, true);
-                dropParts();
-                markDead();
-            } else
-            if(random.nextInt(automobile.DEATH_TIME_MAX) > deathTime)
-            {
-//                spawnParticles("flame", 8, false);
-                spawnParticles("lava", 8, false);
-            }
-            deathTime--;
-        }
-        if(passenger != null)
-        {
+            fireMachineGun();
             if(soundLoopTime <= 0 && vehicleFuel > 0)
             {
                 world.playSound(this, automobile.SOUND_RIDING, 1.0F, 1.0F);
@@ -480,7 +452,7 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
         {
             soundLoopTime = 0;
         }
-        if(passenger != null && automobile.hasTurret)
+        if(passenger != null && automobile.hasTurret) /// Turret Yaw, Pitch
         {
             if(automobile.tankDestroyer)
             {
@@ -491,7 +463,7 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
                 while (gunYaw < -360) gunYaw += 360F;
                 while (passYaw > 0) passYaw -= 360F;
                 float checkYaw = Math.abs(gunYaw-passYaw);
-                if(checkYaw < automobile.turretYawSpeed || checkYaw > (360.0F - automobile.turretYawSpeed)){ //TODO properties //checkYaw < 1F || checkYaw > 359F
+                if(checkYaw < automobile.turretYawSpeed || checkYaw > (360.0F - automobile.turretYawSpeed)){
                     gunYaw = passYaw;
                 }else{
                     if(gunYaw > passYaw){
@@ -563,9 +535,49 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
             if(velocityY > 0) {
                 velocityY = -0.001;
             }
-            wheelsAngle += (float)getSpeed() / 2F;
+            wheelsAngle += (float)getSpeed() / 2F; ///co to nie wiem do końca...
             if(wheelsAngle > 3600)
                 wheelsAngle = 0;
+    }
+
+    public void fireMachineGun(){
+        if(clientFIRE){
+            if(world.isRemote || shootDelay > 0 || !automobile.hasGuns)
+            {
+                return;
+            }
+            int j = 0;
+            for(int i1 = automobile.numCargoSlots + 1; i1 < automobile.numCargoSlots + automobile.numBulletSlots + 1; i1++)
+            {
+                if(cargoItems[i1] != null && cargoItems[i1].itemId == mod_Vehicles.tankBullet.id)
+                {
+                    j = i1;
+                }
+            }
+
+            if(j != 0)
+            {
+//                SdkEntityBulletMachineGun okurwa = new SdkEntityBulletMachineGun(world, this, ((SdkItemGun)automobile.gunMachineGun.getItem()), (float)(automobile.barrelX / 16D), (float)(automobile.barrelY / 16D), (float)(automobile.barrelZ / 16D), 90F, 0.0F);
+//                world.spawnEntity(okurwa); ///jest Git tyle, że bez dźwięku...
+//                removeStack(j, 1);
+//                shootDelay = automobile.vehicleShootDelay;
+                ///
+                ((SdkItemGun)automobile.gunMachineGun.getItem()).onItemRightClickEntity(gunMachineGun, world, this, (float)(automobile.barrelX / 16D), (float)(automobile.barrelY / 16D), (float)(automobile.barrelZ / 16D), 90F, 0.0F, 0); //machine gun
+                removeStack(j, 1);
+                shootDelay = automobile.vehicleShootDelay;
+            }
+        }
+    }
+
+    public void destroyVehicle(){
+        Explosion explosion = new Explosion(world, null, x, (float)y, (float)z, 3F);
+        explosion.explode();
+        world.playSound(x, y, z, "random.explode", 4F, (1.0F + (world.random.nextFloat() - world.random.nextFloat()) * 0.2F) * 0.7F);
+        spawnParticles("explode", 32, true);
+        spawnParticles("smoke", 32, true);
+        spawnParticles("lava", 32, false);
+        dropParts();
+        markDead();
     }
 
     public void dropParts(){
@@ -672,7 +684,7 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
 
     public void handleCollision(Entity entity)
     {   /// Tu można pokombinować mocnie....
-        if(entity instanceof WW2Tank || entity instanceof WW2Plane)
+        if(entity instanceof WW2Tank || entity instanceof WW2Plane || entity instanceof WW2Truck) //TODO odpowiedź na zagadke czemu czolg nie przesuwa car?
         {
             entity.onCollision(this);  //apply entity collision
         }
@@ -731,7 +743,7 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
     @Override
     public double getPassengerRidingHeight()
     {
-        return automobile.playerYOffset; //TODO passanger Update Possition like Car...
+        return automobile.playerYOffset;
     }
 
     @Override
@@ -812,40 +824,6 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
         return entityplayer.getSquaredDistance(x, y, z) <= 64D;
     }
 
-//    @Override
-//    public void read(NbtCompound nbttagcompound)
-//    {
-//        NbtList nbttaglist = nbttagcompound.getList("Pos");
-//        NbtList nbttaglist1 = nbttagcompound.getList("Motion");
-//        NbtList nbttaglist2 = nbttagcompound.getList("Rotation");
-//        setPosition(0.0D, 0.0D, 0.0D);
-//        velocityX = ((NbtDouble)nbttaglist1.get(0)).value;
-//        velocityY = ((NbtDouble)nbttaglist1.get(1)).value;
-//        velocityZ = ((NbtDouble)nbttaglist1.get(2)).value;
-//        if(Math.abs(velocityX) > 10D)
-//        {
-//            velocityX = 0.0D;
-//        }
-//        if(Math.abs(velocityY) > 10D)
-//        {
-//            velocityY = 0.0D;
-//        }
-//        if(Math.abs(velocityZ) > 10D)
-//        {
-//            velocityZ = 0.0D;
-//        }
-//        prevX = lastTickX = x = ((NbtDouble)nbttaglist.get(0)).value;
-//        prevY = lastTickY = y = ((NbtDouble)nbttaglist.get(1)).value;
-//        prevZ = lastTickZ = z = ((NbtDouble)nbttaglist.get(2)).value;
-//        prevYaw = yaw = ((NbtFloat)nbttaglist2.get(0)).value;
-//        prevPitch = pitch = ((NbtFloat)nbttaglist2.get(1)).value;
-//        fallDistance = nbttagcompound.getFloat("FallDistance");
-//        fireTicks = nbttagcompound.getShort("Fire");
-//        air = nbttagcompound.getShort("Air");
-//        onGround = nbttagcompound.getBoolean("OnGround");
-//        readNbt(nbttagcompound);
-//    }
-
     @Override
     public void writeNbt(NbtCompound nbttagcompound)
     {
@@ -862,7 +840,6 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
         }
 
         nbttagcompound.putInt("Health", health);
-        nbttagcompound.putInt("DeathTime", deathTime);
         nbttagcompound.put("Items", nbttaglist);
         nbttagcompound.putFloat("GunYaw", gunYaw);
         nbttagcompound.putFloat("GunPitch", gunPitch);
@@ -893,7 +870,6 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
         }
 
         health = nbttagcompound.getInt("Health");
-        deathTime = nbttagcompound.getInt("DeathTime");
         gunYaw = nbttagcompound.getFloat("GunYaw");
         gunPitch = nbttagcompound.getFloat("GunPitch");
         vehicleFuel = nbttagcompound.getInt("Fuel");
@@ -907,6 +883,24 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
         {
             engineType = 4;
         }
+    }
+
+    @Override
+    public void updatePassengerPosition(){
+
+        double d = automobile.playerXOffset;;
+        double d1 = getPassengerRidingHeight() + passenger.getStandingEyeHeight();
+        double d2 = automobile.playerZOffset;
+        double d3 = Math.cos(((double)(-yaw) / 180D) * 3.1415926535897931D);
+        double d4 = Math.sin(((double)(-yaw) / 180D) * 3.1415926535897931D);
+        double d5 = Math.cos(((double)pitch / 180D) * 3.1415926535897931D);
+        double d6 = Math.sin(((double)pitch / 180D) * 3.1415926535897931D);
+        double d7 = Math.cos(((double)yaw * 3.1415926535897931D) / 180D) * 0.40000000000000002D * d5;
+        double d8 = Math.sin(((double)yaw * 3.1415926535897931D) / 180D) * 0.40000000000000002D * d5;
+        double d9 = (d * d5 - d1 * d6) * d3 + d2 * d4;
+        double d10 = d * d6 + d1 * d5;
+        double d11 = (d1 * d6 - d * d5) * d4 + d2 * d3;
+        passenger.setPosition(x + d9 + d7, y + d10, z + d11 + d8);
     }
 
     public void updateTowedPosition()
@@ -980,9 +974,7 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
     public Entity lastCollidedEntity;
     public Entity towingEntity;
     public int flakGunOff;
-    Minecraft minecraft = (Minecraft) FabricLoader.getInstance().getGameInstance();
 
-    public int deathTime;
     public int soundLoopTime;
     public float gunYaw;
     public float gunPitch;
@@ -1005,8 +997,53 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
     public boolean rocketKeyDown;
     public int uphillTicks;
 
+    boolean clientFORWARD = false;
+    boolean clientBACK = false;
+    boolean clientLEFT= false;
+    boolean clientRIGHT= false;
+    boolean clientUP= false;
+    boolean clientDOWN= false;
+    boolean clientFIRE= false;
+
     @Override
-    public void firePrimaryKey(PlayerEntity entityplayer) {
+    public void setControls(boolean forward, boolean back, boolean left, boolean right, boolean up, boolean down, boolean fire) {
+        clientFORWARD = forward;
+        clientBACK = back;
+        clientLEFT= left;
+        clientRIGHT= right;
+        clientUP= up;
+        clientDOWN= down;
+        clientFIRE= fire;
+    }
+
+    @Override
+    public void reloadKey() {
+        shootExplosive = !shootExplosive;
+        world.playSound(this, "ww2:tankreload", 1.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
+    }
+
+    @Override
+    public void exitKey(PlayerEntity entityplayer) {
+        passenger.setVehicle(this);
+    }
+
+    @Override
+    public void inventoryKey(PlayerEntity playerEntity) {
+//        if (minecraft.currentScreen instanceof GuiVehicle) {
+//            minecraft.setScreen(null);
+//        } else if (passenger.vehicle instanceof EntityTank) {
+//            minecraft.setScreen(new GuiVehicle(((PlayerEntity)passenger).inventory, (EntityTank) passenger.vehicle));
+//        }
+        GuiHelper.openGUI(
+                playerEntity,
+                Identifier.of(Namespace.of("ww2"), "openTank"),
+                this,
+                new InventoryTank(playerEntity.inventory, this)
+        );
+    }
+
+    @Override
+    public void bombKey() {
         if(automobile.antiAircraft){
             if(world.isRemote || shellDelay > 0 || !automobile.hasTurret)
             {
@@ -1034,7 +1071,7 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
                 double d18 = d2 * d14 + d4 * d12;
                 double d20 = (d4 * d14 - d2 * d12) * d10 + d6 * d8;
 
-                world.spawnEntity(new EntityAAShell(world, x + d16, y + d18 + (automobile.shellYOffset / 16D), z + d20, d16 / 3D, d18 / 3D, d20 / 3D, automobile.gunDamage, automobile.gunVelocity, automobile.gunSpread, automobile.gunFlakRange));
+                world.spawnEntity(new EntityAAShell(world, x + d16, y + d18 + (automobile.shellYOffset / 16D), z + d20, d16 / 3D, d18 / 3D, d20 / 3D, 7, 4, 2, automobile.gunFlakRange)); //wyjebałem stare properties DMG
                 world.playSound(this, automobile.shootSound, 1.0F, 1.0F);
 
                 mod_SdkFlasher.LightEntity(world, this, 15, 2);
@@ -1075,57 +1112,36 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
                 double d18 = d2 * d14 + d4 * d12;
                 double d20 = (d4 * d14 - d2 * d12) * d10 + d6 * d8;
 
-                world.spawnEntity(new EntityShell(world, x + d16, y + d18 + (automobile.shellYOffset / 16D), z + d20, d16 / 3D, d18 / 3D, d20 / 3D, shootExplosive, automobile.gunDamage, automobile.gunVelocity, automobile.gunSpread));
-//                ((SdkItemGun)automobile.gunMachineGun.getItem()).onItemRightClickEntity(gunMachineGun, world, this, (float)(automobile.shellXOffset / 16D), (float)(automobile.shellYOffset / 16D), (float)(automobile.shellZOffset / 16D), 90F, 0.0F); //machine gun
-                ((SdkItemGun)automobile.gunMachineGun.getItem()).onItemRightClickEntity(gunMachineGun, world, this, (float)(automobile.shellXOffset / 16D), (float)(automobile.shellYOffset / 16D), (float)(automobile.shellZOffset / 16D), gunYaw - yaw, gunPitch - pitch); //machine gun
-                world.playSound(this, automobile.shootSound, 1.0F, 1.0F);
 
-                mod_SdkFlasher.LightEntity(world, this, 15, 2);
+//                EntityShell tShell = new EntityShellM4(world, x + d16, y + d18 + (automobile.shellYOffset / 16D), z + d20, d16 / 3D, d18 / 3D, d20 / 3D, shootExplosive, automobile.gunDamage, automobile.gunVelocity, automobile.gunSpread);
+//                world.spawnEntity(tShell);
+
+//                world.spawnEntity(new EntityShell(world, x + d16, y + d18 + (automobile.shellYOffset / 16D), z + d20, d16 / 3D, d18 / 3D, d20 / 3D, shootExplosive, automobile.gunDamage, automobile.gunVelocity, automobile.gunSpread));
+
+
+//                ((SdkItemGun)automobile.gunMachineGun.getItem()).onItemRightClickEntity(gunMachineGun, world, this, (float)(automobile.shellXOffset / 16D), (float)(automobile.shellYOffset / 16D), (float)(automobile.shellZOffset / 16D), 90F, 0.0F); //machine gun
+//                ((SdkItemGun)automobile.gunMachineGun.getItem()).onItemRightClickEntity(gunMachineGun, world, this, (float)(automobile.shellXOffset / 16D), (float)(automobile.shellYOffset / 16D), (float)(automobile.shellZOffset / 16D), gunYaw - yaw, gunPitch - pitch, 0); //machine gun
+//                world.playSound(this, automobile.shootSound, 1.0F, 1.0F);
+
+//                SdkEntityBullet tShell = new SdkEntityTankShell(world, this, ((SdkItemGun)automobile.gunMachineGun.getItem()));
+                /// Ewentualne Class Factory jeżeli będą w przyszłości różne dźwięki dla różnych czołgów - osobne Klasy podrzędne EntityShell
+//                SdkEntityTankShell tShell = new SdkEntityTankShell(world, this, ((SdkItemGun)automobile.gunMachineGun.getItem()), shootExplosive);
+                SdkEntityTankShell tShell = new SdkEntityTankShell(world, this, automobile, shootExplosive);
+                world.spawnEntity(tShell);
+
+//                mod_SdkFlasher.LightEntity(world, this, 15, 2);
                 removeStack(k, 1);
                 shellDelay = automobile.vehicleShellDelay;
+
+
+            }else{
+                world.playSound(this, "ww2:tnkfireempty", 1.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
             }
         }
     }
 
     @Override
-    public void fireSecondaryKey(PlayerEntity entityplayer) {
-        if(world.isRemote || shootDelay > 0 || !automobile.hasGuns)
-        {
-            return;
-        }
-        int j = 0;
-        for(int i1 = automobile.numCargoSlots + 1; i1 < automobile.numCargoSlots + automobile.numBulletSlots + 1; i1++)
-        {
-            if(cargoItems[i1] != null && cargoItems[i1].itemId == mod_Vehicles.tankBullet.id)
-            {
-                j = i1;
-            }
-        }
-
-        if(j != 0)
-        {
-            ((SdkItemGun)automobile.gunMachineGun.getItem()).onItemRightClickEntity(gunMachineGun, world, this, (float)(automobile.barrelX / 16D), (float)(automobile.barrelY / 16D), (float)(automobile.barrelZ / 16D), 90F, 0.0F); //machine gun
-            removeStack(j, 1);
-            shootDelay = automobile.vehicleShootDelay;
-        }
-    }
-
-    @Override
-    public void inventoryKey(Minecraft minecraft, PlayerEntity entityplayer) {
-        if (minecraft.currentScreen instanceof GuiVehicle) {
-            minecraft.setScreen(null);
-        } else if (passenger.vehicle instanceof EntityVehicle) {
-            minecraft.setScreen(new GuiVehicle(((PlayerEntity)passenger).inventory, (EntityVehicle) passenger.vehicle));
-        }
-    }
-
-    @Override
-    public void exitKey(PlayerEntity entityplayer) {
-        passenger.setVehicle(this);
-    }
-
-    @Override
-    public void towKey(PlayerEntity entityplayer) {
+    public void rocketKey() {
         if(automobile.specialWeapon == "haul")
         {
             if(towingEntity == null)
@@ -1153,13 +1169,37 @@ public class EntityVehicle extends Entity implements Inventory, WW2Tank {
     }
 
     @Override
-    public void reloadKey(PlayerEntity entityplayer) {
-        shootExplosive = !shootExplosive;
-        world.playSound(this, "ww2:tankreload", 1.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
+    public int getPercentHealth() {
+//        return 0;
+        return (int) (((double)health/(double)automobile.MAX_HEALTH)*100D);
     }
 
     @Override
-    public int getPercentHealth() {
+    public float getArmorFactor() { //TODO props reduce + factor both Car+tank
+        return 3.0F;
+    }
+
+    @Override
+    public float getDmgReduce() {
         return 0;
+    }
+
+    @Override
+    public float getDmgBroken() {
+        return 0;
+    }
+
+    @Override
+    public String getAmmoName() {
+        if(shootExplosive){
+            return "§6HE";
+        }else{
+            return "§9AP";
+        }
+    }
+
+    @Override
+    public String getBombName() {
+        return "";
     }
 }

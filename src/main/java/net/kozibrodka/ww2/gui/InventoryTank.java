@@ -1,15 +1,15 @@
 package net.kozibrodka.ww2.gui;
 
-import net.kozibrodka.ww2.entity.EntityVehicle;
+import net.kozibrodka.ww2.entity.EntityTank;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 
-public class InventoryVehicle extends ScreenHandler
+public class InventoryTank extends ScreenHandler
 {
 
-    public InventoryVehicle(Inventory iinventory, EntityVehicle entityvehicle)
+    public InventoryTank(Inventory iinventory, EntityTank entityvehicle)
     {
         vehicle = entityvehicle;
         addSlot(new Slot(entityvehicle, 0, 8, 53));
@@ -53,5 +53,5 @@ public class InventoryVehicle extends ScreenHandler
         return vehicle.canPlayerUse(entityplayer);
     }
 
-    private EntityVehicle vehicle;
+    private EntityTank vehicle;
 }

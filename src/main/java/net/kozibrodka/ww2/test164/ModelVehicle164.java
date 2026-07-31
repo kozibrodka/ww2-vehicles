@@ -2,7 +2,7 @@ package net.kozibrodka.ww2.test164;
 
 //import net.kozibrodka.tmt.TURBO_MODEL_125.ModelBase;
 //import net.kozibrodka.tmt.TURBO_MODEL_125.ModelRendererTurbo;
-import net.kozibrodka.ww2.entity.EntityVehicle;
+import net.kozibrodka.ww2.entity.EntityTank;
 
 import net.kozibrodka.tmt.TURBO_MODEL_164.*;
 
@@ -92,7 +92,7 @@ public class ModelVehicle164 extends ModelBase {
     }
 
 
-    public void renderGun(float f, float f1, float f2, float f3, float f4, float f5, EntityVehicle vehicle, float gunYaw, float gunPitch) {
+    public void renderGun(float f, float f1, float f2, float f3, float f4, float f5, EntityTank vehicle, float gunYaw, float gunPitch) {
         int i;
         for(i = 0; i < this.gunModel.length; ++i) {
             this.gunModel[i].rotateAngleX = gunPitch * (float)Math.PI / 180.0F;

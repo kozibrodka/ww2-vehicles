@@ -1,17 +1,16 @@
 package net.kozibrodka.ww2.entity;
 
-import net.fabricmc.loader.api.FabricLoader;
-import net.kozibrodka.sdk_api.events.init.ItemCasingListener;
-import net.kozibrodka.sdk_api.events.init.ww2Parts;
-import net.kozibrodka.sdk_api.events.utils.*;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.kozibrodka.sdk_api.utils.*;
 import net.kozibrodka.ww2.events.mod_Vehicles;
-import net.kozibrodka.ww2.gui.GuiTruck;
+import net.kozibrodka.ww2.events.ww2Parts;
+import net.kozibrodka.ww2.gui.InventoryTruck;
+import net.kozibrodka.ww2.network.TruckLoadPacket;
 import net.kozibrodka.ww2.properties.TruckType;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Monster;
-import net.minecraft.entity.passive.PigEntity;
 import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
@@ -22,12 +21,19 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
-import org.lwjgl.input.Keyboard;
+import net.modificationstation.stationapi.api.gui.screen.container.GuiHelper;
+import net.modificationstation.stationapi.api.network.packet.PacketHelper;
+import net.modificationstation.stationapi.api.server.entity.EntitySpawnDataProvider;
+import net.modificationstation.stationapi.api.server.entity.HasTrackingParameters;
+import net.modificationstation.stationapi.api.util.Identifier;
+import net.modificationstation.stationapi.api.util.Namespace;
+import net.modificationstation.stationapi.api.util.TriState;
 
 import java.util.Iterator;
 import java.util.List;
 
-public class EntityTruck extends Entity implements Inventory, WW2Truck {
+@HasTrackingParameters(trackingDistance = 160, updatePeriod = 2, sendVelocity = TriState.TRUE)
+public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehicle, EntitySpawnDataProvider {
 
     public EntityTruck(World world)
     {
@@ -39,7 +45,6 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
         prevMotionZ = 0.0D;
         lastCollidedEntity = null;
         blocksSameBlockSpawning = true;  //preventEntitySpawning
-        deathTime = -13;
         soundLoopTime = 0;
 //        standingEyeHeight = 0.625F;
         stepHeight = 1.0F; //stepHeight
@@ -57,15 +62,6 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
         prevX = d;
         prevY = d1;
         prevZ = d2;
-//        if(mod_Vehicles.type == null) /// co to kurw jest v2???
-//        {
-//            automobile = (TruckType) TruckType.types.get(0);
-//        } else
-//        {
-//            automobile = mod_Vehicles.type_truck;
-//        }
-        inventorySize = automobile.numCargoSlots + automobile.numBulletSlots + automobile.numShellSlots + 1;
-        cargoItems = new ItemStack[inventorySize];
     }
 
     public EntityTruck(World world, double d, double d1, double d2,
@@ -139,14 +135,11 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
                 if(!(otherEntity instanceof LivingEntity)){ /// Gracz nie przesunie Pojazdu
                     this.addVelocity(-var2, 0.0F, -var4);
                 }
-                otherEntity.addVelocity(var2, 0.0F, var4);
+                if(!(otherEntity instanceof WW2Tank)){ /// Lista czego auto ma nie przesuwać
+                    otherEntity.addVelocity(var2, 0.0F, var4);
+                }
             }
         }
-    }
-
-    @Override
-    protected void initDataTracker()
-    {
     }
 
     @Override
@@ -177,7 +170,7 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
     @Override
     public boolean damage(Entity entity, int i)
     {
-        if(automobile.MAX_HEALTH != -1)
+        if(health > 0)
         {
             if(entity instanceof LivingEntity){
                 if(entity instanceof Monster){
@@ -192,7 +185,7 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
             }
             if(health <= 0)
             {
-                onDeath();
+                destroyVehicle();
             }
         }
         return true;
@@ -201,14 +194,6 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
     public void onHurt()
     {
         world.playSound(this, "ww2:mechhurt", 1.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
-    }
-
-    public void onDeath()
-    {
-        if(deathTime == -13)
-        {
-            deathTime = automobile.DEATH_TIME_MAX;
-        }
     }
 
     @Override
@@ -241,7 +226,7 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
             }
             return true;
         }
-        if(entityplayer.getHand() != null && entityplayer.getHand().itemId == ItemCasingListener.itemWrenchGold.id) /// DEBUG
+        if(entityplayer.getHand() != null && entityplayer.getHand().itemId == mod_Vehicles.wrenchGoldDebug.id) /// DEBUG
         {
             System.out.println("TYPE: " + automobile.name);
             System.out.println("ENGINE: " + engineType);
@@ -289,6 +274,14 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
     public void tick()
     {
         super.tick();
+        if(world.isRemote){
+            if(!receivedP){
+                receivedP = true;
+                PacketHelper.send(new TruckLoadPacket(this.id));
+            }
+            remoteTick();
+            return;
+        }
         prevX = x;
         prevY = y;
         prevZ = z;
@@ -313,12 +306,12 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
                 if(getSpeed() != 0.0D)
                 {
                     double d4 = 0.0D;
-                    if(vehicleFuel > 0 && minecraft.currentScreen == null && Keyboard.isKeyDown(minecraft.options.leftKey.code))
+                    if(vehicleFuel > 0 && clientLEFT)
                     {
                         d4 = -getTurnSpeed() * (double)(flag1 ? 1 : -1);
                         wheelsYaw = (float)((double)wheelsYaw - 0.5D * getTurnSpeed());
                     } else
-                    if(vehicleFuel > 0 && minecraft.currentScreen == null && Keyboard.isKeyDown(minecraft.options.rightKey.code))
+                    if(vehicleFuel > 0 && clientRIGHT)
                     {
                         d4 = getTurnSpeed() * (double)(flag1 ? 1 : -1);
                         wheelsYaw = (float)((double)wheelsYaw + 0.5D * getTurnSpeed());
@@ -331,7 +324,7 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
                             rotSpeedM = 1.0D;
                         }
                         double d4car = d4*rotSpeedM;
-                        yaw += d4car;
+                        yaw += (float) d4car;
                         projectMotion(d4car);
                         /// Old
 //                        yaw += d4;
@@ -341,19 +334,16 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
                     lastTurnSpeed = d4 * (double)(flag1 ? 1 : -1);
                 }
                 double d5 = 0.0D;
-                if(passenger != null && minecraft.currentScreen == null)
+                if(vehicleFuel > 0 && clientFORWARD)
                 {
-                    if(vehicleFuel > 0 && Keyboard.isKeyDown(minecraft.options.forwardKey.code))
-                    {
-                        d5 = -(flag1 ? getAccelForward() : automobile.ACCEL_BRAKE);
-                        vehicleFuel--;
-                        flag = true;
-                    }else
-                    if(vehicleFuel > 0 && Keyboard.isKeyDown(minecraft.options.backKey.code))
-                    {
-                        d5 = flag1 ? automobile.ACCEL_BRAKE : getAccelBackward();
-                        flag = true;
-                    }
+                    d5 = -(flag1 ? getAccelForward() : automobile.ACCEL_BRAKE);
+                    vehicleFuel--;
+                    flag = true;
+                }else
+                if(vehicleFuel > 0 && clientBACK)
+                {
+                    d5 = flag1 ? automobile.ACCEL_BRAKE : getAccelBackward();
+                    flag = true;
                 }
                 if(d5 != 0.0D)
                 {
@@ -388,7 +378,7 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
         }
         if(uphillTicks > 0){ /// Spowolnienie pod Górke
             uphillTicks--;
-            multiplySpeed(automobile.UPHILL_SLOWDOWN); //TODO properties
+            multiplySpeed(automobile.UPHILL_SLOWDOWN);
         }
         move(velocityX, velocityY, velocityZ);
         int i = flag1 ? 1 : -1;
@@ -424,7 +414,7 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
             velocityY = y - prevY - automobile.FALL_SPEED;
         }
         lastOnGround = onGround;
-        List list = world.getEntities(this, boundingBox.expand(0.20000000000000001D, 0.0D, 0.20000000000000001D));
+        List list = world.getEntities(this, boundingBox.expand(0.2D, 0.0D, 0.2D));
         if(list != null && list.size() > 0)
         {
             for(int j = 0; j < list.size(); j++)
@@ -437,7 +427,7 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
             }
 
         }
-        ///
+        /// Spowolnienie na tyle duże, że kwalfikowane jako kolizja
         if(passenger != null && getPrevSpeed() - getSpeed() > automobile.COLLISION_SPEED_MIN)
         {
             if(lastCollidedEntity != null)
@@ -491,29 +481,6 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
             if(health < automobile.MAX_HEALTH)
                 spawnParticles("smoke", 4, false);
         }
-        if(health > 0 && deathTime != -13)
-        {
-            deathTime = -13;
-        }
-        if(deathTime >= 0)
-        {
-            if(deathTime == 0)
-            {
-                Explosion explosion = new Explosion(world, null, x, (float)y, (float)z, 3F);
-                explosion.explode();
-                world.playSound(x, y, z, "random.explode", 4F, (1.0F + (world.random.nextFloat() - world.random.nextFloat()) * 0.2F) * 0.7F);
-                spawnParticles("explode", 64, true);
-                spawnParticles("smoke", 64, true);
-                dropParts();
-                markDead();
-            } else
-            if(random.nextInt(automobile.DEATH_TIME_MAX) > deathTime)
-            {
-//                spawnParticles("flame", 8, false);
-                spawnParticles("lava", 8, false);
-            }
-            deathTime--;
-        }
         if(passenger != null)
         {
             if(soundLoopTime <= 0 && vehicleFuel > 0)
@@ -554,18 +521,39 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
         {
             updateTowedPosition();
         }
-            if(velocityY > 0) {
-                velocityY = -0.001;
-            }
-            wheelsAngle += (float)getSpeed() / 2F;
-            if(wheelsAngle > 3600)
-                wheelsAngle = 0;
-
-        if(!spawnedSeats){
+        if(velocityY > 0) { /// Anty-Podskakiwanie
+            velocityY = -0.001;
+        }
+        wheelsAngle += (float)getSpeed() / 2F;
+        if(wheelsAngle > 3600){
+            wheelsAngle = 0;
+        }
+        if(!spawnedSeats){ /// Pass-Seat Spawn
             spawnedSeats = true;
             this.seats = new EntityPassengerSeat[automobile.numPassengers];
             addPassengerSeats();
         }
+        if(!world.isRemote){ /// Server Data-Tracker send
+            setOnGround(this.onGround);
+            setClientYaw(yaw);
+            setClientWheels(wheelsYaw);
+            this.dataTracker.set(29, health);
+        }
+    }
+
+    public void tickEffects(){
+
+    }
+
+    public void destroyVehicle(){
+        Explosion explosion = new Explosion(world, null, x, (float)y, (float)z, 3F);
+        explosion.explode();
+        world.playSound(x, y, z, "random.explode", 4F, (1.0F + (world.random.nextFloat() - world.random.nextFloat()) * 0.2F) * 0.7F);
+        spawnParticles("explode", 32, true);
+        spawnParticles("smoke", 32, true);
+        spawnParticles("lava", 32, false);
+        dropParts();
+        markDead();
     }
 
     public void dropParts(){
@@ -687,11 +675,11 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
     {
         if((double)(f - pitch) > automobile.ROTATION_PITCH_DELTA_MAX)
         {
-            pitch += automobile.ROTATION_PITCH_DELTA_MAX;
+            pitch += (float) automobile.ROTATION_PITCH_DELTA_MAX;
         } else
         if((double)(pitch - f) > automobile.ROTATION_PITCH_DELTA_MAX)
         {
-            pitch -= automobile.ROTATION_PITCH_DELTA_MAX;
+            pitch -= (float) automobile.ROTATION_PITCH_DELTA_MAX;
         } else
         {
             pitch = f;
@@ -727,7 +715,7 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
     public float getTurnSpeedForRender()
     {
         return (float)(lastTurnSpeed * automobile.TURN_SPEED_RENDER_MULT);
-    }    //?
+    }
 
     @Override
     public float getEyeHeight()
@@ -823,7 +811,6 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
         }
 
         nbttagcompound.putInt("Health", health);
-        nbttagcompound.putInt("DeathTime", deathTime);
         nbttagcompound.put("Items", nbttaglist);
         nbttagcompound.putInt("Engine", engineType);
         nbttagcompound.putInt("Fuel", vehicleFuel);
@@ -852,7 +839,6 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
         }
 
         health = nbttagcompound.getInt("Health");
-        deathTime = nbttagcompound.getInt("DeathTime");
         vehicleFuel = nbttagcompound.getInt("Fuel");
         engineType = nbttagcompound.getInt("Engine");
         if(engineType < 1)
@@ -893,8 +879,8 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
 //            double d6 = Math.sin(((double)0 / 180D) * 3.1415926535897931D);
             /// Simple no drop freeze
 
-            double d7 = Math.cos(((double)yaw * 3.1415926535897931D) / 180D) * 0.40000000000000002D * d5;
-            double d8 = Math.sin(((double)yaw * 3.1415926535897931D) / 180D) * 0.40000000000000002D * d5;
+            double d7 = Math.cos(((double)yaw * 3.1415926535897931D) / 180D) * 0.4D * d5;
+            double d8 = Math.sin(((double)yaw * 3.1415926535897931D) / 180D) * 0.4D * d5;
             double d9 = (d * d5 - d1 * d6) * d3 + d2 * d4;
             double d10 = d * d6 + d1 * d5;
             double d11 = (d1 * d6 - d * d5) * d4 + d2 * d3;
@@ -919,8 +905,8 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
             double d4 = -Math.sin(((double)(-yaw) / 180D) * 3.1415926535897931D);
             double d5 = Math.cos(((double)pitch / 180D) * 3.1415926535897931D);
             double d6 = Math.sin(((double)pitch / 180D) * 3.1415926535897931D);
-            double d7 = Math.cos(((double)(yaw) * 3.1415926535897931D) / 180D) * 0.40000000000000002D * d5;
-            double d8 = Math.sin(((double)(yaw) * 3.1415926535897931D) / 180D) * 0.40000000000000002D * d5;
+            double d7 = Math.cos(((double)(yaw) * 3.1415926535897931D) / 180D) * 0.4D * d5;
+            double d8 = Math.sin(((double)(yaw) * 3.1415926535897931D) / 180D) * 0.4D * d5;
             double d9 = (d * d5 - d1 * d6) * d3 + d2 * d4;
             double d10 = d * d6 + d1 * d5;
             double d11 = (d1 * d6 - d * d5) * d4 + d2 * d3;
@@ -962,49 +948,29 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
         return (vehicleFuel * i) / automobile.vehicleFuelAdd;
     }
 
-    private double lastTurnSpeed;
-    public boolean lastOnGround;
-    public int health;
-    public double prevMotionX;
-    public double prevMotionY;
-    public double prevMotionZ;
-    public Entity lastCollidedEntity;
-    public Entity towingEntity;
-    Minecraft minecraft = (Minecraft) FabricLoader.getInstance().getGameInstance();
-
-    public int deathTime;
-    public int soundLoopTime;
-    public float wheelsYaw;
-    public float prevRotationRoll;
-    public RotatedAxes axes;
-    public int engineType;
-    public float wheelsAngle;
-    public ItemStack[] cargoItems;
-    public int inventorySize;
-    private int vehicleFuel;
-    public TruckType automobile;
-
-    public boolean spawnedSeats;
-    public EntityPassengerSeat[] seats;
-    public int uphillTicks;
-
     @Override
-    public void inventoryKey(Minecraft minecraft, PlayerEntity entityplayer) {
-        if (minecraft.currentScreen instanceof GuiTruck) {
-            minecraft.setScreen(null);
-        } else if (passenger.vehicle instanceof EntityTruck) {
-            minecraft.setScreen(new GuiTruck(((PlayerEntity)passenger).inventory, (EntityTruck) passenger.vehicle));
-        }
+    public void setControls(boolean forward, boolean back, boolean left, boolean right, boolean up, boolean down, boolean fire) {
+        clientFORWARD = forward;
+        clientBACK = back;
+        clientLEFT= left;
+        clientRIGHT= right;
+        clientUP= up;
+        clientDOWN= down;
+        clientFIRE= fire;
     }
 
     @Override
-    public void exitKey(PlayerEntity entityplayer) {
+    public void reloadKey() {
+
+    }
+
+    @Override
+    public void exitKey(PlayerEntity playerEntity) {
         passenger.setVehicle(this);
         int j = 0;
-        //todo na szybko wolf exit - crashuje.
-        while(j < automobile.numPassengers)
+        while(j < automobile.numPassengers) //todo na szybko zrobione
         {
-            if(seats[j].passenger != null)
+            if(seats[j].passenger != null) //todo żeby gracza nie wywaliło
             {
                 seats[j].passenger.setVehicle(null);
 //                entitywolf.setVehicle(seats[j]);
@@ -1014,34 +980,295 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck {
     }
 
     @Override
-    public void towKey(PlayerEntity entityplayer) {
-            if(towingEntity == null)
-            {
-                List list = world.getEntities(this, boundingBox.expand(0.10000000000000001D, 0.0D, 0.10000000000000001D));
-                if(list != null && list.size() > 0)
-                {
-                    for(int j2 = 0; j2 < list.size(); j2++)
-                    {
-                        Entity entity = (Entity)list.get(j2);
+    public void inventoryKey(PlayerEntity playerEntity) {
+        GuiHelper.openGUI(
+                playerEntity,
+                Identifier.of(Namespace.of("ww2"), "openTruck"),
+                this,
+                new InventoryTruck(playerEntity.inventory, this)
+        );
+    }
 
-                        if(entity instanceof WW2Cannon && towingEntity == null)
-                        {
-                            towEntity(entity);
-                        }else
-                        {
-                            entity.onCollision(this);
-                        }
-                    }
-                }
-            }else{
-                towEntity(towingEntity);
-            }
+    @Override
+    public void bombKey() {
 
     }
 
     @Override
-    public int getPercentHealth() { /// co to?
+    public void rocketKey() {
+        if(towingEntity == null)
+        {
+            List list = world.getEntities(this, boundingBox.expand(0.1D, 0.0D, 0.1D));
+            if(list != null && list.size() > 0)
+            {
+                for(int j2 = 0; j2 < list.size(); j2++)
+                {
+                    Entity entity = (Entity)list.get(j2);
+
+                    if(entity instanceof WW2Cannon && towingEntity == null)
+                    {
+                        towEntity(entity);
+                    }else
+                    {
+                        entity.onCollision(this);
+                    }
+                }
+            }
+        }else{
+            towEntity(towingEntity);
+        }
+    }
+
+    @Override
+    public int getPercentHealth() {
+        return (int) (((double)health/(double)automobile.MAX_HEALTH)*100D);
+    }
+
+    @Override
+    public float getArmorFactor() {
         return 0;
     }
 
+    @Override
+    public float getDmgReduce() {
+        return 0;
+    }
+
+    @Override
+    public float getDmgBroken() {
+        return 0;
+    }
+
+    @Override
+    public String getAmmoName() {
+        return "";
+    }
+
+    @Override
+    public String getBombName() {
+        return "";
+    }
+
+    @Override
+    public Identifier getHandlerIdentifier() {
+        return Identifier.of(mod_Vehicles.MOD_ID, "Truck");
+    }
+
+    boolean clientFORWARD = false;
+    boolean clientBACK = false;
+    boolean clientLEFT= false;
+    boolean clientRIGHT= false;
+    boolean clientUP= false;
+    boolean clientDOWN= false;
+    boolean clientFIRE= false;
+
+    private double lastTurnSpeed;
+    public boolean lastOnGround;
+    public int health;
+    public double prevMotionX;
+    public double prevMotionY;
+    public double prevMotionZ;
+    public Entity lastCollidedEntity;
+    public Entity towingEntity;
+
+    public int soundLoopTime;
+    public float wheelsYaw;
+    public float prevRotationRoll;
+    public RotatedAxes axes;
+    public int engineType;
+    public float wheelsAngle; //TODO po co to??
+    public ItemStack[] cargoItems;
+    public int inventorySize;
+    public int vehicleFuel;
+    public TruckType automobile;
+
+    public boolean spawnedSeats;
+    public EntityPassengerSeat[] seats;
+    public int uphillTicks;
+    public boolean receivedP = false;
+
+    /// Client interpolation and pos/rot
+    @Environment(EnvType.CLIENT)
+    private int clientInterpolationSteps;
+    @Environment(EnvType.CLIENT)
+    private double clientX;
+    @Environment(EnvType.CLIENT)
+    private double clientY;
+    @Environment(EnvType.CLIENT)
+    private double clientZ;
+    @Environment(EnvType.CLIENT)
+    private double clientYaw;
+    @Environment(EnvType.CLIENT)
+    private double clientPitch;
+    @Environment(EnvType.CLIENT)
+    private double clientPrevY;
+
+    /// Client velocity
+    @Environment(EnvType.CLIENT)
+    public double clientVelocityX;
+    @Environment(EnvType.CLIENT)
+    public double clientVelocityY;
+    @Environment(EnvType.CLIENT)
+    public double clientVelocityZ;
+    public boolean lastOnClientGround;
+
+    @Override
+    @Environment(EnvType.CLIENT)
+    public void setPositionAndAnglesAvoidEntities(double x, double y, double z, float pitch, float yaw, int interpolationSteps) {
+        clientX = x;
+        clientY = y;
+        clientZ = z;
+        clientYaw = pitch;
+        clientPitch = yaw;
+        clientInterpolationSteps = interpolationSteps + 1;
+    }
+
+    @Override
+    @Environment(EnvType.CLIENT)
+    public void setVelocityClient(double x, double y, double z) {
+        clientVelocityX = x;
+        clientVelocityY = y;
+        clientVelocityZ = z;
+    }
+
+    @Override
+    protected void initDataTracker()
+    {
+        dataTracker.startTracking(16, (byte) 0); //onGround
+        dataTracker.startTracking(17, 0); //Yaw
+        dataTracker.startTracking(18, 0); //Wheels
+
+        dataTracker.startTracking(29, 0); //HEALTH
+    }
+
+    public void remoteTick(){
+        if(clientInterpolationSteps == 0 || automobile == null){
+            return;
+        }
+        onGround = getOnGround();
+//        double xt = x + (clientX - x) / clientInterpolationSteps;
+//        double yt = y + (clientY - y) / 2;
+//        double zt = z + (clientZ - z) / clientInterpolationSteps;
+
+//        double xt = x + (clientX - x) / ((double) clientInterpolationSteps - 0.5D);
+//        double yt = y + (clientY - y) / ((double) clientInterpolationSteps - 1.5D);
+//        double zt = z + (clientZ - z) / ((double) clientInterpolationSteps - 0.5D);
+
+        double xt = x + (clientX - x) / ((double) clientInterpolationSteps - 0.5D);
+        double yt = y + (clientY - y) / ((double) clientInterpolationSteps - 2.5D);
+        double zt = z + (clientZ - z) / ((double) clientInterpolationSteps - 0.5D);
+
+        boolean flag1 = true;
+        if(getClientSpeed() != 0.0D)
+        {
+            double d2 = (yaw * 3.1415926535897931D) / 180D;
+            double d6 = Math.cos(d2);
+            flag1 = -d6 > 0.0D && clientVelocityX > 0.0D || -d6 < 0.0D && clientVelocityX < 0.0D;
+        }
+        int i = flag1 ? 1 : -1;
+        if(onGround && lastOnClientGround)
+        {
+            if(clientPrevY - clientY > 0.2D)
+            {
+                pitch = 45 * i;
+            } else
+            if(clientPrevY - clientY < -0.2D)
+            {
+                pitch = -45 * i;
+            } else
+            {
+                pitch = 0.0F;
+            }
+        } else
+        {
+            setRotationPitch(Math.max(Math.min((float)((-90D * clientVelocityY) / getClientSpeed()) * (float)i, 90F), -90F) / 2.0F);
+        }
+        lastOnClientGround = onGround;
+        clientPrevY = clientY;
+
+        float merkar2 = getClientYaw();
+        float angleYaw = merkar2 % 360.0F;
+
+        float prevRYaw = yaw;
+        double yrd = angleYaw - yaw;
+        while (yrd < 180F) yrd += 360F;
+        while (yrd > 180.0F) yrd -= 360.0F;
+        yaw += (float) (yrd / (clientInterpolationSteps - 2)); /// 0
+
+        double pyrd1 = yaw - prevRYaw; //
+        setPosition(xt, yt, zt);
+        setRotation(yaw, pitch);
+        clientInterpolationSteps--;
+
+        if(pyrd1 == 0.0D){
+        }
+        if(pyrd1 < 0.0D){ /// lewo-prawo??
+            wheelsYaw = (float)((double)wheelsYaw - 0.5D * getClientTurnSpeedRender());
+        }
+        if(pyrd1 > 0.0D){ // yrd
+            wheelsYaw = (float)((double)wheelsYaw + 0.5D * getTurnSpeed());
+        }
+        this.wheelsYaw *= 0.8F;
+        if(this.wheelsYaw > 10.0F) {
+            this.wheelsYaw = 10.0F;
+        }
+
+        if(this.wheelsYaw < -10.0F) {
+            this.wheelsYaw = -10.0F;
+        }
+
+//        wheelsYaw = getClientWheels();
+        health = dataTracker.getInt(29);
+    }
+
+    public double getClientSpeed()
+    {
+        return Math.sqrt(clientVelocityX * clientVelocityX + clientVelocityZ * clientVelocityZ);
+    }
+
+    public double getClientTurnSpeedRender()
+    {
+        return scaleOnClientSpeed((automobile.TURN_SPEED_STOPPED + engineType*0.5D), (automobile.TURN_SPEED_FULL + engineType*0.25D));
+    }
+
+    public double scaleOnClientSpeed(double d, double d1)
+    {
+        return d - (d - d1) * (getClientSpeed() / (automobile.MAX_SPEED + engineType*0.03D));
+    }
+
+    //GROUND
+    public boolean getOnGround()
+    {
+        return (dataTracker.getByte(16) & 1) != 0;
+    }
+    public void setOnGround(boolean flag)
+    {
+        if(flag)
+        {
+            dataTracker.set(16, (byte) 1);
+        } else
+        {
+            dataTracker.set(16, (byte) 0);
+        }
+    }
+
+    //YAW
+    public void setClientYaw(float age)
+    {
+        dataTracker.set(17, Float.floatToRawIntBits(age));
+    }
+    public float getClientYaw()
+    {
+        return Float.intBitsToFloat(dataTracker.getInt(17));
+    }
+
+    //YAW
+    public void setClientWheels(float wheelAngle)
+    {
+        dataTracker.set(18, Float.floatToRawIntBits(wheelAngle));
+    }
+    public float getClientWheels()
+    {
+        return Float.intBitsToFloat(dataTracker.getInt(18));
+    }
 }

@@ -1,16 +1,11 @@
 package net.kozibrodka.ww2.test164;
 
 import net.fabricmc.loader.api.FabricLoader;
-import net.kozibrodka.sdk_api.events.ingame.mod_SdkFlasher;
-import net.kozibrodka.sdk_api.events.init.ItemCasingListener;
-import net.kozibrodka.sdk_api.events.init.ww2Parts;
-import net.kozibrodka.sdk_api.events.utils.*;
-import net.kozibrodka.ww2.entity.EntityAAShell;
+import net.kozibrodka.sdk_api.utils.*;
 import net.kozibrodka.ww2.entity.EntityPassengerSeat;
-import net.kozibrodka.ww2.entity.EntityShell;
 import net.kozibrodka.ww2.entity.RotatedAxes;
 import net.kozibrodka.ww2.events.mod_Vehicles;
-import net.kozibrodka.ww2.gui.GuiVehicle;
+import net.kozibrodka.ww2.events.ww2Parts;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
@@ -32,7 +27,7 @@ import org.lwjgl.input.Keyboard;
 import java.util.List;
 
 public class EntityVehicleTEST164 extends Entity implements Inventory, WW2Tank {
-
+    //todo outdated interface...
     public EntityVehicleTEST164(World world)
     {
         super(world);
@@ -192,7 +187,7 @@ public class EntityVehicleTEST164 extends Entity implements Inventory, WW2Tank {
             }
             return true;
         }
-        if(entityplayer.getHand() != null && entityplayer.getHand().itemId == ItemCasingListener.itemWrenchGold.id)
+        if(entityplayer.getHand() != null && entityplayer.getHand().itemId == mod_Vehicles.wrenchGoldDebug.id)
         {
             System.out.println("TYPE: " + automobile.name);
             System.out.println("ENGINE: " + engineType);
@@ -925,160 +920,160 @@ public class EntityVehicleTEST164 extends Entity implements Inventory, WW2Tank {
     public boolean reloadKeyDown;
     public boolean rocketKeyDown;
 
-    @Override
-    public void firePrimaryKey(PlayerEntity entityplayer) {
-        if(automobile.antiAircraft){
-            if(world.isRemote || shellDelay > 0 || !automobile.hasTurret)
-            {
-                return;
-            }
-            int k2 = 0;
-            for(int j1 = automobile.numCargoSlots + automobile.numBulletSlots + 1; j1 < automobile.numCargoSlots + automobile.numBulletSlots + automobile.numShellSlots + 1; j1++)
-            {
-                if(cargoItems[j1] != null && cargoItems[j1].itemId == mod_Vehicles.aaShellTank.id)
-                {
-                    k2 = j1;
-                }
-            }
-
-            if(k2 != 0)
-            {
-                double d2 = (double)automobile.shellXOffset / 16D;
-                double d4 = 0.0D;
-                double d6 = (double)automobile.shellZOffset / 16D;
-                double d8 = Math.cos(((double)(-(yaw + gunYawShoot)) / 180D) * 3.1415926535897931D);
-                double d10 = Math.sin(((double)(-(yaw + gunYawShoot)) / 180D) * 3.1415926535897931D);
-                double d12 = Math.cos(((double)(-(pitch + gunPitch)) / 180D) * 3.1415926535897931D);
-                double d14 = Math.sin(((double)(-(pitch + gunPitch)) / 180D) * 3.1415926535897931D);
-                double d16 = (d2 * d12 - d4 * d14) * d8 + d6 * d10;
-                double d18 = d2 * d14 + d4 * d12;
-                double d20 = (d4 * d14 - d2 * d12) * d10 + d6 * d8;
-
-                world.spawnEntity(new EntityAAShell(world, x + d16, y + d18 + (automobile.shellYOffset / 16D), z + d20, d16 / 3D, d18 / 3D, d20 / 3D, automobile.gunDamage, automobile.gunVelocity, automobile.gunSpread, automobile.gunFlakRange));
-                world.playSound(this, automobile.shootSound, 1.0F, 1.0F);
-
-                mod_SdkFlasher.LightEntity(world, this, 15, 2);
-                removeStack(k2, 1);
-                shellDelay = automobile.vehicleShellDelay;
-                automobile.shellZOffset = -automobile.shellZOffset;
-            }
-        }else{
-            if(world.isRemote || shellDelay > 0 || !automobile.hasTurret)
-            {
-                return;
-            }
-            int k = 0;
-            int shellID;
-            if(shootExplosive){
-                shellID = mod_Vehicles.tankShellHE.id;
-            }else{
-                shellID = mod_Vehicles.tankShell.id;
-            }
-            for(int j1 = automobile.numCargoSlots + automobile.numBulletSlots + 1; j1 < automobile.numCargoSlots + automobile.numBulletSlots + automobile.numShellSlots + 1; j1++)
-            {
-                if(cargoItems[j1] != null && cargoItems[j1].itemId == shellID)
-                {
-                    k = j1;
-                }
-            }
-
-            if(k != 0)
-            {
-                double d2 = (double)automobile.shellXOffset / 16D;
-                double d4 = 0.0D;
-                double d6 = (double)automobile.shellZOffset / 16D;
-                double d8 = Math.cos(((double)(-(yaw + gunYawShoot)) / 180D) * 3.1415926535897931D);
-                double d10 = Math.sin(((double)(-(yaw + gunYawShoot)) / 180D) * 3.1415926535897931D);
-                double d12 = Math.cos(((double)(-(pitch + gunPitch)) / 180D) * 3.1415926535897931D);
-                double d14 = Math.sin(((double)(-(pitch + gunPitch)) / 180D) * 3.1415926535897931D);
-                double d16 = (d2 * d12 - d4 * d14) * d8 + d6 * d10;
-                double d18 = d2 * d14 + d4 * d12;
-                double d20 = (d4 * d14 - d2 * d12) * d10 + d6 * d8;
-
-                world.spawnEntity(new EntityShell(world, x + d16, y + d18 + (automobile.shellYOffset / 16D), z + d20, d16 / 3D, d18 / 3D, d20 / 3D, shootExplosive, automobile.gunDamage, automobile.gunVelocity, automobile.gunSpread));
-//                ((SdkItemGun)gunMachineGun.getType()).onItemRightClickEntity(gunMachineGun, level, passenger, (float)(automobile.shellXOffset / 16D), (float)(automobile.shellYOffset / 16D), (float)(automobile.shellZOffset / 16D), 90F, 0.0F); //machine gun
-                world.playSound(this, automobile.shootSound, 1.0F, 1.0F);
-
-                mod_SdkFlasher.LightEntity(world, this, 15, 2);
-                removeStack(k, 1);
-                shellDelay = automobile.vehicleShellDelay;
-            }
-        }
-    }
-
-    @Override
-    public void fireSecondaryKey(PlayerEntity entityplayer) {
-        if(world.isRemote || shootDelay > 0 || !automobile.hasGuns)
-        {
-            return;
-        }
-        int j = 0;
-        for(int i1 = automobile.numCargoSlots + 1; i1 < automobile.numCargoSlots + automobile.numBulletSlots + 1; i1++)
-        {
-            if(cargoItems[i1] != null && cargoItems[i1].itemId == mod_Vehicles.tankBullet.id)
-            {
-                j = i1;
-            }
-        }
-
-        if(j != 0)
-        {
-            ((SdkItemGun)automobile.gunMachineGun.getItem()).onItemRightClickEntity(gunMachineGun, world, this, (float)(automobile.barrelX / 16D), (float)(automobile.barrelY / 16D), (float)(automobile.barrelZ / 16D), 90F, 0.0F); //machine gun
-            removeStack(j, 1);
-            shootDelay = automobile.vehicleShootDelay;
-        }
-    }
-
-    @Override
-    public void inventoryKey(Minecraft minecraft, PlayerEntity entityplayer) {
-        if (minecraft.currentScreen instanceof GuiVehicle) {
-            minecraft.setScreen(null);
-        } else if (passenger.vehicle instanceof EntityVehicleTEST164) {
-//            minecraft.setScreen(new GuiVehicle(((PlayerEntity)passenger).inventory, (EntityVehicleTEST164) passenger.vehicle));
-        }
-    }
-
-    @Override
-    public void exitKey(PlayerEntity entityplayer) {
-        passenger.setVehicle(this);
-    }
-
-    @Override
-    public void towKey(PlayerEntity entityplayer) {
-        if(automobile.specialWeapon == "haul")
-        {
-            if(towingEntity == null)
-            {
-                List list = world.getEntities(this, boundingBox.expand(0.10000000000000001D, 0.0D, 0.10000000000000001D));
-                if(list != null && list.size() > 0)
-                {
-                    for(int j2 = 0; j2 < list.size(); j2++)
-                    {
-                        Entity entity = (Entity)list.get(j2);
-
-                        if(entity instanceof WW2Cannon && towingEntity == null)
-                        {
-                            towEntity(entity);
-                        }else
-                        {
-                            entity.onCollision(this);
-                        }
-                    }
-                }
-            }else{
-                towEntity(towingEntity);
-            }
-        }
-    }
-
-    @Override
-    public void reloadKey(PlayerEntity entityplayer) {
-        shootExplosive = !shootExplosive;
-        world.playSound(this, "ww2:tankreload", 1.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
-    }
-
-    @Override
-    public int getPercentHealth() {
-        return 0;
-    }
+//    @Override
+//    public void firePrimaryKey(PlayerEntity entityplayer) {
+//        if(automobile.antiAircraft){
+//            if(world.isRemote || shellDelay > 0 || !automobile.hasTurret)
+//            {
+//                return;
+//            }
+//            int k2 = 0;
+//            for(int j1 = automobile.numCargoSlots + automobile.numBulletSlots + 1; j1 < automobile.numCargoSlots + automobile.numBulletSlots + automobile.numShellSlots + 1; j1++)
+//            {
+//                if(cargoItems[j1] != null && cargoItems[j1].itemId == mod_Vehicles.aaShellTank.id)
+//                {
+//                    k2 = j1;
+//                }
+//            }
+//
+//            if(k2 != 0)
+//            {
+//                double d2 = (double)automobile.shellXOffset / 16D;
+//                double d4 = 0.0D;
+//                double d6 = (double)automobile.shellZOffset / 16D;
+//                double d8 = Math.cos(((double)(-(yaw + gunYawShoot)) / 180D) * 3.1415926535897931D);
+//                double d10 = Math.sin(((double)(-(yaw + gunYawShoot)) / 180D) * 3.1415926535897931D);
+//                double d12 = Math.cos(((double)(-(pitch + gunPitch)) / 180D) * 3.1415926535897931D);
+//                double d14 = Math.sin(((double)(-(pitch + gunPitch)) / 180D) * 3.1415926535897931D);
+//                double d16 = (d2 * d12 - d4 * d14) * d8 + d6 * d10;
+//                double d18 = d2 * d14 + d4 * d12;
+//                double d20 = (d4 * d14 - d2 * d12) * d10 + d6 * d8;
+//
+//                world.spawnEntity(new EntityAAShell(world, x + d16, y + d18 + (automobile.shellYOffset / 16D), z + d20, d16 / 3D, d18 / 3D, d20 / 3D, automobile.gunDamage, automobile.gunVelocity, automobile.gunSpread, automobile.gunFlakRange));
+//                world.playSound(this, automobile.shootSound, 1.0F, 1.0F);
+//
+//                mod_SdkFlasher.LightEntity(world, this, 15, 2);
+//                removeStack(k2, 1);
+//                shellDelay = automobile.vehicleShellDelay;
+//                automobile.shellZOffset = -automobile.shellZOffset;
+//            }
+//        }else{
+//            if(world.isRemote || shellDelay > 0 || !automobile.hasTurret)
+//            {
+//                return;
+//            }
+//            int k = 0;
+//            int shellID;
+//            if(shootExplosive){
+//                shellID = mod_Vehicles.tankShellHE.id;
+//            }else{
+//                shellID = mod_Vehicles.tankShell.id;
+//            }
+//            for(int j1 = automobile.numCargoSlots + automobile.numBulletSlots + 1; j1 < automobile.numCargoSlots + automobile.numBulletSlots + automobile.numShellSlots + 1; j1++)
+//            {
+//                if(cargoItems[j1] != null && cargoItems[j1].itemId == shellID)
+//                {
+//                    k = j1;
+//                }
+//            }
+//
+//            if(k != 0)
+//            {
+//                double d2 = (double)automobile.shellXOffset / 16D;
+//                double d4 = 0.0D;
+//                double d6 = (double)automobile.shellZOffset / 16D;
+//                double d8 = Math.cos(((double)(-(yaw + gunYawShoot)) / 180D) * 3.1415926535897931D);
+//                double d10 = Math.sin(((double)(-(yaw + gunYawShoot)) / 180D) * 3.1415926535897931D);
+//                double d12 = Math.cos(((double)(-(pitch + gunPitch)) / 180D) * 3.1415926535897931D);
+//                double d14 = Math.sin(((double)(-(pitch + gunPitch)) / 180D) * 3.1415926535897931D);
+//                double d16 = (d2 * d12 - d4 * d14) * d8 + d6 * d10;
+//                double d18 = d2 * d14 + d4 * d12;
+//                double d20 = (d4 * d14 - d2 * d12) * d10 + d6 * d8;
+//
+//                world.spawnEntity(new EntityShell_OLD(world, x + d16, y + d18 + (automobile.shellYOffset / 16D), z + d20, d16 / 3D, d18 / 3D, d20 / 3D, shootExplosive, automobile.gunDamage, automobile.gunVelocity, automobile.gunSpread));
+////                ((SdkItemGun)gunMachineGun.getType()).onItemRightClickEntity(gunMachineGun, level, passenger, (float)(automobile.shellXOffset / 16D), (float)(automobile.shellYOffset / 16D), (float)(automobile.shellZOffset / 16D), 90F, 0.0F); //machine gun
+//                world.playSound(this, automobile.shootSound, 1.0F, 1.0F);
+//
+//                mod_SdkFlasher.LightEntity(world, this, 15, 2);
+//                removeStack(k, 1);
+//                shellDelay = automobile.vehicleShellDelay;
+//            }
+//        }
+//    }
+//
+//    @Override
+//    public void fireSecondaryKey(PlayerEntity entityplayer) {
+//        if(world.isRemote || shootDelay > 0 || !automobile.hasGuns)
+//        {
+//            return;
+//        }
+//        int j = 0;
+//        for(int i1 = automobile.numCargoSlots + 1; i1 < automobile.numCargoSlots + automobile.numBulletSlots + 1; i1++)
+//        {
+//            if(cargoItems[i1] != null && cargoItems[i1].itemId == mod_Vehicles.tankBullet.id)
+//            {
+//                j = i1;
+//            }
+//        }
+//
+//        if(j != 0)
+//        {
+//            ((SdkItemGun)automobile.gunMachineGun.getItem()).onItemRightClickEntity(gunMachineGun, world, this, (float)(automobile.barrelX / 16D), (float)(automobile.barrelY / 16D), (float)(automobile.barrelZ / 16D), 90F, 0.0F,0); //machine gun
+//            removeStack(j, 1);
+//            shootDelay = automobile.vehicleShootDelay;
+//        }
+//    }
+//
+//    @Override
+//    public void inventoryKey(Minecraft minecraft, PlayerEntity entityplayer) {
+//        if (minecraft.currentScreen instanceof GuiVehicle) {
+//            minecraft.setScreen(null);
+//        } else if (passenger.vehicle instanceof EntityVehicleTEST164) {
+////            minecraft.setScreen(new GuiVehicle(((PlayerEntity)passenger).inventory, (EntityVehicleTEST164) passenger.vehicle));
+//        }
+//    }
+//
+//    @Override
+//    public void exitKey(PlayerEntity entityplayer) {
+//        passenger.setVehicle(this);
+//    }
+//
+//    @Override
+//    public void towKey(PlayerEntity entityplayer) {
+//        if(automobile.specialWeapon == "haul")
+//        {
+//            if(towingEntity == null)
+//            {
+//                List list = world.getEntities(this, boundingBox.expand(0.10000000000000001D, 0.0D, 0.10000000000000001D));
+//                if(list != null && list.size() > 0)
+//                {
+//                    for(int j2 = 0; j2 < list.size(); j2++)
+//                    {
+//                        Entity entity = (Entity)list.get(j2);
+//
+//                        if(entity instanceof WW2Cannon && towingEntity == null)
+//                        {
+//                            towEntity(entity);
+//                        }else
+//                        {
+//                            entity.onCollision(this);
+//                        }
+//                    }
+//                }
+//            }else{
+//                towEntity(towingEntity);
+//            }
+//        }
+//    }
+//
+//    @Override
+//    public void reloadKey(PlayerEntity entityplayer) {
+//        shootExplosive = !shootExplosive;
+//        world.playSound(this, "ww2:tankreload", 1.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
+//    }
+//
+//    @Override
+//    public int getPercentHealth() {
+//        return 0;
+//    }
 }

@@ -21,7 +21,6 @@ public class PropertiesOld_T34 extends Vehicle_properties{
         specialWeapon = "haul";
 
         MAX_HEALTH = 500;
-        DEATH_TIME_MAX = 10;
         hasTurret = true;
         hasGuns = true;
         vehicleFuelAdd = 1000;
@@ -30,9 +29,6 @@ public class PropertiesOld_T34 extends Vehicle_properties{
         numCargoSlots = 5;
         numBulletSlots = 5;
         numShellSlots = 5;
-        gunDamage = 8;
-        gunVelocity = 3F;
-        gunSpread = 2F;
         autoWidth = 2.5F;
         autoHeight = 2.5F;
         standingOko = 0.625F;
@@ -48,6 +44,14 @@ public class PropertiesOld_T34 extends Vehicle_properties{
         gunYawMax = 180;
         gunPitchMin = -45;
         gunPitchMax = 5;
+
+        cannonDamage = 0; //toodo wszystko
+        cannonVehicleDamage = 0;
+        cannonPenetration = 0.0F;
+        cannonMuzzleVelocity = 0.0F;
+        cannonSpread = 0.0F;
+        cannonBulletDrop = 0.000F;
+        cannonExploPower = 0.0F;
 
         MAX_SPEED = 0.22D; //TODO: 0.9 do testów kolizji
         TURN_SPEED_STOPPED = 6D;

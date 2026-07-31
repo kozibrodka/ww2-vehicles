@@ -13,6 +13,10 @@ public class RenderTruck extends EntityRenderer {
     }
 
     public void func_157_a(EntityTruck vehicle, double d, double d1, double d2, float f, float f1) {
+        if(vehicle.automobile == null){
+            return;
+        }
+
         GL11.glPushMatrix();
         float f2 = vehicle.prevPitch + (vehicle.pitch - vehicle.prevPitch) * f1;
         GL11.glTranslatef((float)d, (float)d1, (float)d2);
@@ -34,6 +38,7 @@ public class RenderTruck extends EntityRenderer {
         GL11.glPopMatrix();
     }
 
+    @Override
     public void render(Entity entity, double d, double d1, double d2, float f, float f1) {
         this.func_157_a((EntityTruck)entity, d, d1, d2, f, f1);
     }

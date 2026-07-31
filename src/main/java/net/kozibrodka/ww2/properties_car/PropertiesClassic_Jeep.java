@@ -1,5 +1,6 @@
 package net.kozibrodka.ww2.properties_car;
 
+import net.kozibrodka.sdk_api.utils.SdkEnvTool;
 import net.kozibrodka.ww2.events.ww2Parts;
 import net.kozibrodka.ww2.events.mod_Vehicles;
 import net.kozibrodka.ww2.model_car.ModelJeep_Classic;
@@ -14,14 +15,15 @@ public class PropertiesClassic_Jeep extends Truck_properties {
         name = "classic_Jeep";
         longName = "Willy's Jeep";
         texture = "Jeep.png";
-        model = new ModelJeep_Classic();
+        if(SdkEnvTool.isEnvClient()) {
+            model = new ModelJeep_Classic();
+        }
         SOUND_RIDING = "ww2:engine";
         shootSound = "ww2:tankshell";
         SOUND_LOOP_TIME_MAX = 20;
         przedmiot = mod_Vehicles.vehicleClassic_WillysJeep;
 
         MAX_HEALTH = 200;
-        DEATH_TIME_MAX = 100;
         vehicleFuelAdd = 1000;
         numCargoSlots = 5;
         autoWidth = 1.8F;

@@ -1,7 +1,8 @@
 package net.kozibrodka.ww2.entity;
 
 
-import net.kozibrodka.sdk_api.events.utils.SdkEntityBullet;
+import net.kozibrodka.sdk_api.utils.SdkEntityBullet;
+import net.kozibrodka.sdk_api.utils.SdkItemGun;
 import net.kozibrodka.ww2.events.mod_Vehicles;
 import net.kozibrodka.ww2.item.SdkItemGunMachineGun;
 import net.minecraft.entity.Entity;
@@ -21,16 +22,17 @@ public class SdkEntityBulletMachineGun extends SdkEntityBullet {
         setBoundingBoxSpacing(0.35F, 0.35F);
     }
 
-    public SdkEntityBulletMachineGun(World world, Entity entity, SdkItemGunMachineGun sdkitemgun, float f, float f1, float f2, float f3,
+    public SdkEntityBulletMachineGun(World world, Entity entity, SdkItemGun sdkitemgun, float f, float f1, float f2, float f3,
                                      float f4)
     {
         super(world, entity, sdkitemgun, f, f1, f2, f3, f4);
         setBoundingBoxSpacing(0.35F, 0.35F);
     }
 
+    @Override
     public void playServerSound(World world)
     {
-        world.playSound(this, ((SdkItemGunMachineGun) mod_Vehicles.itemGunMachineGun).firingSound, ((SdkItemGunMachineGun)mod_Vehicles.itemGunMachineGun).soundRangeFactor, 1.0F / (random.nextFloat() * 0.1F + 0.95F));
+        world.playSound(this, ((SdkItemGun) mod_Vehicles.itemGunMachineGun).firingSound, ((SdkItemGun)mod_Vehicles.itemGunMachineGun).soundRangeFactor, 1.0F / (random.nextFloat() * 0.1F + 0.95F));
     }
 
     public void playImpactSound(World world){

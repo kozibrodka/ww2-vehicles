@@ -1,13 +1,25 @@
 package net.kozibrodka.ww2.entity;
 
+import net.kozibrodka.sdk_api.utils.SdkVehicle;
+import net.kozibrodka.ww2.events.mod_Vehicles;
+import net.kozibrodka.ww2.network.PassSeatLoadPacket;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
+import net.modificationstation.stationapi.api.network.packet.PacketHelper;
+import net.modificationstation.stationapi.api.server.entity.EntitySpawnDataProvider;
+import net.modificationstation.stationapi.api.server.entity.HasTrackingParameters;
+import net.modificationstation.stationapi.api.util.Identifier;
+import net.modificationstation.stationapi.api.util.TriState;
 
-public class EntityPassengerSeat extends Entity
+@HasTrackingParameters(trackingDistance = 240, updatePeriod = Integer.MAX_VALUE, sendVelocity = TriState.TRUE)
+public class EntityPassengerSeat extends Entity implements SdkVehicle, EntitySpawnDataProvider
 {
+
+    //TODO prawdopodobnie klasa Interface PassSeats potrzebna?
+    //TODO - ogólnie MESS klasa, wiele kodu do usunięcia po testach
 
     public EntityPassengerSeat(World world)
     {
@@ -55,9 +67,11 @@ public class EntityPassengerSeat extends Entity
     }
 
     @Override
-    public boolean damage(Entity entity1, int i)
+    public boolean damage(Entity entitySource, int i)
     {
-        System.out.println(entity1 + "  " + i);
+        if(entitySource != null){
+            mother.damage(entitySource, i);
+        }
         return true;
     }
 
@@ -78,7 +92,6 @@ public class EntityPassengerSeat extends Entity
         return entity1.boundingBox;
     }
 
-    /// todo Zdebuguj a aucie "hasCollided" zobacz czy to odpala się kiedy zatrzymuje...
     @Override
     public Box getBoundingBox() /// Kolizja przy chodzeniu/poruszaniu sie
     {
@@ -119,7 +132,6 @@ public class EntityPassengerSeat extends Entity
 //        prevYaw = yaw;
 //        prevPitch = pitch;
 
-
         /// GRANICA ///
 
         double d = relativeX;
@@ -127,7 +139,6 @@ public class EntityPassengerSeat extends Entity
         double d2 = relativeZ;
         double d3 = Math.cos(((double)(-mother.yaw) / 180D) * 3.1415926535897931D);
         double d4 = Math.sin(((double)(-mother.yaw) / 180D) * 3.1415926535897931D);
-
 
         double d5 = Math.cos(((double)mother.pitch / 180D) * 3.1415926535897931D); /// GÓRA - DÓŁ
         double d6 = Math.sin(((double)mother.pitch / 180D) * 3.1415926535897931D) * 0.5D; /// Przesunięcie PRZÓD-TYŁ
@@ -166,79 +177,44 @@ public class EntityPassengerSeat extends Entity
     {
     }
 
-
-//    @Override
-//    public void setPositionAndAnglesAvoidEntities(double d, double d1, double d2, float f,
-//                                                  float f1, int i)
-//    {
-//        field_9393_e = d;
-//        field_9392_f = d1;
-//        field_9391_g = d2;
-//        field_9390_h = f;
-//        field_9389_i = f1;
-//        field_9394_d = i + 4;
-//        velocityX = field_9388_j;
-//        velocityY = field_9387_k;
-//        velocityZ = field_9386_l;
-//    }
-//
-//    @Override
-//    public void setVelocityClient(double d, double d1, double d2)
-//    {
-//        field_9388_j = velocityX = d;
-//        field_9387_k = velocityY = d1;
-//        field_9386_l = velocityZ = d2;
-//    }
-
     public double getSpeed()
     {
         return Math.sqrt(velocityX * velocityX + velocityZ * velocityZ);
-    }
-
-    public void pressKey(int i)
-    {
-        if(i == 8)
-        {
-            passenger.setVehicle(this);
-        }
     }
 
     @Override
     public void tick()
     {
         super.tick();
-//        Minecraft minecraft = ModLoader.getMinecraftInstance();     //pass seat
-//        if(ModLoader.isGUIOpen(null) && minecraft.thePlayer.ridingEntity != null && minecraft.thePlayer.ridingEntity == this)
-//        {
-//            if(Keyboard.isKeyDown(KEY_INV))
-//            {
-//                pressKey(7);
-//            }
-//            if(Keyboard.isKeyDown(KEY_GETOUT))
-//            {
-//                pressKey(8);
-//            }
-//        }
-        ///
-        updateFromVehiclePosition();
-        if(world.isRemote)
-        {
-            if(field_9394_d > 0) /// To jest mechanika client interpelation steps... z dziwnymi nazwami....
-            {
-                double d = x + (field_9393_e - x) / (double)field_9394_d;
-                double d1 = y + (field_9392_f - y) / (double)field_9394_d;
-                double d2 = z + (field_9391_g - z) / (double)field_9394_d;
-                double d3;
-                for(d3 = field_9390_h - (double)yaw; d3 < -180D; d3 += 360D) { }
-                for(; d3 >= 180D; d3 -= 360D) { }
-                yaw += d3 / (double)field_9394_d;
-                pitch += (field_9389_i - (double)pitch) / (double)field_9394_d;
-                field_9394_d--;
-                setPosition(d, d1, d2);
-                setRotation(yaw, pitch);
+        if(world.isRemote){ //&& passenger != null
+            if(!receivedP){
+                receivedP = true;
+                PacketHelper.send(new PassSeatLoadPacket(this.id));
             }
+//            remoteTick();
+        }
+        if(mother == null){
             return;
         }
+        updateFromVehiclePosition();
+//        if(world.isRemote)
+//        {
+//            if(field_9394_d > 0) /// To jest mechanika client interpelation steps... z dziwnymi nazwami....
+//            {
+//                double d = x + (field_9393_e - x) / (double)field_9394_d;
+//                double d1 = y + (field_9392_f - y) / (double)field_9394_d;
+//                double d2 = z + (field_9391_g - z) / (double)field_9394_d;
+//                double d3;
+//                for(d3 = field_9390_h - (double)yaw; d3 < -180D; d3 += 360D) { }
+//                for(; d3 >= 180D; d3 -= 360D) { }
+//                yaw += d3 / (double)field_9394_d;
+//                pitch += (field_9389_i - (double)pitch) / (double)field_9394_d;
+//                field_9394_d--;
+//                setPosition(d, d1, d2);
+//                setRotation(yaw, pitch);
+//            }
+//            return;
+//        }
         if(mother == null || mother.dead)
         {
             markDead();
@@ -319,17 +295,6 @@ public class EntityPassengerSeat extends Entity
         return true;
     }
 
-    public boolean canPlayerUse(PlayerEntity entityplayer) //? czemu sie nie swieci //todo zla nazwa
-    {
-        if(dead)
-        {
-            return false;
-        } else
-        {
-            return entityplayer.getSquaredDistance(this) <= 64D;
-        }
-    }
-
     public int boatCurrentDamage;
     public int boatTimeSinceHit;
     public int boatRockDirection;
@@ -346,8 +311,74 @@ public class EntityPassengerSeat extends Entity
     private static int KEY_INV;
     public Entity mother;
     private int seatNumber;
-    private double relativeX;
-    private double relativeY;
-    private double relativeZ;
+    public double relativeX;
+    public double relativeY;
+    public double relativeZ;
     public double playerYOffset;
+    public boolean receivedP = false;
+
+    @Override
+    public void setControls(boolean b, boolean b1, boolean b2, boolean b3, boolean b4, boolean b5, boolean b6) {
+
+    }
+
+    @Override
+    public void reloadKey() {
+
+    }
+
+    @Override
+    public void exitKey(PlayerEntity playerEntity) {
+        passenger.setVehicle(null);
+    }
+
+    @Override
+    public void inventoryKey(PlayerEntity playerEntity) {
+
+    }
+
+    @Override
+    public void bombKey() {
+
+    }
+
+    @Override
+    public void rocketKey() {
+
+    }
+
+    @Override
+    public int getPercentHealth() {
+        return ((SdkVehicle)mother).getPercentHealth();
+    }
+
+    @Override
+    public float getArmorFactor() {
+        return ((SdkVehicle)mother).getArmorFactor();
+    }
+
+    @Override
+    public float getDmgReduce() {
+        return 0;
+    }
+
+    @Override
+    public float getDmgBroken() {
+        return 0;
+    }
+
+    @Override
+    public String getAmmoName() {
+        return "";
+    }
+
+    @Override
+    public String getBombName() {
+        return "";
+    }
+
+    @Override
+    public Identifier getHandlerIdentifier() {
+        return Identifier.of(mod_Vehicles.MOD_ID, "PassSeatVehicle");
+    }
 }

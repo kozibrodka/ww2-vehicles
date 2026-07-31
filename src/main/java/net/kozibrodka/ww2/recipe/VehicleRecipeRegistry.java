@@ -36,13 +36,13 @@ public class VehicleRecipeRegistry {
         for (int i = 0; i < VehicleType.types.size(); i++) {
             VehicleType vehicleType = (VehicleType) VehicleType.types.get(i);
             this.addShapedRecipeVehicle(new ItemStack(vehicleType.przedmiot, 1,1), vehicleType.itemlist1, vehicleType.itemlist2, vehicleType.itemlist3, vehicleType.itemlist4,
-                    'Q', vehicleType.item_mg,'W', vehicleType.item_turret,'E', vehicleType.item_cannon,'A', ww2Parts.smallEngine,'S', vehicleType.item_body,'D', vehicleType.dyeColor,'X', ww2Parts.trackPiece);
+                    'Q', vehicleType.item_mg,'W', vehicleType.item_turret,'E', vehicleType.item_cannon,'A', ww2Parts.smallEngine,'S', vehicleType.item_body,'D', vehicleType.dyeColor,'X', vehicleType.item_track);
 
             this.addShapedRecipeVehicle(new ItemStack(vehicleType.przedmiot, 1,2), vehicleType.itemlist1, vehicleType.itemlist2, vehicleType.itemlist3, vehicleType.itemlist4,
-                    'Q', vehicleType.item_mg,'W', vehicleType.item_turret,'E', vehicleType.item_cannon,'A', ww2Parts.mediumEngine,'S', vehicleType.item_body,'D', vehicleType.dyeColor,'X', ww2Parts.trackPiece);
+                    'Q', vehicleType.item_mg,'W', vehicleType.item_turret,'E', vehicleType.item_cannon,'A', ww2Parts.mediumEngine,'S', vehicleType.item_body,'D', vehicleType.dyeColor,'X', vehicleType.item_track);
 
             this.addShapedRecipeVehicle(new ItemStack(vehicleType.przedmiot, 1,3), vehicleType.itemlist1, vehicleType.itemlist2, vehicleType.itemlist3, vehicleType.itemlist4,
-                    'Q', vehicleType.item_mg,'W', vehicleType.item_turret,'E', vehicleType.item_cannon,'A', ww2Parts.largeEngine,'S', vehicleType.item_body,'D', vehicleType.dyeColor,'X', ww2Parts.trackPiece);
+                    'Q', vehicleType.item_mg,'W', vehicleType.item_turret,'E', vehicleType.item_cannon,'A', ww2Parts.largeEngine,'S', vehicleType.item_body,'D', vehicleType.dyeColor,'X', vehicleType.item_track);
         }
 
         for (int i = 0; i < TruckType.types.size(); i++) {
