@@ -5,6 +5,7 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.loader.FabricLoader;
 import net.kozibrodka.ww2.entity.EntityPassengerSeat;
 import net.kozibrodka.ww2.entity.EntityTruck;
+import net.kozibrodka.ww2.properties.PassengerSeatData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ClientPlayerEntity;
@@ -32,9 +33,7 @@ public class PassSeatLoadPacket extends Packet implements ManagedPacket<PassSeat
     private String playerPass = "";
     private int motherId;
     private int passId;
-    private double offSetX;
-    private double offSetY;
-    private double offSetZ;
+    private int seatNr;
 
     public PassSeatLoadPacket() {
     }
@@ -43,14 +42,12 @@ public class PassSeatLoadPacket extends Packet implements ManagedPacket<PassSeat
         this.entityId = id;
     }
 
-    public PassSeatLoadPacket(int id, int momId, String pass, int entId, double x, double y, double z) {
+    public PassSeatLoadPacket(int id, int momId, String pass, int entId, int numbero) {
         this.entityId = id;
         this.motherId = momId;
         this.playerPass = pass;
         this.passId = entId;
-        this.offSetX = x;
-        this.offSetY = y;
-        this.offSetZ = z;
+        this.seatNr = numbero;
     }
 
     @Override
@@ -60,9 +57,7 @@ public class PassSeatLoadPacket extends Packet implements ManagedPacket<PassSeat
             this.motherId = stream.readInt();
             this.playerPass = stream.readUTF();
             this.passId = stream.readInt();
-            this.offSetX = stream.readDouble();
-            this.offSetY = stream.readDouble();
-            this.offSetZ = stream.readDouble();
+            this.seatNr = stream.readInt();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -75,9 +70,7 @@ public class PassSeatLoadPacket extends Packet implements ManagedPacket<PassSeat
             stream.writeInt(this.motherId);
             stream.writeUTF(this.playerPass);
             stream.writeInt(this.passId);
-            stream.writeDouble(this.offSetX);
-            stream.writeDouble(this.offSetY);
-            stream.writeDouble(this.offSetZ);
+            stream.writeInt(this.seatNr);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -97,23 +90,31 @@ public class PassSeatLoadPacket extends Packet implements ManagedPacket<PassSeat
         if(player == null){
             return;
         }
-        Entity passSeatEntity = ((ClientWorld)player.world).getEntity(this.entityId);
-        if(passSeatEntity instanceof EntityPassengerSeat passSeat){
+        Entity entity = ((ClientWorld)player.world).getEntity(this.entityId);
+        if(entity instanceof EntityPassengerSeat passSeat){
 
             passSeat.mother = ((ClientWorld)player.world).getEntity(this.motherId);
-            passSeat.relativeX = this.offSetX;
-            passSeat.relativeY = this.offSetY;
-            passSeat.relativeZ = this.offSetZ; //todo: do zmiany system, bo jeszcze będą jakieś do Broni pass Seat milion opcji...
+            if(passSeat.mother == null){return;}
 
-            PlayerEntity jokey1 = player.world.getPlayer(this.playerPass);
-                if(jokey1 != null){
-                    jokey1.setVehicle(passSeat);
-                }
-            Entity passangerEnt = ((ClientWorld)player.world).getEntity(this.passId);
-            if(passangerEnt != null){
-                passangerEnt.setVehicle(passSeat);
+            PassengerSeatData passData = ((EntityTruck)passSeat.mother).automobile.passengerSeats[this.seatNr];
+            setPropsFromType(passSeat, passData);
+
+            PlayerEntity jokeyPl = player.world.getPlayer(this.playerPass);
+            if(jokeyPl != null){
+                jokeyPl.setVehicle(passSeat);
+            }
+            Entity jokeyLiv = ((ClientWorld)player.world).getEntity(this.passId);
+            if(jokeyLiv != null){
+                jokeyLiv.setVehicle(passSeat);
             }
         }
+    }
+
+
+    public void setPropsFromType(EntityPassengerSeat seat, PassengerSeatData data){
+        seat.relativeX = data.offSetX / 16D;
+        seat.relativeY = data.offSetY / 16D;
+        seat.relativeZ = data.offSetZ / 16D;
     }
 
     @Environment(EnvType.SERVER)
@@ -123,22 +124,18 @@ public class PassSeatLoadPacket extends Packet implements ManagedPacket<PassSeat
             return;
         }
 
-        Entity passSeatEntity = ((ServerWorld)player.world).getEntity(this.entityId);
+        Entity entity = ((ServerWorld)player.world).getEntity(this.entityId);
 
-        if(passSeatEntity instanceof EntityPassengerSeat passSeat){
+        if(entity instanceof EntityPassengerSeat passSeat){
             String sPass = "";
-            int ePass = 0;
+            int ePass = -1; /// jeżeli wyśle 0, czasami mob z ID zero wejdzie lokalnie na siedzenie
             if(passSeat.passenger instanceof PlayerEntity plPass){
                 sPass = plPass.name;
             } else if(passSeat.passenger instanceof LivingEntity livPass){
                 ePass = livPass.id;
             }
 
-//            ((EntityTruck)passSeat.mother).automobile.passengerSeats[0].offSetX; //TODO - dodać jedną dane kolejność passSeats i jedynie wysyłać nr. - bo jak bronie dojdą czy coś to za dużo będzie.
-
-            PacketHelper.sendTo(player, new PassSeatLoadPacket(passSeat.id, passSeat.mother.id, sPass, ePass, passSeat.relativeX, passSeat.relativeY, passSeat.relativeZ));
-//            PacketHelper.sendTo(player, new TruckLoadPacket(vehicleEntity.id, truck.automobile.name));
-//            PacketHelper.sendTo(player, new CarLoadPacket(vehicleEntity.id, vehicleEntity.yaw, vehicleEntity.pitch, vehicleEntity.onGround, landVeh.health, landVeh.gunA.itemId, landVeh.gunB.itemId, sPass));
+            PacketHelper.sendTo(player, new PassSeatLoadPacket(passSeat.id, passSeat.mother.id, sPass, ePass, passSeat.seatNumber));
 
         }
     }

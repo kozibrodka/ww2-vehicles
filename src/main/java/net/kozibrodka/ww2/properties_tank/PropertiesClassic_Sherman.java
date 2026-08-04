@@ -4,11 +4,11 @@ import net.kozibrodka.sdk_api.utils.SdkEnvTool;
 import net.kozibrodka.ww2.events.ww2Parts;
 import net.kozibrodka.ww2.events.mod_Vehicles;
 import net.kozibrodka.ww2.model_tank.ModelSherman_Classic;
-import net.kozibrodka.ww2.properties.Vehicle_properties;
+import net.kozibrodka.ww2.properties.Tank_properties;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-public class PropertiesClassic_Sherman extends Vehicle_properties {
+public class PropertiesClassic_Sherman extends Tank_properties {
 
     public PropertiesClassic_Sherman() {
         name = "classic_Sherman";
@@ -37,7 +37,7 @@ public class PropertiesClassic_Sherman extends Vehicle_properties {
         standingOko = 0F;
 
         playerYOffset = 2.2D;
-        playerXOffset = -0.5D;
+        playerXOffset = -0.4D;
         shellXOffset = 75;
         shellYOffset = 45;
         shellZOffset = 0;
@@ -79,7 +79,6 @@ public class PropertiesClassic_Sherman extends Vehicle_properties {
         COLLISION_DAMAGE_ENTITY = 30;
         COLLISION_DAMAGE_SELF = 10;
         COLLISION_DAMAGE = true;
-        COLLISION_FLIGHT_PLAYER = false;
         COLLISION_FLIGHT_ENTITY = true;
         UPHILL_SLOWDOWN = 0.9D; //todo tak samo jak auto na razie
 

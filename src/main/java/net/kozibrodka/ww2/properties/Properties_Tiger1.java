@@ -6,7 +6,7 @@ import net.kozibrodka.ww2.model.ModelTigerI;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-public class Properties_Tiger1 extends Vehicle_properties{
+public class Properties_Tiger1 extends Tank_properties {
 
     public Properties_Tiger1() {
 
@@ -68,7 +68,6 @@ public class Properties_Tiger1 extends Vehicle_properties{
         COLLISION_DAMAGE_ENTITY = 10;
         COLLISION_DAMAGE_SELF = 10;
         COLLISION_DAMAGE = true;
-        COLLISION_FLIGHT_PLAYER = false;
         COLLISION_FLIGHT_ENTITY = true;
 
         item_track =  new ItemStack(ww2Parts.trackPiece.id, 1, 0);

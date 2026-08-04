@@ -2,7 +2,7 @@ package net.kozibrodka.ww2.item;
 
 import net.kozibrodka.ww2.entity.EntityTank;
 import net.kozibrodka.ww2.events.mod_Vehicles;
-import net.kozibrodka.ww2.properties.VehicleType;
+import net.kozibrodka.ww2.properties.TankType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.hit.HitResult;
@@ -51,7 +51,7 @@ public class ItemVehicle extends TemplateItem {
             int i = movingobjectposition.blockX;
             int j = movingobjectposition.blockY;
             int k = movingobjectposition.blockZ;
-            VehicleType vehicletype = mod_Vehicles.getVehicleType(vehicleType);
+            TankType vehicletype = mod_Vehicles.getTankType(vehicleType);
             if(!world.isRemote)
             {
                 int l = itemstack.getDamage();

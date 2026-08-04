@@ -3,6 +3,7 @@ package net.kozibrodka.ww2.network;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.FabricLoader;
+import net.kozibrodka.ww2.entity.EntityTank;
 import net.kozibrodka.ww2.entity.EntityTruck;
 import net.kozibrodka.ww2.events.mod_Vehicles;
 import net.minecraft.entity.Entity;
@@ -35,6 +36,7 @@ public class TruckLoadPacket extends Packet implements ManagedPacket<TruckLoadPa
     private float entityPitch;
     private boolean entityGround;
     private int entityHealth;
+    private int engineType;
 
     public TruckLoadPacket() {
     }
@@ -48,7 +50,7 @@ public class TruckLoadPacket extends Packet implements ManagedPacket<TruckLoadPa
         this.typeName = name;
     }
 
-    public TruckLoadPacket(int id, String name, float ya, float pi, boolean gr, int ht, String pass) {
+    public TruckLoadPacket(int id, String name, float ya, float pi, boolean gr, int ht, String pass, int engine) {
         this.entityId = id;
         this.typeName = name;
         this.entityYaw = ya;
@@ -56,6 +58,7 @@ public class TruckLoadPacket extends Packet implements ManagedPacket<TruckLoadPa
         this.entityGround = gr;
         this.entityHealth = ht;
         this.entityPass = pass;
+        this.engineType = engine;
     }
 
     @Override
@@ -68,6 +71,7 @@ public class TruckLoadPacket extends Packet implements ManagedPacket<TruckLoadPa
             this.entityGround = stream.readBoolean();
             this.entityHealth = stream.readInt();
             this.entityPass = stream.readUTF();
+            this.engineType = stream.readInt();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -83,6 +87,7 @@ public class TruckLoadPacket extends Packet implements ManagedPacket<TruckLoadPa
             stream.writeBoolean(this.entityGround);
             stream.writeInt(this.entityHealth);
             stream.writeUTF(this.entityPass);
+            stream.writeInt(this.engineType);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -103,24 +108,37 @@ public class TruckLoadPacket extends Packet implements ManagedPacket<TruckLoadPa
             return;
         }
         Entity vehicleEntity = ((ClientWorld)player.world).getEntity(this.entityId);
+        /// TRUCK
         if(vehicleEntity instanceof EntityTruck truck){
-
             truck.automobile = mod_Vehicles.getTruckType(this.typeName);
             truck.setOnGround(this.entityGround);
             truck.getDataTracker().set(29, this.entityHealth);
             truck.setClientYaw(this.entityYaw);
             truck.setBoundingBoxSpacing(truck.automobile.autoWidth, truck.automobile.autoHeight);
             truck.setPosition(truck.x, truck.y, truck.z);
-
-//            truck.setPosition(truck.x, d1 + (double)standingEyeHeight, d2);
-
+            truck.engineType = this.engineType;
             int inventorySize = truck.automobile.numCargoSlots + truck.automobile.numBulletSlots + truck.automobile.numShellSlots + 1;
             truck.cargoItems = new ItemStack[inventorySize];
-
             PlayerEntity jokey1 = player.world.getPlayer(this.entityPass);
                 if(jokey1 != null){
                     jokey1.setVehicle(truck);
                 }
+        }
+        /// TANK
+        if(vehicleEntity instanceof EntityTank tank){
+            tank.automobile = mod_Vehicles.getTankType(this.typeName);
+            tank.setOnGround(this.entityGround);
+            tank.getDataTracker().set(29, this.entityHealth);
+            tank.setClientYaw(this.entityYaw);
+            tank.setBoundingBoxSpacing(tank.automobile.autoWidth, tank.automobile.autoHeight);
+            tank.setPosition(tank.x, tank.y, tank.z);
+            tank.engineType = this.engineType;
+            int inventorySize = tank.automobile.numCargoSlots + tank.automobile.numBulletSlots + tank.automobile.numShellSlots + 1;
+            tank.cargoItems = new ItemStack[inventorySize];
+            PlayerEntity jokey1 = player.world.getPlayer(this.entityPass);
+            if(jokey1 != null){
+                jokey1.setVehicle(tank);
+            }
         }
     }
 
@@ -133,16 +151,21 @@ public class TruckLoadPacket extends Packet implements ManagedPacket<TruckLoadPa
 
         Entity vehicleEntity = ((ServerWorld)player.world).getEntity(this.entityId);
 
+        /// TRUCK
         if(vehicleEntity instanceof EntityTruck truck){
             String sPass = "";
             if(vehicleEntity.passenger instanceof PlayerEntity plPass){
                 sPass = plPass.name;
             }
-
-            PacketHelper.sendTo(player, new TruckLoadPacket(truck.id, truck.automobile.name, truck.yaw, truck.pitch, truck.onGround, truck.health, sPass));
-//            PacketHelper.sendTo(player, new TruckLoadPacket(vehicleEntity.id, truck.automobile.name));
-//            PacketHelper.sendTo(player, new CarLoadPacket(vehicleEntity.id, vehicleEntity.yaw, vehicleEntity.pitch, vehicleEntity.onGround, landVeh.health, landVeh.gunA.itemId, landVeh.gunB.itemId, sPass));
-
+            PacketHelper.sendTo(player, new TruckLoadPacket(truck.id, truck.automobile.name, truck.yaw, truck.pitch, truck.onGround, truck.health, sPass, truck.engineType));
+        }
+        /// TANK
+        if(vehicleEntity instanceof EntityTank tank){
+            String sPass = "";
+            if(vehicleEntity.passenger instanceof PlayerEntity plPass){
+                sPass = plPass.name;
+            }
+            PacketHelper.sendTo(player, new TruckLoadPacket(tank.id, tank.automobile.name, tank.yaw, tank.pitch, tank.onGround, tank.health, sPass, tank.engineType));
         }
     }
 

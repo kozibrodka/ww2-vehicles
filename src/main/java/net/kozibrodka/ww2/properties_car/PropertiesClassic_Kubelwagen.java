@@ -35,9 +35,9 @@ public class PropertiesClassic_Kubelwagen extends Truck_properties {
 
         numPassengers = 3;
         passengerSeats = new PassengerSeatData[numPassengers];
-        passengerSeats[0] = new PassengerSeatData(-8D, 6D, -8D);
-        passengerSeats[1] = new PassengerSeatData(8D, 6D, 8D);
-        passengerSeats[2] = new PassengerSeatData(8D, 6D, -8D);
+        passengerSeats[0] = new PassengerSeatData(0,-5D, 6D, -8D);
+        passengerSeats[1] = new PassengerSeatData(1,10D, 6D, 8D);
+        passengerSeats[2] = new PassengerSeatData(2,10D, 6D, -8D);
 
         MAX_SPEED = 0.5D;
         TURN_SPEED_STOPPED = 8D;

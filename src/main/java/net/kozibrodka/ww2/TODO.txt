@@ -1,18 +1,28 @@
-TODO BEFORE RELEASE:
-- GUI's opening properly  - chyba
-- Pass seat przekierowania DMG - niekonieczne
+TODO BEFORE RELEASE:          broadcastEventy do wartości BYTE - wykorzystaj - EZZ
+
 - Silniki prędkość - dla Classic vehicles
 - Properties dla Classic 4x
 - Vehicle Living Ramming czy Tank ma ten sam system co Car?
-- Jazda wedlug SDK-API
-- Passanger Pos - Po upadku dziwnie spowalnia - różne opcje mam?
-- Textures directories - rozdzielić na foldery
+- Loading COntent na razie jedynie Vehicles/Cars etc... bez podziału na Classicsy, New, Old...
+
+- Tank Shells, aby był dźwięk i particlesy muszą być sub-klasy + "ClassFactory dla czołgu"
+
+- PassHeadRot Packet add to SDK-API
+//TODO loadPacket, data o Turret dla czołgu
+//todo ENUM pociski type dla czołgu, przełącznie za pomocą broadCastEvent: jedynie wybiera pocisk który istnieje. - dosyć trudne.
+
+- //todo Potem albo ustawienie tych szybkości wszystkich albo czołg.
+- Achievementy?
 
 - Multiplayer
+- Są pewne brakujące partsy. Stapi-resources. święty gral + itemsww2 sprawdź.   MetalWingSection np. Ogarnij to i rozpisz.
 - INtegrate Planes/Cannons Part... - release jako ww2 mod
+
+- Wysiadki przycinki, Alternate Exit jedynie zmiejsza szanse, to jest Vanilla Bug, jak stanę na łódce to też po jakimś czasie się zglitchuje [VANILLA BUG]
 TODO AFTER : (zero nowych pojazdów przez ogarnięciem wszyskich systemów)
 - TMT 1.6.4 - aby móc załadować modele... - da komfort psychiczny
 
+- Zmodyfikować klase ENTITY, którą będą extendować pojazdy, aby usunać footstepsy, oraz DMG od FIRE tak mocny? move().
 - System Camo's do Pojazdu
 - System Kluczyków, itemNBT
 - Lepsze wchodzenie na miejsca pasażera, poprzez interakcje z głównym pojazdem... + wysiadka ze zwierzętami
@@ -23,8 +33,10 @@ TODO AFTER : (zero nowych pojazdów przez ogarnięciem wszyskich systemów)
 - ww2 Guns + Utils
 - Weapons Crafting
 - Nie rozumime do końca kolizji między pojazdami, np. auto przesuwa auto, ale czołg nie przesuwa auta?
-- Tank Physics... moother Pitch Behaviour... mix between old/new? - coś pokombinować
+- Tank Physics... smoother Pitch Behaviour... mix between old/new? - coś pokombinować
 - Kolizja z Pass Seat oraz Coll Box..., Kolizje między pojazdami + DMG + dźwięk - system do dopracowania
+- TOpienie się pojazdów - zobacz jak PlayerEntity to robi.
+- Popychanie Playera zbugowane jest trochę (te same kłopoty co z żyrafą..)
 
 - Collision boxes.... ADVANCED
 - Passanger seats z bronią... ADVANCED

@@ -1,4 +1,7 @@
 accessWidener v2 named
 
 accessible method net/minecraft/entity/Entity setBoundingBoxSpacing (FF)V
+accessible method net/minecraft/entity/LivingEntity onLanding (F)V
+accessible field net/minecraft/entity/Entity vehiclePitchDelta D
+accessible field net/minecraft/entity/Entity vehicleYawDelta D
 

@@ -6,7 +6,7 @@ import net.kozibrodka.ww2.model.ModelM41_Old;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-public class PropertiesOld_M41 extends Vehicle_properties{
+public class PropertiesOld_M41 extends Tank_properties {
 
     public PropertiesOld_M41() {
         name = "old_M41";
@@ -63,7 +63,6 @@ public class PropertiesOld_M41 extends Vehicle_properties{
         COLLISION_DAMAGE_ENTITY = 30;
         COLLISION_DAMAGE_SELF = 10;
         COLLISION_DAMAGE = true;
-        COLLISION_FLIGHT_PLAYER = false;
         COLLISION_FLIGHT_ENTITY = true;
 
         item_track =  new ItemStack(ww2Parts.trackPiece.id, 1, 0);

@@ -6,7 +6,7 @@ import net.kozibrodka.ww2.model.ModelHummel_Old;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-public class PropertiesOld_Hummel extends Vehicle_properties{
+public class PropertiesOld_Hummel extends Tank_properties {
 
     public PropertiesOld_Hummel() {
         name = "old_Hummel";
@@ -64,7 +64,6 @@ public class PropertiesOld_Hummel extends Vehicle_properties{
         COLLISION_DAMAGE_ENTITY = 30;
         COLLISION_DAMAGE_SELF = 10;
         COLLISION_DAMAGE = true;
-        COLLISION_FLIGHT_PLAYER = false;
         COLLISION_FLIGHT_ENTITY = true;
 
         item_track =  new ItemStack(ww2Parts.trackPiece.id, 1, 0);

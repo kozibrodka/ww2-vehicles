@@ -7,9 +7,9 @@ import net.minecraft.item.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VehicleType {
+public class TankType {
 
-    public VehicleType(Vehicle_properties klasa)
+    public TankType(Tank_properties klasa)
     {
           name = klasa.name;
           longName = klasa.longName;
@@ -92,7 +92,6 @@ public class VehicleType {
           COLLISION_DAMAGE_ENTITY = klasa.COLLISION_DAMAGE_ENTITY;
           COLLISION_DAMAGE_SELF = klasa.COLLISION_DAMAGE_SELF;
           COLLISION_DAMAGE = klasa.COLLISION_DAMAGE;
-          COLLISION_FLIGHT_PLAYER = klasa.COLLISION_FLIGHT_PLAYER;
           COLLISION_FLIGHT_ENTITY = klasa.COLLISION_FLIGHT_ENTITY;
           UPHILL_SLOWDOWN = klasa.UPHILL_SLOWDOWN;
 
@@ -181,7 +180,6 @@ public class VehicleType {
     public int COLLISION_DAMAGE_ENTITY;
     public int COLLISION_DAMAGE_SELF;
     public boolean COLLISION_DAMAGE;
-    public boolean COLLISION_FLIGHT_PLAYER;
     public boolean COLLISION_FLIGHT_ENTITY;
     public double UPHILL_SLOWDOWN;
 }

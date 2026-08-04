@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "ww2:item/Sherman"
+    "layer0": "ww2:item/icon/Sherman"
   }
 }

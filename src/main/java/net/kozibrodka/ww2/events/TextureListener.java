@@ -100,6 +100,11 @@ public class TextureListener {
         event.renderers.put(EntityTank.class, new RenderTank());
         event.renderers.put(EntityTruck.class, new RenderTruck());
         event.renderers.put(EntityVehicleTEST164.class, new RenderVehicle164());
+
+        /// HIDE TO SHOW PASSSEAT DEBUG MODEL
+        if(mod_Vehicles.vehiclesGlass.debugPassSeats) {
+            event.renderers.put(EntityPassengerSeat.class, new RenderPassSeat());
+        }
     }
 
     private int registerBlockTexture(String s) {

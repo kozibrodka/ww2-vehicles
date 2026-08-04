@@ -1,6 +1,7 @@
 package net.kozibrodka.ww2.events;
 
 import net.glasslauncher.mods.gcapi3.api.ConfigRoot;
+import net.kozibrodka.ww2.glasscfg.VehiclesCFG;
 import net.kozibrodka.ww2.entity.*;
 import net.kozibrodka.ww2.item.ItemTruck;
 import net.kozibrodka.ww2.item.ItemVehicle;
@@ -84,31 +85,32 @@ public class mod_Vehicles {
 
        //TODO: ADD MACHINE GUN TYPE for vehicles, engine types work, DMG overall & props & collision, Truck playerXOffset, MINA!, ZAPORA ANTY-CZOLGOWA! (ala płotek), blowtorch effect, Gaśnica!
         if(vehiclesGlass.registerVehicles_CLASSIC) {
-            new VehicleType(new PropertiesClassic_Sherman());
-            new VehicleType(new PropertiesClassic_Panzer());
+            new TankType(new PropertiesClassic_Sherman());
+            new TankType(new PropertiesClassic_Panzer());
             new TruckType(new PropertiesClassic_Jeep());
             new TruckType(new PropertiesClassic_Kubelwagen());
         }
         if(vehiclesGlass.registerVehicles_NORMAL) {
-            new VehicleType(new PropertiesOld_M41());
-            new VehicleType(new PropertiesOld_T34());
-            new VehicleType(new PropertiesOld_Panzer4G());
-            new VehicleType(new PropertiesOld_Panzer4H());
-            new VehicleType(new PropertiesOld_Hummel());
-            new VehicleType(new PropertiesOld_Flakpanzer4());
+            new TankType(new PropertiesOld_M41());
+            new TankType(new PropertiesOld_T34());
+            new TankType(new PropertiesOld_Panzer4G());
+            new TankType(new PropertiesOld_Panzer4H());
+            new TankType(new PropertiesOld_Hummel());
+            new TankType(new PropertiesOld_Flakpanzer4());
         }
 
         if(vehiclesGlass.registerVehicles_NEW) {
-            new VehicleType(new Properties_Tiger1());
-            new VehicleType(new Properties_Tiger2());
+            new TankType(new Properties_Tiger1());
+            new TankType(new Properties_Tiger2());
             new TruckType(new Properties_WillyJeep());
             new TruckType(new Properties_VWType82());
         }
 
         //TODO "pozwolenie" na dodanie czołgów dodaje VehicleType ale nie dodaje itema aby przy wyłączniu nie było resetu chunków przez NBT null error.
+        /// UPDATE! - dodajemy Itemy, ale ukrywamy w AMI + nie dodajemy recipes.
 
-        for (int i = 0; i < VehicleType.types.size(); i++) {
-            VehicleType vehicletype = (VehicleType) VehicleType.types.get(i);
+        for (int i = 0; i < TankType.types.size(); i++) {
+            TankType vehicletype = (TankType) TankType.types.get(i);
             System.out.println("mod_WW2 added tank: " + vehicletype.name);
 
             vehicleMapping.put(vehicletype.name, vehicletype);
@@ -123,9 +125,10 @@ public class mod_Vehicles {
             truckType.przedmiot = new ItemTruck(Identifier.of(MOD_ID, truckType.name), truckType.name).setTranslationKey(MOD_ID, truckType.name).setMaxCount(1);
         }
 
-
         vehicle_test164 = new ItemVehicle164(Identifier.of(MOD_ID, "vehicle_test164")).setTranslationKey(MOD_ID, "vehicle_test164");
-        wrenchGoldDebug = new TemplateItem(Identifier.of(MOD_ID, "wrenchGoldDebug")).setTranslationKey(MOD_ID, "wrenchGoldDebug");
+//        if(vehiclesGlass.testMP) {
+            wrenchGoldDebug = new TemplateItem(Identifier.of(MOD_ID, "wrenchGoldDebug")).setTranslationKey(MOD_ID, "wrenchGoldDebug");
+//        }
 
     }
 
@@ -162,8 +165,8 @@ public class mod_Vehicles {
         VehicleRecipeRegistry.getInstance().initVehicleRecipe();
     }
 
-    public static VehicleType getVehicleType(String s) {
-        return (VehicleType) vehicleMapping.get(s);
+    public static TankType getTankType(String s) {
+        return (TankType) vehicleMapping.get(s);
     }
     public static TruckType getTruckType(String s) {
         return (TruckType) truckMapping.get(s);
@@ -173,7 +176,7 @@ public class mod_Vehicles {
 //    public static VehicleType type = null;
 //    public static TruckType type_truck = null;
 
-    private static Map<String, VehicleType> vehicleMapping = new HashMap<>();
+    private static Map<String, TankType> vehicleMapping = new HashMap<>();
     private static Map<String, TruckType> truckMapping = new HashMap<>();
 
 }

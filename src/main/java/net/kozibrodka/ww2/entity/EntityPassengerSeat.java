@@ -1,9 +1,17 @@
 package net.kozibrodka.ww2.entity;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.kozibrodka.sdk_api.utils.SdkEnvTool;
+import net.kozibrodka.sdk_api.utils.SdkItemCustomUseDelay;
+import net.kozibrodka.sdk_api.utils.SdkToolsRender;
 import net.kozibrodka.sdk_api.utils.SdkVehicle;
 import net.kozibrodka.ww2.events.mod_Vehicles;
+import net.kozibrodka.ww2.network.PassHeadRotPacket;
 import net.kozibrodka.ww2.network.PassSeatLoadPacket;
+import net.kozibrodka.ww2.network.PassengerEnterPacket;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.Box;
@@ -14,12 +22,14 @@ import net.modificationstation.stationapi.api.server.entity.HasTrackingParameter
 import net.modificationstation.stationapi.api.util.Identifier;
 import net.modificationstation.stationapi.api.util.TriState;
 
+import java.util.Objects;
+
 @HasTrackingParameters(trackingDistance = 240, updatePeriod = Integer.MAX_VALUE, sendVelocity = TriState.TRUE)
 public class EntityPassengerSeat extends Entity implements SdkVehicle, EntitySpawnDataProvider
 {
 
     //TODO prawdopodobnie klasa Interface PassSeats potrzebna?
-    //TODO - ogólnie MESS klasa, wiele kodu do usunięcia po testach
+    // TODO ENUM TYPE dla Typu MAtki - aby zostawić jendą klase PassSeat. (Enum.CAR/TANK/PLANE)
 
     public EntityPassengerSeat(World world)
     {
@@ -32,7 +42,6 @@ public class EntityPassengerSeat extends Entity implements SdkVehicle, EntitySpa
         velocityX = 0.0D;
         velocityY = 0.0D;
         velocityZ = 0.0D;
-//        getProperties();
     }
 
     public EntityPassengerSeat(World world, double d, double d1, double d2)
@@ -44,10 +53,11 @@ public class EntityPassengerSeat extends Entity implements SdkVehicle, EntitySpa
         prevZ = d2;
     }
 
-    public EntityPassengerSeat(World world, double d, double d1, double d2,
+    public EntityPassengerSeat(World world, int numnber, double d, double d1, double d2,
                                Entity entity1)
     {
         this(world);
+        seatNumber = numnber;
         relativeX = d / 16D;
         relativeY = d1 / 16D;
         relativeZ = d2 / 16D;
@@ -81,9 +91,27 @@ public class EntityPassengerSeat extends Entity implements SdkVehicle, EntitySpa
     {
     }
 
+
+    @Override
+    public void addVelocity(double x, double y, double z) {
+        if(mother != null){ /// Gdy następuje Zderzenie (o obrażeniami), addVelo przekierowane jest na Mother Vehicle
+            mother.velocityX += x;
+            mother.velocityY += y;
+            mother.velocityZ += z;
+        }
+    }
+
     @Override
     public void onCollision(Entity otherEntity) { /// tutaj mogę wpisać pszesuwanie mnie oraz entity z którym mam kolizje
-        return;
+        /// ALPHA - czy tak to powinno działać?
+//        if(mother != null && !(otherEntity instanceof LivingEntity)) {
+//            System.out.println("przekazuje KOlizje");
+//            mother.onCollision(otherEntity);
+//        }
+        if(mother != null){
+            mother.onCollision(otherEntity);
+        }
+        /// Na razie wyłączam to, trzeba przemyśleć chyba...
     }
 
     @Override
@@ -116,21 +144,13 @@ public class EntityPassengerSeat extends Entity implements SdkVehicle, EntitySpa
     public double getPassengerRidingHeight()
     {
         if(passenger instanceof PlayerEntity){
-            return 0.0D;
+            return 0.025D;
         }else{
             return 0.3D;
         }
     }
 
     public void updateFromVehiclePosition(){
-//        setPosition(mother.x, mother.y + relativeY, mother.z);
-//        setRotation(mother.yaw, mother.pitch);
-
-//        prevX = x;
-//        prevY = y;
-//        prevZ = z;
-//        prevYaw = yaw;
-//        prevPitch = pitch;
 
         /// GRANICA ///
 
@@ -140,12 +160,12 @@ public class EntityPassengerSeat extends Entity implements SdkVehicle, EntitySpa
         double d3 = Math.cos(((double)(-mother.yaw) / 180D) * 3.1415926535897931D);
         double d4 = Math.sin(((double)(-mother.yaw) / 180D) * 3.1415926535897931D);
 
-        double d5 = Math.cos(((double)mother.pitch / 180D) * 3.1415926535897931D); /// GÓRA - DÓŁ
-        double d6 = Math.sin(((double)mother.pitch / 180D) * 3.1415926535897931D) * 0.5D; /// Przesunięcie PRZÓD-TYŁ
+//        double d5 = Math.cos(((double)mother.pitch / 180D) * 3.1415926535897931D); /// GÓRA - DÓŁ
+//        double d6 = Math.sin(((double)mother.pitch / 180D) * 3.1415926535897931D) * 0.5D; /// Przesunięcie PRZÓD-TYŁ
         /// Issue: Little "freeze" on drop
 
-//            double d5 = Math.cos(((double)pitch / 180D) * 3.1415926535897931D);
-//            double d6 = Math.sin(((double)pitch / 180D) * 3.1415926535897931D);
+            double d5 = Math.cos(((double)pitch / 180D) * 3.1415926535897931D);
+            double d6 = Math.sin(((double)pitch / 180D) * 3.1415926535897931D);
         /// Oryginal
 
 //            double d5 = Math.cos(((double)0 / 180D) * 3.1415926535897931D);
@@ -177,11 +197,6 @@ public class EntityPassengerSeat extends Entity implements SdkVehicle, EntitySpa
     {
     }
 
-    public double getSpeed()
-    {
-        return Math.sqrt(velocityX * velocityX + velocityZ * velocityZ);
-    }
-
     @Override
     public void tick()
     {
@@ -191,79 +206,30 @@ public class EntityPassengerSeat extends Entity implements SdkVehicle, EntitySpa
                 receivedP = true;
                 PacketHelper.send(new PassSeatLoadPacket(this.id));
             }
-//            remoteTick();
+            if(passenger instanceof PlayerEntity playerEnt && Objects.equals(SdkToolsRender.minecraft.player.name, playerEnt.name)){/// Głowa Packet
+                PacketHelper.send(new PassHeadRotPacket(passenger.yaw, passenger.pitch));
+            }
+        }else{
+            if(mother == null || mother.dead){
+                markDead();
+            }
+            if(passenger != null && (passenger.dead || !passenger.isAlive()))
+            {
+                if(passenger instanceof PlayerEntity player && mother instanceof EntityTruck truck){
+                    truck.exitWithPupils(player);
+                }
+                passenger = null;
+                broadcastEventExit();
+            }
         }
         if(mother == null){
             return;
         }
+//        if(!world.isRemote){
+//            updateFromVehiclePosition();
+//        }
         updateFromVehiclePosition();
-//        if(world.isRemote)
-//        {
-//            if(field_9394_d > 0) /// To jest mechanika client interpelation steps... z dziwnymi nazwami....
-//            {
-//                double d = x + (field_9393_e - x) / (double)field_9394_d;
-//                double d1 = y + (field_9392_f - y) / (double)field_9394_d;
-//                double d2 = z + (field_9391_g - z) / (double)field_9394_d;
-//                double d3;
-//                for(d3 = field_9390_h - (double)yaw; d3 < -180D; d3 += 360D) { }
-//                for(; d3 >= 180D; d3 -= 360D) { }
-//                yaw += d3 / (double)field_9394_d;
-//                pitch += (field_9389_i - (double)pitch) / (double)field_9394_d;
-//                field_9394_d--;
-//                setPosition(d, d1, d2);
-//                setRotation(yaw, pitch);
-//            }
-//            return;
-//        }
-        if(mother == null || mother.dead)
-        {
-            markDead();
-        }
     }
-
-    public void updatePlanePosition(double d, double d1, double d2, float f,
-                                    float f1)
-    {
-        velocityX = d - prevX;
-        velocityY = d1 - prevY;
-        velocityZ = d2 - prevZ;
-        prevX = x;
-        prevY = y;
-        prevZ = z;
-        prevYaw = yaw;
-        prevPitch = pitch;
-        setPosition(d, d1, d2);
-        setRotation(f, f1);
-        updatePassengerPosition();
-    }
-
-
-//    @Override
-//    public void updatePassengerPosition()  //updateRiderPosition
-//    {
-//        if(passenger == null)
-//        {
-//            return;
-//        }
-//        if(passenger == SdkTools.minecraft.player || (passenger instanceof WolfEntity))
-//        {
-//            double d = relativeX;
-//            double d1 = getMountedYOffset() + passenger.getStandingEyeHeight() + relativeY;
-//            double d2 = relativeZ;
-//            double d3 = Math.cos(((double)(-yaw) / 180D) * 3.1415926535897931D);
-//            double d4 = Math.sin(((double)(-yaw) / 180D) * 3.1415926535897931D);
-//            double d5 = Math.cos(((double)pitch / 180D) * 3.1415926535897931D);
-//            double d6 = Math.sin(((double)pitch / 180D) * 3.1415926535897931D);
-//            double d7 = Math.cos(((double)yaw * 3.1415926535897931D) / 180D) * 0.40000000000000002D * d5;
-//            double d8 = Math.sin(((double)yaw * 3.1415926535897931D) / 180D) * 0.40000000000000002D * d5;
-//            double d9 = (d * d5 - d1 * d6) * d3 + d2 * d4;
-//            double d10 = d * d6 + d1 * d5;
-//            double d11 = (d1 * d6 - d * d5) * d4 + d2 * d3;
-//            passenger.setPosition(x + d9 + d7, y + d10, z + d11 + d8);
-//        } else
-//        {
-//        }
-//    }
 
     @Override
     protected void writeNbt(NbtCompound nbttagcompound)
@@ -273,6 +239,9 @@ public class EntityPassengerSeat extends Entity implements SdkVehicle, EntitySpa
     @Override
     protected void readNbt(NbtCompound nbttagcompound)
     {
+        if(mother == null){
+            markDead();
+        }
     }
 
     @Override
@@ -286,31 +255,25 @@ public class EntityPassengerSeat extends Entity implements SdkVehicle, EntitySpa
     {
         if(passenger != null && (passenger instanceof PlayerEntity) && passenger != entityplayer)
         {
-            return true;
+            return true; ///zostawiam to jedynie dla ewentualnje logiki dontUseThatTick sdk
         }
-        if(!world.isRemote && passenger != entityplayer)
+        if(!world.isRemote && passenger == null)
         {
+            SdkItemCustomUseDelay.doNotUseThisTick = world.getTime();
             entityplayer.setVehicle(this);
+            if(mother instanceof EntityTruck truck){
+                truck.occupySeatsWithPupils(entityplayer);
+            }
+            if(SdkEnvTool.isEnvServ()) {
+                PacketHelper.sendToAllTracking(this, new PassengerEnterPacket(this.id, entityplayer.name));
+            }
         }
         return true;
     }
 
-    public int boatCurrentDamage;
-    public int boatTimeSinceHit;
-    public int boatRockDirection;
-    private int field_9394_d;
-    private double field_9393_e;
-    private double field_9392_f;
-    private double field_9391_g;
-    private double field_9390_h;
-    private double field_9389_i;
-    private double field_9388_j;
-    private double field_9387_k;
-    private double field_9386_l;
-    private static int KEY_GETOUT;
-    private static int KEY_INV;
+
     public Entity mother;
-    private int seatNumber;
+    public int seatNumber;
     public double relativeX;
     public double relativeY;
     public double relativeZ;
@@ -329,7 +292,22 @@ public class EntityPassengerSeat extends Entity implements SdkVehicle, EntitySpa
 
     @Override
     public void exitKey(PlayerEntity playerEntity) {
-        passenger.setVehicle(null);
+        alternateExit(playerEntity);
+        if(mother instanceof EntityTruck truck){
+            truck.exitWithPupils(playerEntity);
+        }
+        broadcastEventExit();
+    }
+
+    public void alternateExit(PlayerEntity playerEntity){
+        playerEntity.vehiclePitchDelta = 0.0F;
+        playerEntity.vehicleYawDelta = 0.0F;
+        if (playerEntity.vehicle != null) {
+            double extraY = 0.15D;
+            playerEntity.setPositionAndAnglesKeepPrevAngles(playerEntity.x, playerEntity.vehicle.boundingBox.minY + (double)playerEntity.vehicle.height + extraY, playerEntity.z, playerEntity.yaw, playerEntity.pitch);
+            playerEntity.vehicle.passenger = null;
+        }
+        playerEntity.vehicle = null;
     }
 
     @Override
@@ -378,7 +356,53 @@ public class EntityPassengerSeat extends Entity implements SdkVehicle, EntitySpa
     }
 
     @Override
+    public boolean canPassengerUseGun() {
+        return true;
+    }
+
+    @Override
     public Identifier getHandlerIdentifier() {
         return Identifier.of(mod_Vehicles.MOD_ID, "PassSeatVehicle");
     }
+
+    public void broadcastEventExit(){
+        world.broadcastEntityEvent(this, (byte)6);
+    }
+
+    @Override
+    @Environment(EnvType.CLIENT)
+    public void processServerEntityStatus(byte status) {
+        if (status == 6) {
+            passenger = null;
+        } else{
+            super.processServerEntityStatus(status);
+        }
+    }
+
+    //    @Override
+//    public void updatePassengerPosition()  //updateRiderPosition
+//    {
+//        if(passenger == null)
+//        {
+//            return;
+//        }
+//        if(passenger == SdkTools.minecraft.player || (passenger instanceof WolfEntity))
+//        {
+//            double d = relativeX;
+//            double d1 = getMountedYOffset() + passenger.getStandingEyeHeight() + relativeY;
+//            double d2 = relativeZ;
+//            double d3 = Math.cos(((double)(-yaw) / 180D) * 3.1415926535897931D);
+//            double d4 = Math.sin(((double)(-yaw) / 180D) * 3.1415926535897931D);
+//            double d5 = Math.cos(((double)pitch / 180D) * 3.1415926535897931D);
+//            double d6 = Math.sin(((double)pitch / 180D) * 3.1415926535897931D);
+//            double d7 = Math.cos(((double)yaw * 3.1415926535897931D) / 180D) * 0.40000000000000002D * d5;
+//            double d8 = Math.sin(((double)yaw * 3.1415926535897931D) / 180D) * 0.40000000000000002D * d5;
+//            double d9 = (d * d5 - d1 * d6) * d3 + d2 * d4;
+//            double d10 = d * d6 + d1 * d5;
+//            double d11 = (d1 * d6 - d * d5) * d4 + d2 * d3;
+//            passenger.setPosition(x + d9 + d7, y + d10, z + d11 + d8);
+//        } else
+//        {
+//        }
+//    }
 }

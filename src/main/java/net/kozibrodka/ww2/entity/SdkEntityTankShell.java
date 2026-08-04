@@ -2,7 +2,7 @@ package net.kozibrodka.ww2.entity;
 
 import net.kozibrodka.sdk_api.events.SdkGlass;
 import net.kozibrodka.sdk_api.utils.*;
-import net.kozibrodka.ww2.properties.VehicleType;
+import net.kozibrodka.ww2.properties.TankType;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -31,7 +31,7 @@ public class SdkEntityTankShell extends SdkEntityBullet {
         this.standingEyeHeight = 0.0F;
         this.serverSpawned = true;
         this.doFlash(false);
-        this.bulletDrop = 0.005F; //todo - musi sie zgadzac
+        this.bulletDrop = 0.005F; //todo - musi sie zgadzac, między client a server. Przy wprowadzeniu większej ilości TankShells z różnym dźwiękiem istotne.
         setBoundingBoxSpacing(0.25F, 0.25F);
     }
 
@@ -42,9 +42,9 @@ public class SdkEntityTankShell extends SdkEntityBullet {
     public float spread;
     public float muzzleVelocity;
 
-    public SdkEntityTankShell(World world, EntityTank tankEntity, VehicleType tankType, boolean HE)
+    public SdkEntityTankShell(World world, EntityTank tankEntity, TankType tankType, boolean HE)
     {
-        /// TODO założenie Entity = Czołg nie gracz
+        /// założenie Entity = Czołg, nie gracz
         this(world);
         this.owner = tankEntity;
         this.damage = tankType.cannonDamage;
@@ -63,7 +63,6 @@ public class SdkEntityTankShell extends SdkEntityBullet {
             this.penetration = 0.0F;
         }else{ /// AP Shell
             this.exploPower = 1.0F;
-            //TODO penetration change maybe
         }
 
         setBoundingBoxSpacing(0.25F, 0.25F);
@@ -126,7 +125,7 @@ public class SdkEntityTankShell extends SdkEntityBullet {
         }
         if(SdkEnvTool.isEnvClient())
         {
-            addMoveParticle(timeInAir); //TODO time in air move to method - call every tick. - SDK rocketLauncher update then...?
+            addMoveParticle(timeInAir);
         }
         if (prevPitch == 0.0F && prevYaw == 0.0F) {
             float f = MathHelper.sqrt(velocityX * velocityX + velocityZ * velocityZ);
@@ -236,7 +235,6 @@ public class SdkEntityTankShell extends SdkEntityBullet {
                     }
                 }
                 noImpSound = true;
-//                explode();
             }
             playImpactSound(world, Block.BLOCKS[inTile].material);
             explode();

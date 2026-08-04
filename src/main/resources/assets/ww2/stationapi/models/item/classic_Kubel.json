@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "ww2:item/Kubelwagen"
+    "layer0": "ww2:item/icon/Kubelwagen"
   }
 }

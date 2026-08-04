@@ -13,7 +13,7 @@ public class ModelTank extends ModelBase {
     public ModelRendererTurbo[] gunModel = new ModelRendererTurbo[0];
     public ModelRendererTurbo[] ammoModel = new ModelRendererTurbo[0];
 
-    public ModelRendererTurbo[] leftFrontWheelModel = new ModelRendererTurbo[0];
+    public ModelRendererTurbo[] leftFrontWheelModel = new ModelRendererTurbo[0]; //TODO WTF koła dla czołgu?
     public ModelRendererTurbo[] rightFrontWheelModel = new ModelRendererTurbo[0];
     public ModelRendererTurbo[] leftBackWheelModel = new ModelRendererTurbo[0];
     public ModelRendererTurbo[] rightBackWheelModel = new ModelRendererTurbo[0];
@@ -43,23 +43,25 @@ public class ModelTank extends ModelBase {
             }
         }
 
-        for(i = 0; i < this.leftBackWheelModel.length; ++i) {
-            this.leftBackWheelModel[i].render(f5);
-        }
-
-        for(i = 0; i < this.rightBackWheelModel.length; ++i) {
-            this.rightBackWheelModel[i].render(f5);
-        }
-
-        for(i = 0; i < this.leftFrontWheelModel.length; ++i) {
-            this.leftFrontWheelModel[i].rotateAngleY = -vehicle.wheelsYaw * (float)Math.PI / 180.0F * 10.0F;
-            this.leftFrontWheelModel[i].render(f5);
-        }
-
-        for(i = 0; i < this.rightFrontWheelModel.length; ++i) {
-            this.rightFrontWheelModel[i].rotateAngleY = -vehicle.wheelsYaw * (float)Math.PI / 180.0F * 10.0F;
-            this.rightFrontWheelModel[i].render(f5);
-        }
+        /// todo KOŁA usunięte zwykłe/
+//        for(i = 0; i < this.leftBackWheelModel.length; ++i) {
+//            this.leftBackWheelModel[i].render(f5);
+//        }
+//
+//        for(i = 0; i < this.rightBackWheelModel.length; ++i) {
+//            this.rightBackWheelModel[i].render(f5);
+//        }
+//
+//        for(i = 0; i < this.leftFrontWheelModel.length; ++i) {
+//            this.leftFrontWheelModel[i].rotateAngleY = -vehicle.wheelsYaw * (float)Math.PI / 180.0F * 10.0F;
+//            this.leftFrontWheelModel[i].render(f5);
+//        }
+//
+//        for(i = 0; i < this.rightFrontWheelModel.length; ++i) {
+//            this.rightFrontWheelModel[i].rotateAngleY = -vehicle.wheelsYaw * (float)Math.PI / 180.0F * 10.0F;
+//            this.rightFrontWheelModel[i].render(f5);
+//        }
+        ///
 
         // usunac nulle
         if(leftTrackModel != null) {
@@ -135,25 +137,26 @@ public class ModelTank extends ModelBase {
             this.barrelModel[i].setRotationPoint(this.barrelModel[i].rotationPointX, -this.barrelModel[i].rotationPointY, -this.barrelModel[i].rotationPointZ);
         }
 
-        for(i = 0; i < this.leftFrontWheelModel.length; ++i) {
-            this.leftFrontWheelModel[i].doMirror(false, true, true);
-            this.leftFrontWheelModel[i].setRotationPoint(this.leftFrontWheelModel[i].rotationPointX, -this.leftFrontWheelModel[i].rotationPointY, -this.leftFrontWheelModel[i].rotationPointZ);
-        }
-
-        for(i = 0; i < this.rightFrontWheelModel.length; ++i) {
-            this.rightFrontWheelModel[i].doMirror(false, true, true);
-            this.rightFrontWheelModel[i].setRotationPoint(this.rightFrontWheelModel[i].rotationPointX, -this.rightFrontWheelModel[i].rotationPointY, -this.rightFrontWheelModel[i].rotationPointZ);
-        }
-
-        for(i = 0; i < this.leftBackWheelModel.length; ++i) {
-            this.leftBackWheelModel[i].doMirror(false, true, true);
-            this.leftBackWheelModel[i].setRotationPoint(this.leftBackWheelModel[i].rotationPointX, -this.leftBackWheelModel[i].rotationPointY, -this.leftBackWheelModel[i].rotationPointZ);
-        }
-
-        for(i = 0; i < this.rightBackWheelModel.length; ++i) {
-            this.rightBackWheelModel[i].doMirror(false, true, true);
-            this.rightBackWheelModel[i].setRotationPoint(this.rightBackWheelModel[i].rotationPointX, -this.rightBackWheelModel[i].rotationPointY, -this.rightBackWheelModel[i].rotationPointZ);
-        }
+        /// TODO koła??
+//        for(i = 0; i < this.leftFrontWheelModel.length; ++i) {
+//            this.leftFrontWheelModel[i].doMirror(false, true, true);
+//            this.leftFrontWheelModel[i].setRotationPoint(this.leftFrontWheelModel[i].rotationPointX, -this.leftFrontWheelModel[i].rotationPointY, -this.leftFrontWheelModel[i].rotationPointZ);
+//        }
+//
+//        for(i = 0; i < this.rightFrontWheelModel.length; ++i) {
+//            this.rightFrontWheelModel[i].doMirror(false, true, true);
+//            this.rightFrontWheelModel[i].setRotationPoint(this.rightFrontWheelModel[i].rotationPointX, -this.rightFrontWheelModel[i].rotationPointY, -this.rightFrontWheelModel[i].rotationPointZ);
+//        }
+//
+//        for(i = 0; i < this.leftBackWheelModel.length; ++i) {
+//            this.leftBackWheelModel[i].doMirror(false, true, true);
+//            this.leftBackWheelModel[i].setRotationPoint(this.leftBackWheelModel[i].rotationPointX, -this.leftBackWheelModel[i].rotationPointY, -this.leftBackWheelModel[i].rotationPointZ);
+//        }
+//
+//        for(i = 0; i < this.rightBackWheelModel.length; ++i) {
+//            this.rightBackWheelModel[i].doMirror(false, true, true);
+//            this.rightBackWheelModel[i].setRotationPoint(this.rightBackWheelModel[i].rotationPointX, -this.rightBackWheelModel[i].rotationPointY, -this.rightBackWheelModel[i].rotationPointZ);
+//        }
 
         //
         for(i = 0; i < this.leftTrackWheelModels.length; ++i) {
@@ -220,37 +223,38 @@ public class ModelTank extends ModelBase {
             mod.rotationPointY += (float)y;
         }
 
-        arr$ = this.leftFrontWheelModel;
-        len$ = arr$.length;
-
-        for(i$ = 0; i$ < len$; ++i$) {
-            mod = arr$[i$];
-            mod.rotationPointY += (float)y;
-        }
-
-        arr$ = this.rightFrontWheelModel;
-        len$ = arr$.length;
-
-        for(i$ = 0; i$ < len$; ++i$) {
-            mod = arr$[i$];
-            mod.rotationPointY += (float)y;
-        }
-
-        arr$ = this.leftBackWheelModel;
-        len$ = arr$.length;
-
-        for(i$ = 0; i$ < len$; ++i$) {
-            mod = arr$[i$];
-            mod.rotationPointY += (float)y;
-        }
-
-        arr$ = this.rightBackWheelModel;
-        len$ = arr$.length;
-
-        for(i$ = 0; i$ < len$; ++i$) {
-            mod = arr$[i$];
-            mod.rotationPointY += (float)y;
-        }
+        /// TODO koła??
+//        arr$ = this.leftFrontWheelModel;
+//        len$ = arr$.length;
+//
+//        for(i$ = 0; i$ < len$; ++i$) {
+//            mod = arr$[i$];
+//            mod.rotationPointY += (float)y;
+//        }
+//
+//        arr$ = this.rightFrontWheelModel;
+//        len$ = arr$.length;
+//
+//        for(i$ = 0; i$ < len$; ++i$) {
+//            mod = arr$[i$];
+//            mod.rotationPointY += (float)y;
+//        }
+//
+//        arr$ = this.leftBackWheelModel;
+//        len$ = arr$.length;
+//
+//        for(i$ = 0; i$ < len$; ++i$) {
+//            mod = arr$[i$];
+//            mod.rotationPointY += (float)y;
+//        }
+//
+//        arr$ = this.rightBackWheelModel;
+//        len$ = arr$.length;
+//
+//        for(i$ = 0; i$ < len$; ++i$) {
+//            mod = arr$[i$];
+//            mod.rotationPointY += (float)y;
+//        }
 
     }
 

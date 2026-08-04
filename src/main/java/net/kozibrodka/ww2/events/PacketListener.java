@@ -1,7 +1,6 @@
 package net.kozibrodka.ww2.events;
 
-import net.kozibrodka.ww2.network.PassSeatLoadPacket;
-import net.kozibrodka.ww2.network.TruckLoadPacket;
+import net.kozibrodka.ww2.network.*;
 import net.mine_diver.unsafeevents.listener.EventListener;
 import net.modificationstation.stationapi.api.event.network.packet.PacketRegisterEvent;
 import net.modificationstation.stationapi.api.mod.entrypoint.Entrypoint;
@@ -17,8 +16,13 @@ public class PacketListener {
 
     @EventListener
     public void registerPacket(PacketRegisterEvent event) {
-        Registry.register(PacketTypeRegistry.INSTANCE, MOD_ID.id("truckLoad"), TruckLoadPacket.TYPE);
+        Registry.register(PacketTypeRegistry.INSTANCE, MOD_ID.id("vehicleLoad"), TruckLoadPacket.TYPE);
         Registry.register(PacketTypeRegistry.INSTANCE, MOD_ID.id("passSeatLoad"), PassSeatLoadPacket.TYPE);
+        Registry.register(PacketTypeRegistry.INSTANCE, MOD_ID.id("passEnter"), PassengerEnterPacket.TYPE);
+        Registry.register(PacketTypeRegistry.INSTANCE, MOD_ID.id("passLivingEnter"), PassengerLivingEnterPacket.TYPE);
+        Registry.register(PacketTypeRegistry.INSTANCE, MOD_ID.id("passHeadRot"), PassHeadRotPacket.TYPE);
+        Registry.register(PacketTypeRegistry.INSTANCE, MOD_ID.id("carCrash"), CarCrashPacket.TYPE);
+        Registry.register(PacketTypeRegistry.INSTANCE, MOD_ID.id("antiExitStuck"), ExitAntiStuckPacket.TYPE);
 
     }
 }

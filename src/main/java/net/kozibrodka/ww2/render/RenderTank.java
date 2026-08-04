@@ -14,6 +14,9 @@ public class RenderTank extends EntityRenderer {
     }
 
     public void func_157_a(EntityTank vehicle, double d, double d1, double d2, float f, float f1) {
+        if(vehicle.automobile == null){
+            return;
+        }
         GL11.glPushMatrix();
         float f2 = vehicle.prevPitch + (vehicle.pitch - vehicle.prevPitch) * f1;
         GL11.glTranslatef((float)d, (float)d1, (float)d2);
@@ -23,7 +26,7 @@ public class RenderTank extends EntityRenderer {
 //        GL11.glRotatef(f + 90.0F, 0.0F, 1.0F, 0.0F);
 //        GL11.glRotatef(vehicle.prevPitch + (vehicle.axes.getPitch() - vehicle.prevPitch) * f1, 0.0F, 0.0F, 1.0F);
 //        GL11.glRotatef(-vehicle.prevRotationRoll - (vehicle.axes.getRoll() - vehicle.prevRotationRoll) * f1, 1.0F, 0.0F, 0.0F);
-        this.bindTexture("/assets/ww2/stationapi/textures/mob/" + vehicle.automobile.texture);
+        this.bindTexture("/assets/ww2/stationapi/textures/mob/tank/" + vehicle.automobile.texture);
         ModelTank modVehicle = vehicle.automobile.model;
         if(modVehicle != null) {
             modVehicle.render(0.0F, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F, vehicle);
@@ -33,7 +36,7 @@ public class RenderTank extends EntityRenderer {
         float gunPitch = 0.0F;
         GL11.glPushMatrix();
         if(modVehicle != null && modVehicle.gunModel.length > 0) { // && vehicle.data.guns[1] != null
-            EntityPassengerSeat[] arr$ = vehicle.seats;
+            EntityPassengerSeat[] arr$ = vehicle.seats; ///To jest dodatkowy render KMa ...
             int len$ = arr$.length;
 
             for(int i$ = 0; i$ < len$; ++i$) {

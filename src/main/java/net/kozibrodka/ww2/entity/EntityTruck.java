@@ -2,11 +2,13 @@ package net.kozibrodka.ww2.entity;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.kozibrodka.sdk_api.particle.SdkParticleFactory;
 import net.kozibrodka.sdk_api.utils.*;
 import net.kozibrodka.ww2.events.mod_Vehicles;
 import net.kozibrodka.ww2.events.ww2Parts;
 import net.kozibrodka.ww2.gui.InventoryTruck;
-import net.kozibrodka.ww2.network.TruckLoadPacket;
+import net.kozibrodka.ww2.network.*;
+import net.kozibrodka.ww2.properties.PassengerSeatData;
 import net.kozibrodka.ww2.properties.TruckType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -20,7 +22,6 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.explosion.Explosion;
 import net.modificationstation.stationapi.api.gui.screen.container.GuiHelper;
 import net.modificationstation.stationapi.api.network.packet.PacketHelper;
 import net.modificationstation.stationapi.api.server.entity.EntitySpawnDataProvider;
@@ -31,6 +32,7 @@ import net.modificationstation.stationapi.api.util.TriState;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 @HasTrackingParameters(trackingDistance = 160, updatePeriod = 2, sendVelocity = TriState.TRUE)
 public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehicle, EntitySpawnDataProvider {
@@ -98,7 +100,8 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
         {
             if(world != null)
             {
-                seats[i] = new EntityPassengerSeat(world, automobile.passengerSeats[i].offSetX, automobile.passengerSeats[i].offSetY, automobile.passengerSeats[i].offSetZ, this);
+                PassengerSeatData passData = automobile.passengerSeats[i];
+                seats[i] = new EntityPassengerSeat(world, passData.number, passData.offSetX, passData.offSetY, passData.offSetZ, this);
                 world.spawnEntity(seats[i]);
             }
         }
@@ -132,7 +135,7 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
                 var4 *= 0.05F;
                 var2 *= 1.0F - this.pushSpeedReduction;
                 var4 *= 1.0F - this.pushSpeedReduction;
-                if(!(otherEntity instanceof LivingEntity)){ /// Gracz nie przesunie Pojazdu
+                if(!(otherEntity instanceof LivingEntity)){ /// Lista co ma nie przesuwać auta. Gracz nie przesunie Pojazdu
                     this.addVelocity(-var2, 0.0F, -var4);
                 }
                 if(!(otherEntity instanceof WW2Tank)){ /// Lista czego auto ma nie przesuwać
@@ -146,7 +149,7 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
     public Box getCollisionAgainstShape(Entity other) {
         /// System aby Auto nie podjeżdzało na niskie zwierzęta - tylko je przejeżdzało.
         if(other instanceof LivingEntity piggy && piggy.height <= 1.0F){
-            Box ramBox = Box.create((double)0.0F, (double)0.0F, (double)0.0F, (double)0.0F, (double)0.0F, (double)0.0F);
+            Box ramBox = Box.create(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
             ramBox.clone(piggy.boundingBox);
             double roznica = (1.0D - (double) piggy.height) + 0.1D;
             ramBox.maxY += roznica;
@@ -172,32 +175,50 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
     {
         if(health > 0)
         {
-            if(entity instanceof LivingEntity){
+            if(entity instanceof LivingEntity){ /// RACZEJ DO ZMIANY, przemyślenia
                 if(entity instanceof Monster){
                     health -= i /5;
                     System.out.println("CAR DAMAGED from: " + entity + " DMG: " + i /5);
-                    onHurt();
+                    playHurtSound();
                 }
             }else{
                 health -= i;
                 System.out.println("CAR DAMAGED from: " + entity + " DMG: " + i);
-                onHurt();
+                playHurtSound();
             }
             if(health <= 0)
             {
                 destroyVehicle();
+                broadcastEventExplode();
             }
         }
         return true;
     }
 
-    public void onHurt()
+    @Override
+    protected void onLanding(float fallDistance) {
+        int fallDMG = (int)Math.ceil(fallDistance - 3.0F) * 4;
+        if (fallDMG > 0) {
+            damage(null, fallDMG);
+        }
+        if (passenger instanceof LivingEntity living1) {
+            living1.onLanding(fallDistance);
+        }
+        for (EntityPassengerSeat seat : seats) {
+            if (seat.passenger instanceof LivingEntity passLiving) {
+                passLiving.onLanding(fallDistance);
+            }
+        }
+    }
+
+    public void playHurtSound()
     {
         world.playSound(this, "ww2:mechhurt", 1.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
+        world.broadcastEntityEvent(this, (byte)7);
     }
 
     @Override
-    public boolean isCollidable() //canBeCollidedWith
+    public boolean isCollidable()
     {
         return !dead;
     }
@@ -205,13 +226,21 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
     @Override
     public float getShadowRadius()
     {
-        return 0.0F;
+        return 0.0F; //TODO, czemu zero daje cień?
+//        return this.width / 1.0F;
     }
 
     @Override
     public boolean interact(PlayerEntity entityplayer)
     {
-        if(entityplayer.getHand() != null && entityplayer.getHand().itemId == mod_Vehicles.vehicleBlowTorch.id)
+        if(world.isRemote){ //todo interaction + healing / TANK również
+            if(!(passenger != null && passenger != entityplayer))
+            {
+                SdkItemCustomUseDelay.doNotUseThisTick = world.getTime();
+            }
+            return true;
+        }
+        if(entityplayer.getHand() != null && entityplayer.getHand().itemId == mod_Vehicles.vehicleBlowTorch.id) //TODO przenieś do ItemBlowTorch / TANK również
         {
             if(health > 0 && health < automobile.MAX_HEALTH)
             {
@@ -231,43 +260,63 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
             System.out.println("TYPE: " + automobile.name);
             System.out.println("ENGINE: " + engineType);
             System.out.println("HEALTH: " + health);
-            damage(null, 200); ///debug
+//            damage(null, 200); ///debug
             entityplayer.swingHand();
+            world.broadcastEntityEvent(this, (byte)110);
             return true;
         }
-        if(passenger != null && (passenger instanceof PlayerEntity) && passenger != entityplayer)
+        if(passenger != null && passenger != entityplayer)
         {
             return true;
         }
         if(!world.isRemote && passenger == null)
         {
-            entityplayer.setVehicle(this);
             SdkItemCustomUseDelay.doNotUseThisTick = world.getTime();
-            List list = world.collectEntitiesByClass(WolfEntity.class, Box.createCached(x, y, z, x + 1.0D, y + 1.0D, z + 1.0D).expand(16D, 4D, 16D));
-            Iterator iterator = list.iterator();
-            do
-            {
-                if(!iterator.hasNext())
-                {
-                    break;
-                }
-                Entity entity = (Entity)iterator.next();
-                WolfEntity entitywolf = (WolfEntity)entity;
-                if(entitywolf.isTamed() && entityplayer.name.equals(entitywolf.getOwnerName()))
-                {
-                    int j = 0;
-                    while(j < automobile.numPassengers)
-                    {
-                        if(seats[j].passenger == null)
-                        {
-                            entitywolf.setVehicle(seats[j]);
-                        }
-                        j++;
-                    }
-                }
-            } while(true);
+            entityplayer.setVehicle(this);
+            occupySeatsWithPupils(entityplayer);
+            if(SdkEnvTool.isEnvServ()) {
+                PacketHelper.sendToAllTracking(this, new PassengerEnterPacket(this.id, entityplayer.name));
+            }
         }
         return true;
+    }
+
+    public void occupySeatsWithPupils(PlayerEntity player){
+        List list = world.collectEntitiesByClass(WolfEntity.class, Box.createCached(x, y, z, x + 1.0D, y + 1.0D, z + 1.0D).expand(16D, 4D, 16D));
+        Iterator iterator = list.iterator();
+        while (iterator.hasNext()) {
+            Entity entity = (Entity) iterator.next();
+            WolfEntity entitywolf = (WolfEntity) entity;
+            if (entitywolf.isTamed() && !entitywolf.isInSittingPose() && player.name.equals(entitywolf.getOwnerName())) {
+                int j = 0;
+                while (j < automobile.numPassengers) {
+                    if (seats[j].passenger == null) {
+                        entitywolf.setVehicle(seats[j]);
+                        entitywolf.setSitting(true);
+                        if(SdkEnvTool.isEnvServ()) {
+                            PacketHelper.sendToAllTracking(this, new PassengerLivingEnterPacket(this.id, entitywolf.id));
+                        }
+                    }
+                    j++;
+                }
+            }
+        }
+    }
+
+    public void exitWithPupils(PlayerEntity player){
+
+        int j = 0;
+        while(j < automobile.numPassengers)
+        {
+            if(seats[j].passenger instanceof WolfEntity wolf && Objects.equals(wolf.getOwnerName(), player.name))
+            {
+                /// Klasa Utils z integracją z mocreatures?
+                wolf.setSitting(false);
+                wolf.setVehicle(null);
+                seats[j].broadcastEventExit();
+            }
+            j++;
+        }
     }
 
     @Override
@@ -381,16 +430,16 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
             multiplySpeed(automobile.UPHILL_SLOWDOWN);
         }
         move(velocityX, velocityY, velocityZ);
-        int i = flag1 ? 1 : -1;
+        int forwOrBack = flag1 ? 1 : -1;
         if(onGround && lastOnGround)
         {
             if(prevY - y > 0.01D)
             {
-                pitch = 45 * i;
+                pitch = 45 * forwOrBack;
             } else
             if(prevY - y < -0.01D)
             {
-                pitch = -45 * i;
+                pitch = -45 * forwOrBack;
                 uphillTicks = 4; /// Daje 4 ticksów spowolnienia pod górke
             } else
             {
@@ -410,88 +459,80 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
             velocityY -= 0.001D;
         } else
         {
-            setRotationPitch(Math.max(Math.min((float)((-90D * velocityY) / getSpeed()) * (float)i, 90F), -90F) / 2.0F);
+            setRotationPitch(Math.max(Math.min((float)((-90D * velocityY) / getSpeed()) * (float)forwOrBack, 90F), -90F) / 2.0F);
             velocityY = y - prevY - automobile.FALL_SPEED;
         }
         lastOnGround = onGround;
+        /// Handling Collision
         List list = world.getEntities(this, boundingBox.expand(0.2D, 0.0D, 0.2D));
-        if(list != null && list.size() > 0)
+        if(list != null && !list.isEmpty())
         {
             for(int j = 0; j < list.size(); j++)
             {
                 Entity entity = (Entity)list.get(j);
-                if(entity != passenger && entity.isPushable()) //canbepushed
+                if(entity != passenger && entity.isPushable())
                 {
                     handleCollision(entity);
                 }
             }
 
         }
-        /// Spowolnienie na tyle duże, że kwalfikowane jako kolizja
+        /// Collision with living - Ramming
+        if(passenger != null && lastCollidedEntity instanceof LivingEntity){
+            /// todo, przy określonej wielkości entity jakieś konsekwencje dla samochodu (dmg, spowolnienie)? DMG przy Crash - maksymalnie tyle samo co w zwykłej na ten moment - lekko dziwny system.
+            //TODO:  Podbicie Gracza jest pobugowane, czasami wywala w kosmos, czasami za lekko - z tym zawsze były problemy (żyrafa for example)
+            double colSpeedF = getSpeed();
+            lastCollidedEntity.addVelocity(prevMotionX, prevMotionY + colSpeedF, prevMotionZ);
+            if(lastCollidedEntity instanceof PlayerEntity player2 && !collPlayerDublet){
+                sendPlayerCrash(player2, prevMotionX, prevMotionY + colSpeedF, prevMotionZ);
+            }
+            if(colSpeedF >= 0.2D) {
+                lastCollidedEntity.damage(passenger, (int) (automobile.COLLISION_DAMAGE_ENTITY * (colSpeedF * 2.0D)));
+            }
+        }
+        collPlayerDublet = false;
+        /// Spowolnienie na tyle duże, że kwalfikowane jako kolizja - Crash
         if(passenger != null && getPrevSpeed() - getSpeed() > automobile.COLLISION_SPEED_MIN)
         {
             if(lastCollidedEntity != null)
             {
                 if(automobile.COLLISION_FLIGHT_ENTITY)
                 {
-                    if(!(lastCollidedEntity instanceof WW2Tank)) {
+                    if(!(lastCollidedEntity instanceof WW2Tank)) { /// Lista czego nie przesuwać przy Car-Crash
                         lastCollidedEntity.addVelocity(prevMotionX, prevMotionY + 1.0D, prevMotionZ);
+                        if(lastCollidedEntity instanceof PlayerEntity player1){
+                            sendPlayerCrash(player1, prevMotionX, prevMotionY + getPrevSpeed(), prevMotionZ);
+                            collPlayerDublet = true;
+                        }
                     }
                 }
-                if(automobile.COLLISION_DAMAGE)
+                if(automobile.COLLISION_DAMAGE) /// DMG from Crash i Ramming się wyklucza, albo jedno albo drugie się odpala.
                 {
-                    lastCollidedEntity.damage(this, automobile.COLLISION_DAMAGE_ENTITY);
+                    lastCollidedEntity.damage(this, (int) (automobile.COLLISION_DAMAGE_ENTITY * (getPrevSpeed() * 2.0D))); /// Kolizja z zatrzymaniem
                 }
             }
-            if(automobile.COLLISION_DAMAGE) //todo czy kolizja z Living nie zada obrażeń? czym większe entity tym więcej?
+            if(automobile.COLLISION_DAMAGE) /// Jako, że źrodłem obrażeń jest lastCollidedEntity, zderzenie z LivingEntity nie zada obrażeń.
             {
-                damage(lastCollidedEntity, automobile.COLLISION_DAMAGE_SELF);
+                damage(lastCollidedEntity, (int) (automobile.COLLISION_DAMAGE_SELF * (getPrevSpeed() * 2.0D)));
             }
-            if(automobile.COLLISION_FLIGHT_PLAYER && lastCollidedEntity == null) //todo dodaj aby colliede Entity nie było null?? czyli jedynie na "drzewie" wyjebka przez okno
+            if(automobile.COLLISION_FLIGHT_PLAYER && lastCollidedEntity == null) /// Wypadnięcie jedynie na "drzewie", nigdy na Entity.
             {
+                PlayerEntity playerPass = (PlayerEntity)passenger;
                 passenger.addVelocity(prevMotionX, prevMotionY + 1.0D, prevMotionZ);
                 passenger.setVehicle(null);
-            }
-        }
-        /// Collision with living
-        if(passenger != null && lastCollidedEntity instanceof LivingEntity){
-            /// todo, przy określonej wielkości entity jakieś konsekwencje dla samochodu?
-            double colSpeedF = getSpeed();
-            lastCollidedEntity.addVelocity(prevMotionX, prevMotionY + colSpeedF, prevMotionZ);
-            if(colSpeedF >= 0.2D) {
-//                System.out.println(lastCollidedEntity);
-                lastCollidedEntity.damage(passenger, (int) (automobile.COLLISION_DAMAGE_ENTITY * (colSpeedF * 2.0D)));
-                /// damage from passenger - animals aggro - //todo czy na Car też moze zagrowac?
+                broadcastEventExit();
+                sendPlayerCrash(playerPass, prevMotionX, prevMotionY + 1.0D, prevMotionZ);
             }
         }
         lastCollidedEntity = null;
+        ///
         prevMotionX = velocityX;
         prevMotionY = velocityY;
         prevMotionZ = velocityZ;
-        if(passenger != null && passenger.dead)
+        if(passenger != null && (passenger.dead || !passenger.isAlive()))
         {
             passenger = null;
-        }
-        if(random.nextInt(automobile.MAX_HEALTH) > health * 2)
-        {
-            if(health < automobile.MAX_HEALTH/8)
-                spawnParticles("flame", 2, false);
-            if(health < automobile.MAX_HEALTH/4)
-                spawnParticles("largesmoke", 2, false);
-            if(health < automobile.MAX_HEALTH)
-                spawnParticles("smoke", 4, false);
-        }
-        if(passenger != null)
-        {
-            if(soundLoopTime <= 0 && vehicleFuel > 0)
-            {
-                world.playSound(this, automobile.SOUND_RIDING, 1.0F, 1.0F);
-                soundLoopTime = automobile.SOUND_LOOP_TIME_MAX;
-            }
-            soundLoopTime--;
-        } else
-        {
-            soundLoopTime = 0;
+            broadcastEventExit();
         }
         this.wheelsYaw *= 0.8F;
         if(this.wheelsYaw > 10.0F) {
@@ -513,7 +554,7 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
         {
             vehicleFuel--;
         }
-        if((automobile.MAX_HEALTH-health) > (4.5 * automobile.MAX_HEALTH) / 5 && random.nextInt(30) == 0)   ///samoniszczenie
+        if((automobile.MAX_HEALTH-health) > (4.5 * automobile.MAX_HEALTH) / 5 && random.nextInt(30) == 0)   ///samoniszczenie //todo? tank też
         {
             damage(this, 1);
         }
@@ -524,7 +565,7 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
         if(velocityY > 0) { /// Anty-Podskakiwanie
             velocityY = -0.001;
         }
-        wheelsAngle += (float)getSpeed() / 2F;
+        wheelsAngle += (float)getSpeed() / 2F; /// Do Obracania kół - zepsut
         if(wheelsAngle > 3600){
             wheelsAngle = 0;
         }
@@ -536,24 +577,60 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
         if(!world.isRemote){ /// Server Data-Tracker send
             setOnGround(this.onGround);
             setClientYaw(yaw);
-            setClientWheels(wheelsYaw);
+            setClientFuel(vehicleFuel);
             this.dataTracker.set(29, health);
+        }
+        if(SdkEnvTool.isEnvClient()){
+            tickEffects(); /// Particles + Driving Sound
         }
     }
 
     public void tickEffects(){
-
+        if(random.nextInt(automobile.MAX_HEALTH) > health * 2)
+        {
+            if(health < automobile.MAX_HEALTH/8)
+                spawnParticles("flame", 2, false);
+            if(health < automobile.MAX_HEALTH/4)
+                spawnParticles("largesmoke", 2, false);
+            if(health < automobile.MAX_HEALTH)
+                spawnParticles("smoke", 4, false);
+        }
+        if(passenger != null)
+        {
+            if(soundLoopTime <= 0 && vehicleFuel > 0)
+            {
+                world.playSound(this, automobile.SOUND_RIDING, 1.0F, 1.0F);
+                soundLoopTime = automobile.SOUND_LOOP_TIME_MAX;
+            }
+            soundLoopTime--;
+        } else
+        {
+            soundLoopTime = 0;
+        }
     }
 
     public void destroyVehicle(){
-        Explosion explosion = new Explosion(world, null, x, (float)y, (float)z, 3F);
-        explosion.explode();
-        world.playSound(x, y, z, "random.explode", 4F, (1.0F + (world.random.nextFloat() - world.random.nextFloat()) * 0.2F) * 0.7F);
-        spawnParticles("explode", 32, true);
-        spawnParticles("smoke", 32, true);
-        spawnParticles("lava", 32, false);
-        dropParts();
-        markDead();
+        boolean flagW = checkWaterCollisions();
+        SdkExplosion explosion = new SdkExplosion(world, null, x, y, z, 1.5F, true, false, "random.explode", flagW);
+        explosion.setVolume(6.0F);
+        explosion.fireChance = 0.2F;
+        explosion.explodeA();
+        explosion.explodeB(true);
+        if(SdkEnvTool.isEnvClient()) {
+            if(flagW){
+                spawnParticles("splash", 32, true);
+                spawnParticles("bubble", 32, true);
+            }else{
+                spawnParticles("explode", 32, true);
+                spawnParticles("smoke", 32, true);
+                spawnParticles("lava", 32, false);
+            }
+        }
+        if(!world.isRemote){
+            dropParts();
+            markDead();
+        }
+        //todo damage dla pasażerów + kierowcy dodatkowy / TANK też
     }
 
     public void dropParts(){
@@ -659,17 +736,16 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
     public void handleCollision(Entity entity)
     {
         /// POKOMBINOWAĆ TRZEBA - Słoń powinien przesunąć
-        /// Tutaj zapogiegam odpalania onCollision dla Living, żeby siebie NAWZAJEm nie przesuwać, aczkolwiek i tak jestem zabezpieczony w mojej onCollision(), więc trochę zbędne
+        /// Tutaj zapogiegam odpalania onCollision dla Living, żeby siebie NAWZAJEm nie przesuwać
         if(!(entity instanceof LivingEntity) && !(entity instanceof EntityPassengerSeat pasSeat && pasSeat.mother == this)){  /// odpali onCollision jedynie dla obcego Col Boxa
            entity.onCollision(this);
         }
-//        entity.onCollision(this);
-        if(entity.passenger != this && entity.vehicle != this && !(entity.vehicle instanceof EntityPassengerSeat) && !(entity instanceof EntityPassengerSeat))
+        /// Wykluczam do wyliczeń Kraksy - gdzie prędkość spadła tak mocno, że pojazd Dostaje DMG - i wtedy szuka czy lastCollidedEnt również należy uderzyć.
+        if(entity.passenger != this && entity.vehicle != this && !(entity.vehicle instanceof EntityPassengerSeat) && !(entity instanceof EntityPassengerSeat passSeat && passSeat.mother == this))
         {
             lastCollidedEntity = entity;
         }
     }
-    //TODO onLanding - both for Tank and Car
 
     public void setRotationPitch(float f)
     {
@@ -691,18 +767,12 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
         for(int j = 0; j < i; j++)
         {
             double d = (x + random.nextDouble() * (double)width * 1.5D) - (double)width * 0.75D;
-            double d1 = ((y + random.nextDouble() * (double)height) - (double)height * 0.5D) + 0.25D;
+            double d1 = ((y + random.nextDouble() * (double)height) - (double)height * 0.5D) + 0.75D;
             double d2 = (z + random.nextDouble() * (double)width) - (double)width * 0.5D;
             double d3 = flag ? random.nextDouble() - 0.5D : 0.0D;
             double d4 = flag ? random.nextDouble() - 0.5D : 0.0D;
             double d5 = flag ? random.nextDouble() - 0.5D : 0.0D;
-            if(Math.random() < 0.75D)
-            {
-                world.addParticle(s, d, d1, d2, d3, d4, d5);
-            } else
-            {
-                world.addParticle(s, d, d1, d2, d3, d4, d5);
-            }
+            SdkParticleFactory.addVanillaParticle(world, s, d, d1, d2, d3, d4, d5);
         }
 
     }
@@ -859,25 +929,24 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
 
     @Override
     public void updatePassengerPosition(){
-
+            if(passenger == null){
+                return;
+            }
             double d = automobile.playerXOffset;;
             double d1 = getPassengerRidingHeight() + passenger.getStandingEyeHeight();
             double d2 = automobile.playerZOffset;
             double d3 = Math.cos(((double)(-yaw) / 180D) * 3.1415926535897931D);
             double d4 = Math.sin(((double)(-yaw) / 180D) * 3.1415926535897931D);
-
+            /// Issue: Little "freeze" on drop
             double d5 = Math.cos(((double)pitch / 180D) * 3.1415926535897931D); /// GÓRA - DÓŁ
 //            double d6 = Math.sin(((double)pitch / 180D) * 3.1415926535897931D) * 0.5D; /// Przesunięcie PRZÓD-TYŁ
-            double d6 = Math.sin(((double)pitch / 180D) * 3.1415926535897931D * 0.25D); /// Przesunięcie PRZÓD-TYŁ
-            /// Issue: Little "freeze" on drop
-
+            double d6 = Math.sin(((double)pitch / 180D) * 3.1415926535897931D * 0.25D); /// Przesunięcie PRZÓD-TYŁ 25%
+            /// Oryginal
 //            double d5 = Math.cos(((double)pitch / 180D) * 3.1415926535897931D);
 //            double d6 = Math.sin(((double)pitch / 180D) * 3.1415926535897931D);
-            /// Oryginal
-
+            /// Simple no drop freeze
 //            double d5 = Math.cos(((double)0 / 180D) * 3.1415926535897931D);
 //            double d6 = Math.sin(((double)0 / 180D) * 3.1415926535897931D);
-            /// Simple no drop freeze
 
             double d7 = Math.cos(((double)yaw * 3.1415926535897931D) / 180D) * 0.4D * d5;
             double d8 = Math.sin(((double)yaw * 3.1415926535897931D) / 180D) * 0.4D * d5;
@@ -966,17 +1035,20 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
 
     @Override
     public void exitKey(PlayerEntity playerEntity) {
-        passenger.setVehicle(this);
-        int j = 0;
-        while(j < automobile.numPassengers) //todo na szybko zrobione
-        {
-            if(seats[j].passenger != null) //todo żeby gracza nie wywaliło
-            {
-                seats[j].passenger.setVehicle(null);
-//                entitywolf.setVehicle(seats[j]);
-            }
-            j++;
+        alternateExit(playerEntity);
+        broadcastEventExit();
+        exitWithPupils(playerEntity);
+    }
+
+    public void alternateExit(PlayerEntity playerEntity){
+        playerEntity.vehiclePitchDelta = 0.0F;
+        playerEntity.vehicleYawDelta = 0.0F;
+        if (playerEntity.vehicle != null) {
+            double extraY = 0.15D;
+            playerEntity.setPositionAndAnglesKeepPrevAngles(playerEntity.x, playerEntity.vehicle.boundingBox.minY + (double)playerEntity.vehicle.height + extraY, playerEntity.z, playerEntity.yaw, playerEntity.pitch);
+            playerEntity.vehicle.passenger = null;
         }
+        playerEntity.vehicle = null;
     }
 
     @Override
@@ -1026,17 +1098,17 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
 
     @Override
     public float getArmorFactor() {
-        return 0;
+        return 1.0F;
     }
 
     @Override
     public float getDmgReduce() {
-        return 0;
+        return 0.5F;
     }
 
     @Override
     public float getDmgBroken() {
-        return 0;
+        return 1.0F;
     }
 
     @Override
@@ -1047,6 +1119,11 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
     @Override
     public String getBombName() {
         return "";
+    }
+
+    @Override
+    public boolean canPassengerUseGun() {
+        return false;
     }
 
     @Override
@@ -1076,7 +1153,7 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
     public float prevRotationRoll;
     public RotatedAxes axes;
     public int engineType;
-    public float wheelsAngle; //TODO po co to??
+    public float wheelsAngle; //TODO dla obracających się kół, ale zepsute na razie
     public ItemStack[] cargoItems;
     public int inventorySize;
     public int vehicleFuel;
@@ -1086,6 +1163,40 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
     public EntityPassengerSeat[] seats;
     public int uphillTicks;
     public boolean receivedP = false;
+    public boolean collPlayerDublet;
+
+    public void broadcastEventExit(){
+        world.broadcastEntityEvent(this, (byte)6);
+    }
+
+    public void broadcastEventExplode(){
+        world.broadcastEntityEvent(this, (byte)8);
+    }
+
+    public void sendPlayerCrash(PlayerEntity player, double x, double y, double z){
+        if(SdkEnvTool.isEnvServ()) {
+            PacketHelper.sendTo(player, new CarCrashPacket(x,y,z));
+        }
+    }
+
+    @Override
+    @Environment(EnvType.CLIENT)
+    public void processServerEntityStatus(byte status) {
+        if (status == 6) {
+            passenger = null;
+        } else if (status == 7) {
+            world.playSound(this, "ww2:mechhurt", 1.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
+        } else if (status == 8) {
+            destroyVehicle();
+        }  else if (status == 9){
+//            world.playSound(this, "sdk:wrench", 1.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
+        } else if (status == 110){
+            System.out.println("TESTOWY EVENT 110");
+//            this.passenger = null;
+        }else{
+            super.processServerEntityStatus(status);
+        }
+    }
 
     /// Client interpolation and pos/rot
     @Environment(EnvType.CLIENT)
@@ -1136,7 +1247,7 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
     {
         dataTracker.startTracking(16, (byte) 0); //onGround
         dataTracker.startTracking(17, 0); //Yaw
-        dataTracker.startTracking(18, 0); //Wheels
+        dataTracker.startTracking(18, 0); //Fuel
 
         dataTracker.startTracking(29, 0); //HEALTH
     }
@@ -1165,23 +1276,23 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
             double d6 = Math.cos(d2);
             flag1 = -d6 > 0.0D && clientVelocityX > 0.0D || -d6 < 0.0D && clientVelocityX < 0.0D;
         }
-        int i = flag1 ? 1 : -1;
+        int forwOrBack = flag1 ? 1 : -1;
         if(onGround && lastOnClientGround)
         {
             if(clientPrevY - clientY > 0.2D)
             {
-                pitch = 45 * i;
+                pitch = 45 * forwOrBack;
             } else
             if(clientPrevY - clientY < -0.2D)
             {
-                pitch = -45 * i;
+                pitch = -45 * forwOrBack;
             } else
             {
                 pitch = 0.0F;
             }
         } else
         {
-            setRotationPitch(Math.max(Math.min((float)((-90D * clientVelocityY) / getClientSpeed()) * (float)i, 90F), -90F) / 2.0F);
+            setRotationPitch(Math.max(Math.min((float)((-90D * clientVelocityY) / getClientSpeed()) * (float)forwOrBack, 90F), -90F) / 2.0F);
         }
         lastOnClientGround = onGround;
         clientPrevY = clientY;
@@ -1203,10 +1314,10 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
         if(pyrd1 == 0.0D){
         }
         if(pyrd1 < 0.0D){ /// lewo-prawo??
-            wheelsYaw = (float)((double)wheelsYaw - 0.5D * getClientTurnSpeedRender());
+            wheelsYaw = (float)((double)wheelsYaw - 0.5D * getClientTurnSpeedRender() * forwOrBack);
         }
         if(pyrd1 > 0.0D){ // yrd
-            wheelsYaw = (float)((double)wheelsYaw + 0.5D * getTurnSpeed());
+            wheelsYaw = (float)((double)wheelsYaw + 0.5D * getClientTurnSpeedRender() * forwOrBack);
         }
         this.wheelsYaw *= 0.8F;
         if(this.wheelsYaw > 10.0F) {
@@ -1216,9 +1327,13 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
         if(this.wheelsYaw < -10.0F) {
             this.wheelsYaw = -10.0F;
         }
-
-//        wheelsYaw = getClientWheels();
+        vehicleFuel = getClientFuel();
         health = dataTracker.getInt(29);
+        tickEffects();
+
+        if(passenger != null && Objects.equals(SdkToolsRender.minecraft.player.name, ((PlayerEntity) passenger).name)){/// Głowa Packet
+            PacketHelper.send(new PassHeadRotPacket(passenger.yaw, passenger.pitch));
+        }
     }
 
     public double getClientSpeed()
@@ -1262,13 +1377,14 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
         return Float.intBitsToFloat(dataTracker.getInt(17));
     }
 
-    //YAW
-    public void setClientWheels(float wheelAngle)
+    //Fuel
+    public void setClientFuel(int fuel)
     {
-        dataTracker.set(18, Float.floatToRawIntBits(wheelAngle));
+        dataTracker.set(18, fuel);
     }
-    public float getClientWheels()
+
+    public int getClientFuel()
     {
-        return Float.intBitsToFloat(dataTracker.getInt(18));
+        return dataTracker.getInt(18);
     }
 }

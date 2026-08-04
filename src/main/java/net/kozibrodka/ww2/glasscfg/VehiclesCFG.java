@@ -1,0 +1,35 @@
+package net.kozibrodka.ww2.glasscfg;
+
+import net.glasslauncher.mods.gcapi3.api.ConfigCategory;
+import net.glasslauncher.mods.gcapi3.api.ConfigEntry;
+
+public class VehiclesCFG {
+
+    @ConfigEntry(name = "Render-Debug Passanger Seat")
+    public Boolean debugPassSeats = false;
+
+    @ConfigEntry(name = "Enable Tanks", multiplayerSynced = true, requiresRestart = true)
+    public Boolean register_TANKS = true;
+
+    @ConfigCategory(name="§aGameplay", multiplayerSynced = true)
+    public GameplayCFG gameplay = new GameplayCFG();
+
+
+    @ConfigEntry(name = "Enable Bullets", multiplayerSynced = true, requiresRestart = true)
+    public Boolean testMP = true;
+
+    @ConfigEntry(name = "Enable Bullets")
+    public Boolean shellsEnabled = true;
+    @ConfigEntry(name = "Vehicles Explode")
+    public Boolean vehiclesExplode = true;
+
+    @ConfigEntry(name = "Add Legacy Vehicles")
+    public Boolean registerVehicles_CLASSIC = true;
+    @ConfigEntry(name = "Add OLD Vehicles")
+    public Boolean registerVehicles_NORMAL = false;
+    @ConfigEntry(name = "Add New Vehicles")
+    public Boolean registerVehicles_NEW = false;
+
+
+
+}

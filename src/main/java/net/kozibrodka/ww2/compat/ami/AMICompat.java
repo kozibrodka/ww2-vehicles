@@ -2,7 +2,9 @@ package net.kozibrodka.ww2.compat.ami;
 
 import net.glasslauncher.mods.alwaysmoreitems.api.*;
 import net.kozibrodka.ww2.events.mod_Vehicles;
+import net.kozibrodka.ww2.events.ww2Parts;
 import net.kozibrodka.ww2.recipe.VehicleRecipeRegistry;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.modificationstation.stationapi.api.util.Identifier;
 
@@ -51,6 +53,8 @@ public class AMICompat implements ModPluginProvider {
 
     @Override
     public void updateBlacklist(AMIHelpers amiHelpers) {
-
+        amiHelpers.getItemBlacklist().addItemToBlacklist(new ItemStack(ww2Parts.largeEngine));
     }
+    // TODO poustawiać zaleznosci...
+//        amiHelpers.getItemBlacklist().addItemToBlacklist(new ItemStack(ww2Parts.largeEngine));
 }

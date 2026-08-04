@@ -4,7 +4,7 @@ import net.kozibrodka.ww2.model.ModelTank;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-public class Vehicle_properties {
+public class Tank_properties {
 
     public String name;
     public String longName;
@@ -87,7 +87,6 @@ public class Vehicle_properties {
     public int COLLISION_DAMAGE_ENTITY;
     public int COLLISION_DAMAGE_SELF;
     public boolean COLLISION_DAMAGE;
-    public boolean COLLISION_FLIGHT_PLAYER;
     public boolean COLLISION_FLIGHT_ENTITY;
     public double UPHILL_SLOWDOWN; /// spowolnienie pod górke
 

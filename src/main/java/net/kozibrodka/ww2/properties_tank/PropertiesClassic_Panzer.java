@@ -4,11 +4,11 @@ import net.kozibrodka.sdk_api.utils.SdkEnvTool;
 import net.kozibrodka.ww2.events.ww2Parts;
 import net.kozibrodka.ww2.events.mod_Vehicles;
 import net.kozibrodka.ww2.model_tank.ModelPanzer_Classic;
-import net.kozibrodka.ww2.properties.Vehicle_properties;
+import net.kozibrodka.ww2.properties.Tank_properties;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-public class PropertiesClassic_Panzer extends Vehicle_properties {
+public class PropertiesClassic_Panzer extends Tank_properties {
 
     public PropertiesClassic_Panzer() {
         name = "classic_Panzer";
@@ -75,7 +75,6 @@ public class PropertiesClassic_Panzer extends Vehicle_properties {
         COLLISION_DAMAGE_ENTITY = 30;
         COLLISION_DAMAGE_SELF = 10;
         COLLISION_DAMAGE = true;
-        COLLISION_FLIGHT_PLAYER = false;
         COLLISION_FLIGHT_ENTITY = true;
 
         item_track =  new ItemStack(ww2Parts.trackPiece.id, 1, 0);
