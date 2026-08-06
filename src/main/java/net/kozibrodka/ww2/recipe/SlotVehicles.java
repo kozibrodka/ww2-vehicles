@@ -16,4 +16,6 @@ public class SlotVehicles extends Slot
     {
         return true;
     }
+
+    //todo, chyba dla achievementów ewentualnych? onTakeItem()
 }

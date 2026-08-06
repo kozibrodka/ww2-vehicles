@@ -1,6 +1,7 @@
 package net.kozibrodka.ww2.properties;
 
 
+import net.kozibrodka.sdk_api.utils.SdkEnvTool;
 import net.kozibrodka.ww2.events.ww2Parts;
 import net.kozibrodka.ww2.events.mod_Vehicles;
 import net.kozibrodka.ww2.model.ModelVWType82;
@@ -13,7 +14,9 @@ public class Properties_VWType82 extends Truck_properties{
         name = "VWType82";
         longName = "VWType82";
         texture = "SkinVehicleVWType82.png";
-        model = new ModelVWType82();
+        if(SdkEnvTool.isEnvClient()) {
+            model = new ModelVWType82();
+        }
         SOUND_RIDING = "ww2:engine";
         shootSound = "ww2:tankshell";
         SOUND_LOOP_TIME_MAX = 20;

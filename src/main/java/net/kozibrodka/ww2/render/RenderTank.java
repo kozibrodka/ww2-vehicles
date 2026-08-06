@@ -10,7 +10,7 @@ import org.lwjgl.opengl.GL11;
 public class RenderTank extends EntityRenderer {
 
     public RenderTank() {
-        this.shadowRadius = 0.5F;
+        this.shadowRadius = 0.5F; //TODO zagadka CIENIA!!!
     }
 
     public void func_157_a(EntityTank vehicle, double d, double d1, double d2, float f, float f1) {

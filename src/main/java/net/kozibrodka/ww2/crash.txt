@@ -1,0 +1,31 @@
+CAR DAMAGED from: null DMG: 17
+java.util.ConcurrentModificationException
+	at java.base/java.util.ArrayList$Itr.checkForComodification(ArrayList.java:1013)
+	at java.base/java.util.ArrayList$Itr.next(ArrayList.java:967)
+	at knot//net.kozibrodka.sdk_api.utils.SdkExplosion.explodeA(SdkExplosion.java:112)
+	at knot//net.kozibrodka.ww2.entity.SdkEntityTankShell.explode(SdkEntityTankShell.java:299)
+	at knot//net.kozibrodka.ww2.entity.SdkEntityTankShell.tick(SdkEntityTankShell.java:239)
+	at knot//net.minecraft.world.World.updateEntity(World.java:1181)
+	at knot//net.minecraft.world.ServerWorld.updateEntity(ServerWorld.java:43)
+	at knot//net.minecraft.world.World.updateEntity(World.java:1157)
+	at knot//net.minecraft.world.World.tickEntities(World.java:1100)
+	at knot//net.minecraft.server.MinecraftServer.tick(MinecraftServer.java:374)
+	at knot//net.minecraft.server.MinecraftServer.run(MinecraftServer.java:307)
+	at knot//net.minecraft.server.MinecraftServer$ServerThread.run(MinecraftServer.java:422)
+2026-08-05 23:47:25 [SEVERE] Unexpected exception
+java.util.ConcurrentModificationException
+	at java.base/java.util.ArrayList$Itr.checkForComodification(ArrayList.java:1013)
+	at java.base/java.util.ArrayList$Itr.next(ArrayList.java:967)
+	at knot//net.kozibrodka.sdk_api.utils.SdkExplosion.explodeA(SdkExplosion.java:112)
+	at knot//net.kozibrodka.ww2.entity.SdkEntityTankShell.explode(SdkEntityTankShell.java:299)
+	at knot//net.kozibrodka.ww2.entity.SdkEntityTankShell.tick(SdkEntityTankShell.java:239)
+	at knot//net.minecraft.world.World.updateEntity(World.java:1181)
+	at knot//net.minecraft.world.ServerWorld.updateEntity(ServerWorld.java:43)
+	at knot//net.minecraft.world.World.updateEntity(World.java:1157)
+	at knot//net.minecraft.world.World.tickEntities(World.java:1100)
+	at knot//net.minecraft.server.MinecraftServer.tick(MinecraftServer.java:374)
+	at knot//net.minecraft.server.MinecraftServer.run(MinecraftServer.java:307)
+	at knot//net.minecraft.server.MinecraftServer$ServerThread.run(MinecraftServer.java:422)
+
+
+	explosion.explodeA(); - tutaj wtf?

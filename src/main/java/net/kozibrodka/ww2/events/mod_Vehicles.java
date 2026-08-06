@@ -1,6 +1,10 @@
 package net.kozibrodka.ww2.events;
 
 import net.glasslauncher.mods.gcapi3.api.ConfigRoot;
+import net.kozibrodka.ww2.entityBullet.TankBulletMachineGun;
+import net.kozibrodka.ww2.entityBullet.TankShellAP;
+import net.kozibrodka.ww2.entityBullet.TankShellHE;
+import net.kozibrodka.ww2.entityBullet.TankShellOBS;
 import net.kozibrodka.ww2.glasscfg.VehiclesCFG;
 import net.kozibrodka.ww2.entity.*;
 import net.kozibrodka.ww2.item.ItemTruck;
@@ -35,8 +39,8 @@ import java.util.Map;
 
 public class mod_Vehicles {
     //todo rename
-    @ConfigRoot(value = "VehiclesCFG", visibleName = "WW2 Vehicles Config")
-    public static final VehiclesCFG vehiclesGlass = new VehiclesCFG();
+    @ConfigRoot(value = "VehiclesCFG", visibleName = "WW2 Config")
+    public static final VehiclesCFG ww2Glass = new VehiclesCFG();
 
     @Entrypoint.Namespace
     public static  Namespace MOD_ID = Null.get();
@@ -84,13 +88,13 @@ public class mod_Vehicles {
         itemGunMachineGun = new SdkItemGunMachineGun(Identifier.of(MOD_ID, "itemGunMachineGun")).setTranslationKey(MOD_ID, "itemGunMachineGun");
 
        //TODO: ADD MACHINE GUN TYPE for vehicles, engine types work, DMG overall & props & collision, Truck playerXOffset, MINA!, ZAPORA ANTY-CZOLGOWA! (ala płotek), blowtorch effect, Gaśnica!
-        if(vehiclesGlass.registerVehicles_CLASSIC) {
+        if(true) {
             new TankType(new PropertiesClassic_Sherman());
             new TankType(new PropertiesClassic_Panzer());
             new TruckType(new PropertiesClassic_Jeep());
             new TruckType(new PropertiesClassic_Kubelwagen());
         }
-        if(vehiclesGlass.registerVehicles_NORMAL) {
+        if(false) {
             new TankType(new PropertiesOld_M41());
             new TankType(new PropertiesOld_T34());
             new TankType(new PropertiesOld_Panzer4G());
@@ -99,11 +103,11 @@ public class mod_Vehicles {
             new TankType(new PropertiesOld_Flakpanzer4());
         }
 
-        if(vehiclesGlass.registerVehicles_NEW) {
+        if(true) {
             new TankType(new Properties_Tiger1());
-            new TankType(new Properties_Tiger2());
-            new TruckType(new Properties_WillyJeep());
-            new TruckType(new Properties_VWType82());
+//            new TankType(new Properties_Tiger2()); /// TIGER-2 PSUJE RECIPE - bo dodaje pustą
+//            new TruckType(new Properties_WillyJeep());
+//            new TruckType(new Properties_VWType82());
         }
 
         //TODO "pozwolenie" na dodanie czołgów dodaje VehicleType ale nie dodaje itema aby przy wyłączniu nie było resetu chunków przez NBT null error.
@@ -140,24 +144,35 @@ public class mod_Vehicles {
 
     @EventListener
     public static void registerEntities(EntityRegisterEvent event) {
-        event.register(Identifier.of(MOD_ID, "Shell_OLD"), EntityShell_OLD.class);
-        event.register(Identifier.of(MOD_ID, "Shell"), SdkEntityTankShell.class);
-        event.register(Identifier.of(MOD_ID, "AAShellTank"), EntityAAShell.class);
-        event.register(Identifier.of(MOD_ID, "SdkBulletMachineGun"), SdkEntityBulletMachineGun.class);
         event.register(Identifier.of(MOD_ID, "Tank"), EntityTank.class);
         event.register(Identifier.of(MOD_ID, "Truck"), EntityTruck.class);
         event.register(Identifier.of(MOD_ID, "PassSeatVehicle"), EntityPassengerSeat.class);
+
+        event.register(Identifier.of(MOD_ID, "TankBulletMachineGun"), TankBulletMachineGun.class);
+        event.register(Identifier.of(MOD_ID, "TankShellAP"), TankShellAP.class);
+        event.register(Identifier.of(MOD_ID, "TankShellHE"), TankShellHE.class);
+        event.register(Identifier.of(MOD_ID, "TankShellOBS"), TankShellOBS.class);
+
+        event.register(Identifier.of(MOD_ID, "Shell_OLD"), EntityShell_OLD.class);
+        event.register(Identifier.of(MOD_ID, "Shell"), SdkEntityTankShell.class);
+        event.register(Identifier.of(MOD_ID, "AAShellTank"), EntityAAShell.class);
+
     }
 
     @EventListener
     public static void registerMobHandlers(EntityHandlerRegistryEvent event) {
-        Registry.register(event.registry, MOD_ID.id("Shell_OLD"), EntityShell_OLD::new);
-        Registry.register(event.registry, MOD_ID.id("Shell"), SdkEntityTankShell::new);
-        Registry.register(event.registry, MOD_ID.id("AAShellTank"), EntityAAShell::new);
-        Registry.register(event.registry, MOD_ID.id("SdkBulletMachineGun"), SdkEntityBulletMachineGun::new);
         Registry.register(event.registry, MOD_ID.id("Tank"), EntityTank::new);
         Registry.register(event.registry, MOD_ID.id("Truck"), EntityTruck::new);
         Registry.register(event.registry, MOD_ID.id("PassSeatVehicle"), EntityPassengerSeat::new);
+
+        Registry.register(event.registry, MOD_ID.id("TankBulletMachineGun"), TankBulletMachineGun::new);
+        Registry.register(event.registry, MOD_ID.id("TankShellAP"), TankShellAP::new);
+        Registry.register(event.registry, MOD_ID.id("TankShellHE"), TankShellHE::new);
+        Registry.register(event.registry, MOD_ID.id("TankShellOBS"), TankShellOBS::new);
+
+        Registry.register(event.registry, MOD_ID.id("Shell_OLD"), EntityShell_OLD::new);
+        Registry.register(event.registry, MOD_ID.id("Shell"), SdkEntityTankShell::new);
+        Registry.register(event.registry, MOD_ID.id("AAShellTank"), EntityAAShell::new);
     }
 
     @EventListener

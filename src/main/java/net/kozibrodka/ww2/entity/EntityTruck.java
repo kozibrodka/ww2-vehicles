@@ -7,6 +7,7 @@ import net.kozibrodka.sdk_api.utils.*;
 import net.kozibrodka.ww2.events.mod_Vehicles;
 import net.kozibrodka.ww2.events.ww2Parts;
 import net.kozibrodka.ww2.gui.InventoryTruck;
+import net.kozibrodka.ww2.gui.InventoryVehicle;
 import net.kozibrodka.ww2.network.*;
 import net.kozibrodka.ww2.properties.PassengerSeatData;
 import net.kozibrodka.ww2.properties.TruckType;
@@ -35,7 +36,7 @@ import java.util.List;
 import java.util.Objects;
 
 @HasTrackingParameters(trackingDistance = 160, updatePeriod = 2, sendVelocity = TriState.TRUE)
-public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehicle, EntitySpawnDataProvider {
+public class EntityTruck extends EntityVehicle implements WW2Truck, SdkVehicle, EntitySpawnDataProvider {
 
     public EntityTruck(World world)
     {
@@ -71,6 +72,7 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
     {
         this(world);
         automobile = vehicletype;
+        setDataFromTruck(automobile);
         standingEyeHeight = automobile.standingOko;
         setBoundingBoxSpacing(automobile.autoWidth, automobile.autoHeight);
         setPosition(d, d1 + (double)standingEyeHeight, d2);
@@ -80,7 +82,6 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
         prevX = d;
         prevY = d1;
         prevZ = d2;
-        inventorySize = automobile.numCargoSlots + automobile.numBulletSlots + automobile.numShellSlots + 1;
         cargoItems = new ItemStack[inventorySize];
         health = automobile.MAX_HEALTH;
         engineType = i;
@@ -794,78 +795,6 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
     }
 
     @Override
-    public int size()
-    {
-        return inventorySize;
-    }
-
-    @Override
-    public ItemStack getStack(int i)
-    {
-        return cargoItems[i];
-    }
-
-    @Override
-    public ItemStack removeStack(int i, int j)
-    {
-        if(cargoItems[i] != null)
-        {
-            if(cargoItems[i].count <= j)
-            {
-                ItemStack itemstack = cargoItems[i];
-                cargoItems[i] = null;
-                return itemstack;
-            }
-            ItemStack itemstack1 = cargoItems[i].split(j);
-            if(cargoItems[i].count == 0)
-            {
-                cargoItems[i] = null;
-            }
-            return itemstack1;
-        } else
-        {
-            return null;
-        }
-    }
-
-    @Override
-    public void setStack(int i, ItemStack itemstack)
-    {
-        cargoItems[i] = itemstack;
-        if(itemstack != null && itemstack.count > getMaxCountPerStack())
-        {
-            itemstack.count = getMaxCountPerStack();
-        }
-        if(itemstack != null && itemstack.itemId == 263 && i == 0 && passenger != null && (passenger instanceof PlayerEntity))
-        {
-//            ((PlayerBase)passenger).increaseStat(mod_Planes.startPlane, 1); //TODO: achievement
-        }
-    }
-
-    @Override
-    public String getName()
-    {
-        return automobile.name;
-    }
-
-    @Override
-    public int getMaxCountPerStack()
-    {
-        return 64;
-    }
-
-    @Override
-    public void markDirty()
-    {
-    }
-
-    @Override
-    public boolean canPlayerUse(PlayerEntity entityplayer)
-    {
-        return entityplayer.getSquaredDistance(x, y, z) <= 64D;
-    }
-
-    @Override
     public void writeNbt(NbtCompound nbttagcompound)
     {
         NbtList nbttaglist = new NbtList();
@@ -892,10 +821,10 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
     public void readNbt(NbtCompound nbttagcompound)
     {
         automobile = mod_Vehicles.getTruckType(nbttagcompound.getString("Type"));
+        setDataFromTruck(automobile);
         standingEyeHeight = automobile.standingOko;
         setBoundingBoxSpacing(automobile.autoWidth, automobile.autoHeight);
         setPosition(x, y, z);
-        inventorySize = automobile.numCargoSlots + automobile.numBulletSlots + automobile.numShellSlots + 1;
         NbtList nbttaglist = nbttagcompound.getList("Items");
         cargoItems = new ItemStack[size()];
         for(int i = 0; i < nbttaglist.size(); i++)
@@ -911,14 +840,6 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
         health = nbttagcompound.getInt("Health");
         vehicleFuel = nbttagcompound.getInt("Fuel");
         engineType = nbttagcompound.getInt("Engine");
-        if(engineType < 1)
-        {
-            engineType = 1;
-        }
-        if(engineType > 4)
-        {
-            engineType = 4;
-        }
     }
 
     @Override
@@ -1007,16 +928,6 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
 //        return true;
 //    }
 
-    public boolean isFuelled()
-    {
-        return vehicleFuel > 0;
-    }
-
-    public int getBurnTimeRemainingScaled(int i)
-    {
-        return (vehicleFuel * i) / automobile.vehicleFuelAdd;
-    }
-
     @Override
     public void setControls(boolean forward, boolean back, boolean left, boolean right, boolean up, boolean down, boolean fire) {
         clientFORWARD = forward;
@@ -1055,9 +966,9 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
     public void inventoryKey(PlayerEntity playerEntity) {
         GuiHelper.openGUI(
                 playerEntity,
-                Identifier.of(Namespace.of("ww2"), "openTruck"),
+                Identifier.of(Namespace.of("ww2"), "openVehicle"),
                 this,
-                new InventoryTruck(playerEntity.inventory, this)
+                new InventoryVehicle(playerEntity.inventory, this)
         );
     }
 
@@ -1153,10 +1064,7 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
     public float prevRotationRoll;
     public RotatedAxes axes;
     public int engineType;
-    public float wheelsAngle; //TODO dla obracających się kół, ale zepsute na razie
-    public ItemStack[] cargoItems;
-    public int inventorySize;
-    public int vehicleFuel;
+    public float wheelsAngle; //TODO dla obracających się kół, ale zepsute na razie - Tank też
     public TruckType automobile;
 
     public boolean spawnedSeats;
@@ -1330,10 +1238,6 @@ public class EntityTruck extends Entity implements Inventory, WW2Truck, SdkVehic
         vehicleFuel = getClientFuel();
         health = dataTracker.getInt(29);
         tickEffects();
-
-        if(passenger != null && Objects.equals(SdkToolsRender.minecraft.player.name, ((PlayerEntity) passenger).name)){/// Głowa Packet
-            PacketHelper.send(new PassHeadRotPacket(passenger.yaw, passenger.pitch));
-        }
     }
 
     public double getClientSpeed()

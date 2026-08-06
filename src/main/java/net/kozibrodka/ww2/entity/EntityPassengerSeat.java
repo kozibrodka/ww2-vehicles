@@ -7,7 +7,6 @@ import net.kozibrodka.sdk_api.utils.SdkItemCustomUseDelay;
 import net.kozibrodka.sdk_api.utils.SdkToolsRender;
 import net.kozibrodka.sdk_api.utils.SdkVehicle;
 import net.kozibrodka.ww2.events.mod_Vehicles;
-import net.kozibrodka.ww2.network.PassHeadRotPacket;
 import net.kozibrodka.ww2.network.PassSeatLoadPacket;
 import net.kozibrodka.ww2.network.PassengerEnterPacket;
 import net.minecraft.entity.Entity;
@@ -205,9 +204,6 @@ public class EntityPassengerSeat extends Entity implements SdkVehicle, EntitySpa
             if(!receivedP){
                 receivedP = true;
                 PacketHelper.send(new PassSeatLoadPacket(this.id));
-            }
-            if(passenger instanceof PlayerEntity playerEnt && Objects.equals(SdkToolsRender.minecraft.player.name, playerEnt.name)){/// Głowa Packet
-                PacketHelper.send(new PassHeadRotPacket(passenger.yaw, passenger.pitch));
             }
         }else{
             if(mother == null || mother.dead){

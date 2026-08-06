@@ -1,6 +1,7 @@
 package net.kozibrodka.ww2.properties;
 
 
+import net.kozibrodka.sdk_api.utils.SdkEnvTool;
 import net.kozibrodka.ww2.events.ww2Parts;
 import net.kozibrodka.ww2.events.mod_Vehicles;
 import net.kozibrodka.ww2.model.ModelWillyJeep;
@@ -13,7 +14,9 @@ public class Properties_WillyJeep extends Truck_properties{
         name = "WillyJeep";
         longName = "Willy Jeep";
         texture = "SkinVehicleWillyJeep.png";
-        model = new ModelWillyJeep();
+        if(SdkEnvTool.isEnvClient()) {
+            model = new ModelWillyJeep();
+        }
         SOUND_RIDING = "ww2:engine";
         shootSound = "ww2:tankshell";
         SOUND_LOOP_TIME_MAX = 20;

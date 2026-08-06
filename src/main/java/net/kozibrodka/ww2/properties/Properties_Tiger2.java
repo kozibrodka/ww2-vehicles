@@ -1,5 +1,6 @@
 package net.kozibrodka.ww2.properties;
 
+import net.kozibrodka.sdk_api.utils.SdkEnvTool;
 import net.kozibrodka.ww2.events.mod_Vehicles;
 import net.kozibrodka.ww2.model.ModelTigerII;
 import net.minecraft.item.ItemStack;
@@ -11,7 +12,9 @@ public class Properties_Tiger2 extends Tank_properties {
         name = "TigerII";
         longName = "Panzerkampfwagen VI Tiger II - Version B";
         texture = "SkinVehicleTigerII.png";
-        model = new ModelTigerII();
+        if(SdkEnvTool.isEnvClient()) {
+            model = new ModelTigerII();
+        }
 //        model = new ModelTigerII_New();
         SOUND_RIDING = "ww2:engine";
         shootSound = "ww2:tankshell";

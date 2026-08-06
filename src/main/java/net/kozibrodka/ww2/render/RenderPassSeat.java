@@ -6,6 +6,6 @@ import net.minecraft.entity.Entity;
 public class RenderPassSeat extends EntityRenderer {
     @Override
     public void render(Entity entity, double x, double y, double z, float yaw, float pitch) {
-
+        /// Pusty render dla braku tego klocka białego
     }
 }

@@ -3,7 +3,7 @@ package net.kozibrodka.ww2.item;
 import net.kozibrodka.sdk_api.utils.SdkEntityBullet;
 import net.kozibrodka.sdk_api.utils.SdkEntityCasing;
 import net.kozibrodka.sdk_api.utils.SdkItemGun;
-import net.kozibrodka.ww2.entity.SdkEntityBulletMachineGun;
+import net.kozibrodka.ww2.entityBullet.TankBulletMachineGun;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
@@ -22,12 +22,12 @@ public class SdkItemGunMachineGun extends SdkItemGun {
         useDelay = 1;
         recoil = 1.0F;
         soundRangeFactor = 4F;
-        penetration = 2;
+        penetration = 2.0F;
     }
 
     @Override
     public SdkEntityBullet getBulletEntity(World world, Entity entity, float f, float f1, float f2, float f3, float f4) {
-        return new SdkEntityBulletMachineGun(world, entity, this, f, f1, f2, f3, f4);
+        return new TankBulletMachineGun(world, entity, this, f, f1, f2, f3, f4);
     }
 
     @Override

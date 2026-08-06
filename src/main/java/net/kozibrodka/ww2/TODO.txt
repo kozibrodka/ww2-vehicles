@@ -1,28 +1,42 @@
-TODO BEFORE RELEASE:          broadcastEventy do wartości BYTE - wykorzystaj - EZZ
+TODO BEFORE RELEASE:
+WSKAZÓWKI:
+- broadcastEventy do wartości BYTE - wykorzystaj - EZZ
+- Wstawienie do RenderPassSeat nie powoduje tego przesuwania, jak na tym "default" białym kwadracie - dobrze się sprawdzi do renderowania GUNSów
+ISSUES:
+- Wysiadki przycinki, Alternate Exit jedynie zmiejsza szanse, to jest Vanilla Bug, jak stanę na łódce to też po jakimś czasie się zglitchuje [VANILLA BUG]
+
 
 - Silniki prędkość - dla Classic vehicles
 - Properties dla Classic 4x
 - Vehicle Living Ramming czy Tank ma ten sam system co Car?
 - Loading COntent na razie jedynie Vehicles/Cars etc... bez podziału na Classicsy, New, Old...
 
-- Tank Shells, aby był dźwięk i particlesy muszą być sub-klasy + "ClassFactory dla czołgu"
+- SLOT - wpusczający jedynie AMMO - jak będą samoloty się pomyśli.
+- WSPÓLNE GUI - done for Truck. - TEST dla TANK
+- Klasa EntityVehicle żeby robiła jeszcze kilka podstawowych wspólnych kwestii.
 
-- PassHeadRot Packet add to SDK-API
-//TODO loadPacket, data o Turret dla czołgu
-//todo ENUM pociski type dla czołgu, przełącznie za pomocą broadCastEvent: jedynie wybiera pocisk który istnieje. - dosyć trudne.
+//TODO DEBUG: po wejściu do czołgu i pierwszym otwarciu ekwipunku, czołg wybiera AP - ale chyba tylko lokalnie client. !!!!!!! - CLIENT MUSI ODPALAĆ getFirstShell z jakiegoś powodu.
+
+//TODO bulletsy server spawned nie szukają Entity? - usunąłem to dla Shellsa, i wtedy nie potrzeba broadCastować eventów. - czy to się sprawdzi dla kul zwykłych, czy zbyt wiele jest "missów" wtedy - przeanalizować na SDK guns.
 
 - //todo Potem albo ustawienie tych szybkości wszystkich albo czołg.
-- Achievementy?
 
 - Multiplayer
 - Są pewne brakujące partsy. Stapi-resources. święty gral + itemsww2 sprawdź.   MetalWingSection np. Ogarnij to i rozpisz.
+- Crafting Cannons INSIDE vehicles BOX. - no vanilla workbench
 - INtegrate Planes/Cannons Part... - release jako ww2 mod
 
-- Wysiadki przycinki, Alternate Exit jedynie zmiejsza szanse, to jest Vanilla Bug, jak stanę na łódce to też po jakimś czasie się zglitchuje [VANILLA BUG]
+Pierwszy mały update:
+- Crafting Change: chcę aby Turrety były bez wieży - działa osobno, bo potem podział na kalibry - ewentualnie przed Release.
+- Achievementy
+- Healing pojazdu
 TODO AFTER : (zero nowych pojazdów przez ogarnięciem wszyskich systemów)
 - TMT 1.6.4 - aby móc załadować modele... - da komfort psychiczny
 
-- Zmodyfikować klase ENTITY, którą będą extendować pojazdy, aby usunać footstepsy, oraz DMG od FIRE tak mocny? move().
+- Tank Engine Smoke
+- "OLD" cannon - ala Pak-40 - pasują stylistycznie
+- Modele - brakująca LUFA (register Gun)  w Tiger 1 itd.? . Te animacje w Render/Model Tank dla "gun" z modelu, to jest zwykły KM, który u mnie obsługuje kierowca
+- Zmodyfikować klase ENTITY, którą będą extendować pojazdy, aby usunać footstepsy, oraz DMG od FIRE tak mocny? move(). - wtedy ewentualnie GUI wspólne? - Extender Class, aby mieć jedno GUI?
 - System Camo's do Pojazdu
 - System Kluczyków, itemNBT
 - Lepsze wchodzenie na miejsca pasażera, poprzez interakcje z głównym pojazdem... + wysiadka ze zwierzętami

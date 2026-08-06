@@ -2,6 +2,7 @@ package net.kozibrodka.ww2.events;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.kozibrodka.ww2.entity.*;
+import net.kozibrodka.ww2.entityBullet.TankBulletMachineGun;
 import net.kozibrodka.ww2.render.*;
 import net.kozibrodka.ww2.test164.EntityVehicleTEST164;
 import net.kozibrodka.ww2.test164.RenderVehicle164;
@@ -96,14 +97,15 @@ public class TextureListener {
         event.renderers.put(EntityShell_OLD.class, new RenderShell_OLD());
         event.renderers.put(SdkEntityTankShell.class, new RenderShell());
         event.renderers.put(EntityAAShell.class, new RenderAAShell());
-        event.renderers.put(SdkEntityBulletMachineGun.class, new SdkRenderBulletMachineGun());
+        event.renderers.put(TankBulletMachineGun.class, new SdkRenderBulletMachineGun());
         event.renderers.put(EntityTank.class, new RenderTank());
         event.renderers.put(EntityTruck.class, new RenderTruck());
         event.renderers.put(EntityVehicleTEST164.class, new RenderVehicle164());
 
         /// HIDE TO SHOW PASSSEAT DEBUG MODEL
-        if(mod_Vehicles.vehiclesGlass.debugPassSeats) {
+        if(mod_Vehicles.ww2Glass.debugPassSeats) {
             event.renderers.put(EntityPassengerSeat.class, new RenderPassSeat());
+//            event.renderers.put(EntityPassengerSeat.class, new RenderTestSeatBoat());
         }
     }
 

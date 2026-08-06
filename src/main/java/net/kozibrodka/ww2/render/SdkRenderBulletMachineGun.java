@@ -1,6 +1,6 @@
 package net.kozibrodka.ww2.render;
 
-import net.kozibrodka.ww2.entity.SdkEntityBulletMachineGun;
+import net.kozibrodka.ww2.entityBullet.TankBulletMachineGun;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.entity.Entity;
@@ -12,7 +12,7 @@ public class SdkRenderBulletMachineGun extends EntityRenderer {
     {
     }
 
-    public void renderArrow(SdkEntityBulletMachineGun sdkentitybullet, double d, double d1, double d2,
+    public void renderArrow(TankBulletMachineGun sdkentitybullet, double d, double d1, double d2,
                             float f, float f1)
     {
         bindTexture("/assets/ww2/stationapi/textures/mob/bullet.png");
@@ -68,6 +68,6 @@ public class SdkRenderBulletMachineGun extends EntityRenderer {
     public void render(Entity entity, double d, double d1, double d2,
                        float f, float f1)
     {
-        renderArrow((SdkEntityBulletMachineGun)entity, d, d1, d2, f, f1);
+        renderArrow((TankBulletMachineGun)entity, d, d1, d2, f, f1);
     }
 }

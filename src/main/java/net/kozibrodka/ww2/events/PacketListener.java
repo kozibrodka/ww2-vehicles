@@ -20,7 +20,6 @@ public class PacketListener {
         Registry.register(PacketTypeRegistry.INSTANCE, MOD_ID.id("passSeatLoad"), PassSeatLoadPacket.TYPE);
         Registry.register(PacketTypeRegistry.INSTANCE, MOD_ID.id("passEnter"), PassengerEnterPacket.TYPE);
         Registry.register(PacketTypeRegistry.INSTANCE, MOD_ID.id("passLivingEnter"), PassengerLivingEnterPacket.TYPE);
-        Registry.register(PacketTypeRegistry.INSTANCE, MOD_ID.id("passHeadRot"), PassHeadRotPacket.TYPE);
         Registry.register(PacketTypeRegistry.INSTANCE, MOD_ID.id("carCrash"), CarCrashPacket.TYPE);
         Registry.register(PacketTypeRegistry.INSTANCE, MOD_ID.id("antiExitStuck"), ExitAntiStuckPacket.TYPE);
 

@@ -2,36 +2,37 @@ package net.kozibrodka.ww2.gui;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.kozibrodka.ww2.entity.EntityTruck;
+import net.kozibrodka.ww2.entity.EntityTank;
+import net.kozibrodka.ww2.entity.EntityVehicle;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerListener;
 import net.minecraft.screen.slot.Slot;
 
-public class InventoryTruck extends ScreenHandler
+public class InventoryVehicle extends ScreenHandler
 {
 
-    public InventoryTruck(Inventory iinventory, EntityTruck entityvehicle)
+    public InventoryVehicle(Inventory iinventory, EntityVehicle entityvehicle)
     {
         vehicle = entityvehicle;
         addSlot(new Slot(entityvehicle, 0, 8, 53));
         int i = 1;
-        for(int j = 0; j < vehicle.automobile.numCargoSlots; j++)
+        for(int j = 0; j < vehicle.guiData.numCargoSlots; j++)
         {
             addSlot(new Slot(entityvehicle, i, 80 + j * 18, 18));
             i++;
         }
 
-        for(int k = 0; k < vehicle.automobile.numBulletSlots; k++)
+        for(int k = 0; k < vehicle.guiData.numBulletSlots; k++)
         {
             addSlot(new Slot(entityvehicle, i, 80 + k * 18, 36));
             i++;
         }
 
-        for(int l = 0; l < vehicle.automobile.numShellSlots; l++)
+        for(int l = 0; l < vehicle.guiData.numShellSlots; l++)
         {
-            addSlot(new Slot(entityvehicle, i, 80 + l * 18, 54));
+            addSlot(new SlotShells(entityvehicle, i, 80 + l * 18, 54));
             i++;
         }
 
@@ -57,17 +58,17 @@ public class InventoryTruck extends ScreenHandler
         return vehicle.canPlayerUse(entityplayer);
     }
 
-    private final EntityTruck vehicle;
+    private EntityVehicle vehicle;
 
     private int animalFuel;
-    private int fuelDuration;
+//    private int fuelDuration;
 
     @Environment(EnvType.SERVER)
     @Override
     public void addListener(ScreenHandlerListener listener) {
         super.addListener(listener);
         listener.onPropertyUpdate(this, 0, vehicle.vehicleFuel);
-        listener.onPropertyUpdate(this, 1, vehicle.automobile.vehicleFuelAdd);
+//        listener.onPropertyUpdate(this, 1, vehicle.automobile.vehicleFuelAdd);
     }
 
     @Override
@@ -77,17 +78,17 @@ public class InventoryTruck extends ScreenHandler
         for (Object listener : listeners) {
             ScreenHandlerListener shl = (ScreenHandlerListener) listener;
             if (this.animalFuel != vehicle.vehicleFuel) shl.onPropertyUpdate(this, 0, vehicle.vehicleFuel);
-            if (this.fuelDuration != vehicle.automobile.vehicleFuelAdd) shl.onPropertyUpdate(this, 1, vehicle.automobile.vehicleFuelAdd);
+//            if (this.fuelDuration != vehicle.automobile.vehicleFuelAdd) shl.onPropertyUpdate(this, 1, vehicle.automobile.vehicleFuelAdd);
         }
 
         this.animalFuel = vehicle.vehicleFuel;
-        this.fuelDuration = vehicle.automobile.vehicleFuelAdd;
+//        this.fuelDuration = vehicle.automobile.vehicleFuelAdd;
     }
 
     @Environment(EnvType.CLIENT)
     @Override
     public void setProperty(int id, int value) {
         if (id == 0) vehicle.vehicleFuel = value;
-        if (id == 1) vehicle.automobile.vehicleFuelAdd = value;
+//        if (id == 1) vehicle.automobile.vehicleFuelAdd = value;
     }
 }

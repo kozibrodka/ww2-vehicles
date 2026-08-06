@@ -1,5 +1,6 @@
 package net.kozibrodka.ww2.recipe;
 
+import net.kozibrodka.ww2.events.mod_Vehicles;
 import net.kozibrodka.ww2.events.ww2Parts;
 import net.kozibrodka.ww2.properties.TruckType;
 import net.kozibrodka.ww2.properties.TankType;
@@ -18,8 +19,6 @@ public class VehicleRecipeRegistry {
 
     public void initVehicleRecipe()
     {
-
-
 //        for (int i = 0; i < VehicleType.types.size(); i++) {
 //            VehicleType vehicletype = (VehicleType) VehicleType.types.get(i);
 //            if(vehicletype.name == "old_M41") {
@@ -31,37 +30,45 @@ public class VehicleRecipeRegistry {
 //        }
 //
 //            this.addShapedRecipeVehicle(new ItemInstance(ItemBase.ironAxe, 1), "W", 'W', ItemBase.arrow);
+        initTankRecipe();
+        initTruckRecipe();
+        initArtilleryRecipe();
+    }
 
-
-        for (int i = 0; i < TankType.types.size(); i++) {
-            TankType tankType = (TankType) TankType.types.get(i);
-            if(tankType.przedmiot != null) {
+    public void initTankRecipe() {
+        if (mod_Vehicles.ww2Glass.register_TANK) {
+            for (int i = 0; i < TankType.types.size(); i++) {
+                TankType tankType = (TankType) TankType.types.get(i);
                 this.addShapedRecipeVehicle(new ItemStack(tankType.przedmiot, 1, 1), tankType.itemlist1, tankType.itemlist2, tankType.itemlist3, tankType.itemlist4,
                         'Q', tankType.item_mg, 'W', tankType.item_turret, 'E', tankType.item_cannon, 'A', ww2Parts.smallEngine, 'S', tankType.item_body, 'D', tankType.dyeColor, 'X', tankType.item_track);
-
                 this.addShapedRecipeVehicle(new ItemStack(tankType.przedmiot, 1, 2), tankType.itemlist1, tankType.itemlist2, tankType.itemlist3, tankType.itemlist4,
                         'Q', tankType.item_mg, 'W', tankType.item_turret, 'E', tankType.item_cannon, 'A', ww2Parts.mediumEngine, 'S', tankType.item_body, 'D', tankType.dyeColor, 'X', tankType.item_track);
-
                 this.addShapedRecipeVehicle(new ItemStack(tankType.przedmiot, 1, 3), tankType.itemlist1, tankType.itemlist2, tankType.itemlist3, tankType.itemlist4,
                         'Q', tankType.item_mg, 'W', tankType.item_turret, 'E', tankType.item_cannon, 'A', ww2Parts.largeEngine, 'S', tankType.item_body, 'D', tankType.dyeColor, 'X', tankType.item_track);
             }
         }
+    }
 
-        for (int i = 0; i < TruckType.types.size(); i++) {
-            TruckType vehicleType = (TruckType) TruckType.types.get(i);
-            if(vehicleType.przedmiot != null) {
+    public void initTruckRecipe(){
+        if (mod_Vehicles.ww2Glass.register_TRUCK) {
+            for (int i = 0; i < TruckType.types.size(); i++) {
+                TruckType vehicleType = (TruckType) TruckType.types.get(i);
                 this.addShapedRecipeVehicle(new ItemStack(vehicleType.przedmiot, 1, 1), vehicleType.itemlist1, vehicleType.itemlist2, vehicleType.itemlist3, vehicleType.itemlist4,
                         'A', ww2Parts.smallEngine, 'S', vehicleType.item_body, 'D', vehicleType.dyeColor, 'X', vehicleType.item_wheel);
-
                 this.addShapedRecipeVehicle(new ItemStack(vehicleType.przedmiot, 1, 2), vehicleType.itemlist1, vehicleType.itemlist2, vehicleType.itemlist3, vehicleType.itemlist4,
                         'A', ww2Parts.mediumEngine, 'S', vehicleType.item_body, 'D', vehicleType.dyeColor, 'X', vehicleType.item_wheel);
-
                 this.addShapedRecipeVehicle(new ItemStack(vehicleType.przedmiot, 1, 3), vehicleType.itemlist1, vehicleType.itemlist2, vehicleType.itemlist3, vehicleType.itemlist4,
                         'A', ww2Parts.largeEngine, 'S', vehicleType.item_body, 'D', vehicleType.dyeColor, 'X', vehicleType.item_wheel);
             }
         }
-
     }
+
+    public void initArtilleryRecipe(){
+//        if (mod_Vehicles.ww2Glass.register_CANNON) {
+//
+//        }
+    }
+
 
     void addShapedRecipeVehicle(ItemStack arg, Object... objects) {
         String var3 = "";

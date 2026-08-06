@@ -38,16 +38,17 @@ public class TruckLoadPacket extends Packet implements ManagedPacket<TruckLoadPa
     private int entityHealth;
     private int engineType;
 
+    private float cannonYaw;
+    private float cannonPitch;
+
+    private float passYaw;
+    private float passPitch;
+
     public TruckLoadPacket() {
     }
 
     public TruckLoadPacket(int id) {
         this.entityId = id;
-    }
-
-    public TruckLoadPacket(int id, String name) {
-        this.entityId = id;
-        this.typeName = name;
     }
 
     public TruckLoadPacket(int id, String name, float ya, float pi, boolean gr, int ht, String pass, int engine) {
@@ -61,6 +62,21 @@ public class TruckLoadPacket extends Packet implements ManagedPacket<TruckLoadPa
         this.engineType = engine;
     }
 
+    public TruckLoadPacket(int id, String name, float ya, float pi, boolean gr, int ht, String pass, int engine, float cYaw, float cPith, float pYaw, float pPitc) {
+        this.entityId = id;
+        this.typeName = name;
+        this.entityYaw = ya;
+        this.entityPitch = pi;
+        this.entityGround = gr;
+        this.entityHealth = ht;
+        this.entityPass = pass;
+        this.engineType = engine;
+        this.cannonYaw = cYaw;
+        this.cannonPitch = cPith;
+        this.passYaw = pYaw;
+        this.passPitch = pPitc;
+    }
+
     @Override
     public void read(DataInputStream stream) {
         try {
@@ -72,6 +88,10 @@ public class TruckLoadPacket extends Packet implements ManagedPacket<TruckLoadPa
             this.entityHealth = stream.readInt();
             this.entityPass = stream.readUTF();
             this.engineType = stream.readInt();
+            this.cannonYaw = stream.readFloat();
+            this.cannonPitch = stream.readFloat();
+            this.passYaw = stream.readFloat();
+            this.passPitch = stream.readFloat();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -88,6 +108,10 @@ public class TruckLoadPacket extends Packet implements ManagedPacket<TruckLoadPa
             stream.writeInt(this.entityHealth);
             stream.writeUTF(this.entityPass);
             stream.writeInt(this.engineType);
+            stream.writeFloat(this.cannonYaw);
+            stream.writeFloat(this.cannonPitch);
+            stream.writeFloat(this.passYaw);
+            stream.writeFloat(this.passPitch);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -111,14 +135,14 @@ public class TruckLoadPacket extends Packet implements ManagedPacket<TruckLoadPa
         /// TRUCK
         if(vehicleEntity instanceof EntityTruck truck){
             truck.automobile = mod_Vehicles.getTruckType(this.typeName);
+            truck.setDataFromTruck(truck.automobile);
             truck.setOnGround(this.entityGround);
             truck.getDataTracker().set(29, this.entityHealth);
             truck.setClientYaw(this.entityYaw);
             truck.setBoundingBoxSpacing(truck.automobile.autoWidth, truck.automobile.autoHeight);
             truck.setPosition(truck.x, truck.y, truck.z);
             truck.engineType = this.engineType;
-            int inventorySize = truck.automobile.numCargoSlots + truck.automobile.numBulletSlots + truck.automobile.numShellSlots + 1;
-            truck.cargoItems = new ItemStack[inventorySize];
+            truck.cargoItems = new ItemStack[truck.inventorySize];
             PlayerEntity jokey1 = player.world.getPlayer(this.entityPass);
                 if(jokey1 != null){
                     jokey1.setVehicle(truck);
@@ -127,17 +151,21 @@ public class TruckLoadPacket extends Packet implements ManagedPacket<TruckLoadPa
         /// TANK
         if(vehicleEntity instanceof EntityTank tank){
             tank.automobile = mod_Vehicles.getTankType(this.typeName);
+            tank.setDataFromTank(tank.automobile);
             tank.setOnGround(this.entityGround);
             tank.getDataTracker().set(29, this.entityHealth);
             tank.setClientYaw(this.entityYaw);
             tank.setBoundingBoxSpacing(tank.automobile.autoWidth, tank.automobile.autoHeight);
             tank.setPosition(tank.x, tank.y, tank.z);
+            tank.gunYaw = this.cannonYaw;
+            tank.gunPitch = this.cannonPitch;
             tank.engineType = this.engineType;
-            int inventorySize = tank.automobile.numCargoSlots + tank.automobile.numBulletSlots + tank.automobile.numShellSlots + 1;
-            tank.cargoItems = new ItemStack[inventorySize];
+            tank.cargoItems = new ItemStack[tank.inventorySize];
             PlayerEntity jokey1 = player.world.getPlayer(this.entityPass);
             if(jokey1 != null){
                 jokey1.setVehicle(tank);
+                jokey1.yaw = this.passYaw;
+                jokey1.pitch = this.passPitch;
             }
         }
     }
@@ -162,10 +190,14 @@ public class TruckLoadPacket extends Packet implements ManagedPacket<TruckLoadPa
         /// TANK
         if(vehicleEntity instanceof EntityTank tank){
             String sPass = "";
+            float yawPass = 0.0F;
+            float pitchPass = 0.0F;
             if(vehicleEntity.passenger instanceof PlayerEntity plPass){
                 sPass = plPass.name;
+                yawPass = plPass.yaw;
+                pitchPass = plPass.pitch;
             }
-            PacketHelper.sendTo(player, new TruckLoadPacket(tank.id, tank.automobile.name, tank.yaw, tank.pitch, tank.onGround, tank.health, sPass, tank.engineType));
+            PacketHelper.sendTo(player, new TruckLoadPacket(tank.id, tank.automobile.name, tank.yaw, tank.pitch, tank.onGround, tank.health, sPass, tank.engineType, tank.gunYaw, tank.gunPitch, yawPass, pitchPass));
         }
     }
 

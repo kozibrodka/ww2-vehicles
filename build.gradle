@@ -122,7 +122,7 @@ dependencies {
 	}
 
 //	compileOnlyApi(files("libs/sdk-api-0.8.4.jar"))
-	modImplementation(files("libs/sdk-api-0.8.7.jar"))
+	modImplementation(files("libs/sdk-api-0.8.9.jar"))
 	modImplementation(files("libs/turbo-model-thingy-1.2.jar"))
 	modImplementation(files("libs/InventoryTweaks-2.6.1.jar"))
 	modImplementation(files("libs/keyf3-1.0.1.jar"))
