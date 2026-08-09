@@ -15,6 +15,6 @@ public class SlotShells extends Slot {
     public boolean canInsert(ItemStack itemstack) //todo, for planes albo dodać tu bomby albo dać innego slota.
     {
         int id = itemstack.getItem().id;
-        return id == mod_Vehicles.aaShellTank.id || id == mod_Vehicles.tankShellHE.id || id == mod_Vehicles.tankShell.id;
+        return id == mod_Vehicles.aaShellTank.id || id == mod_Vehicles.tankShellHE.id || id == mod_Vehicles.tankShell.id || id == mod_Vehicles.aaShell.id;
     }
 }

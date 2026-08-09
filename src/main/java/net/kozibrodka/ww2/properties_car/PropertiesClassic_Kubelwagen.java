@@ -25,7 +25,7 @@ public class PropertiesClassic_Kubelwagen extends Truck_properties {
 
         MAX_HEALTH = 250;
         vehicleFuelAdd = 1000;
-        numCargoSlots = 5;
+        numShellSlots = 5;
         autoWidth = 1.8F;
         autoHeight = 1.05F;
         standingOko = 0F;

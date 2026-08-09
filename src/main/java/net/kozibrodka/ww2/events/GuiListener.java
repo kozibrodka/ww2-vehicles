@@ -2,11 +2,7 @@ package net.kozibrodka.ww2.events;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.kozibrodka.ww2.entity.EntityTank;
-import net.kozibrodka.ww2.entity.EntityTruck;
 import net.kozibrodka.ww2.entity.EntityVehicle;
-import net.kozibrodka.ww2.gui.GuiTruck;
-import net.kozibrodka.ww2.gui.GuiTank;
 import net.kozibrodka.ww2.gui.GuiVehicle;
 import net.kozibrodka.ww2.gui.GuiVehicleCrafting;
 import net.mine_diver.unsafeevents.listener.EventListener;
@@ -30,20 +26,8 @@ public class GuiListener {
     public void registerGuiHandlers(GuiHandlerRegistryEvent event) {
         GuiHandlerRegistry registry = event.registry;
 
-        event.register(MOD_ID.id("openTank"), new GuiHandler((GuiHandler.ScreenFactoryNoMessage) this::openTank, () -> null));
-        event.register(MOD_ID.id("openTruck"), new GuiHandler((GuiHandler.ScreenFactoryNoMessage) this::openTruck, () -> null));
         event.register(MOD_ID.id("openVehicle"), new GuiHandler((GuiHandler.ScreenFactoryNoMessage) this::openVehicle, () -> null));
         event.register(MOD_ID.id("openCraftingVehicle"), new GuiHandler((GuiHandler.ScreenFactoryNoMessage) this::openCraftingVehicle, () -> null));
-    }
-
-    @Environment(EnvType.CLIENT)
-    public Screen openTank(PlayerEntity player, Inventory inventoryBase) {
-        return new GuiTank(player.inventory, (EntityTank) player.vehicle);
-    }
-
-    @Environment(EnvType.CLIENT)
-    public Screen openTruck(PlayerEntity player, Inventory inventoryBase) {
-        return new GuiTruck(player.inventory, (EntityTruck) player.vehicle);
     }
 
     @Environment(EnvType.CLIENT)

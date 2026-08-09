@@ -9,7 +9,9 @@ public class Properties_Tiger2_164 extends Vehicle_properties164 {
 
         name = "TigerII";
         longName = "Panzerkampfwagen VI Tiger II - Version B";
-        texture = "SkinVehicleTigerII.png";
+//        texture = "SkinVehicleTigerII.png";
+//        texture = "SkinVehicleM4A1Calliope.png";
+//        texture = "SkinVehicleT34-85.png";
         model = new ModelVehicle164();
 //        model = new ModelTigerII_New();
         SOUND_RIDING = "ww2:engine";

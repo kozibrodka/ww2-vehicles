@@ -22,7 +22,10 @@ public class RenderVehicle164 extends EntityRenderer {
 //        GL11.glRotatef(vehicle.prevPitch + (vehicle.axes.getPitch() - vehicle.prevPitch) * f1, 0.0F, 0.0F, 1.0F);
 //        GL11.glRotatef(-vehicle.prevRotationRoll - (vehicle.axes.getRoll() - vehicle.prevRotationRoll) * f1, 1.0F, 0.0F, 0.0F);
         this.bindTexture("/assets/ww2/stationapi/textures/mob/" + vehicle.automobile.texture);
-        ModelVehicle164 modVehicle = vehicle.automobile.model;
+//        ModelVehicle164 modVehicle = vehicle.automobile.model;
+//        ModelVehicle164 modVehicle = new ModelTigerII_New();
+//        ModelVehicle164 modVehicle = new ModelM4A1Calliope_TEST164();
+        ModelVehicle164 modVehicle = new ModelT3485_TEST164();
         if(modVehicle != null) {
             modVehicle.render(0.0F, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F, vehicle);
         }

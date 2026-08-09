@@ -53,8 +53,16 @@ public class AMICompat implements ModPluginProvider {
 
     @Override
     public void updateBlacklist(AMIHelpers amiHelpers) {
-        amiHelpers.getItemBlacklist().addItemToBlacklist(new ItemStack(ww2Parts.largeEngine));
-    }
-    // TODO poustawiać zaleznosci...
 //        amiHelpers.getItemBlacklist().addItemToBlacklist(new ItemStack(ww2Parts.largeEngine));
+        if(!mod_Vehicles.ww2Glass.register_TANK){
+            amiHelpers.getItemBlacklist().addItemToBlacklist(new ItemStack(mod_Vehicles.vehicleClassic_Sherman));
+            amiHelpers.getItemBlacklist().addItemToBlacklist(new ItemStack(mod_Vehicles.vehicleClassic_Panzer));
+            /// + części i recepisy
+        }
+        if(!mod_Vehicles.ww2Glass.register_TRUCK){
+            amiHelpers.getItemBlacklist().addItemToBlacklist(new ItemStack(mod_Vehicles.vehicleClassic_WillysJeep));
+            amiHelpers.getItemBlacklist().addItemToBlacklist(new ItemStack(mod_Vehicles.vehicleClassic_Kubelwagen));
+        }
+    }
+    // TODO poustawiać zaleznosci... + recipe zwykłe też brak.
 }

@@ -6,8 +6,6 @@ import net.kozibrodka.sdk_api.particle.SdkParticleFactory;
 import net.kozibrodka.sdk_api.utils.*;
 import net.kozibrodka.ww2.events.mod_Vehicles;
 import net.kozibrodka.ww2.events.ww2Parts;
-import net.kozibrodka.ww2.gui.InventoryTruck;
-import net.kozibrodka.ww2.gui.InventoryVehicle;
 import net.kozibrodka.ww2.network.*;
 import net.kozibrodka.ww2.properties.PassengerSeatData;
 import net.kozibrodka.ww2.properties.TruckType;
@@ -36,7 +34,7 @@ import java.util.List;
 import java.util.Objects;
 
 @HasTrackingParameters(trackingDistance = 160, updatePeriod = 2, sendVelocity = TriState.TRUE)
-public class EntityTruck extends EntityVehicle implements WW2Truck, SdkVehicle, EntitySpawnDataProvider {
+public class EntityTruck extends EntityVehicle implements WW2Truck, EntitySpawnDataProvider {
 
     public EntityTruck(World world)
     {
@@ -47,11 +45,8 @@ public class EntityTruck extends EntityVehicle implements WW2Truck, SdkVehicle, 
         prevMotionY = 0.0D;
         prevMotionZ = 0.0D;
         lastCollidedEntity = null;
-        blocksSameBlockSpawning = true;  //preventEntitySpawning
         soundLoopTime = 0;
-//        standingEyeHeight = 0.625F;
         stepHeight = 1.0F; //stepHeight
-        ignoreFrustumCull = true; //ignoreFrustumCheck
         renderDistanceMultiplier = 2; //jakos to dostosoawac
     }
 
@@ -356,7 +351,7 @@ public class EntityTruck extends EntityVehicle implements WW2Truck, SdkVehicle, 
                 if(getSpeed() != 0.0D)
                 {
                     double d4 = 0.0D;
-                    if(vehicleFuel > 0 && clientLEFT)
+                    if(vehicleFuel > 0 && clientLEFT) //todo vehicle fuel nie musi być ZERO dla akcji poza Gazem.
                     {
                         d4 = -getTurnSpeed() * (double)(flag1 ? 1 : -1);
                         wheelsYaw = (float)((double)wheelsYaw - 0.5D * getTurnSpeed());
@@ -783,7 +778,7 @@ public class EntityTruck extends EntityVehicle implements WW2Truck, SdkVehicle, 
         return Math.sqrt(prevMotionX * prevMotionX + prevMotionZ * prevMotionZ);
     }
 
-    public float getTurnSpeedForRender()
+    public float getTurnSpeedForRender() /// Tego ATV używa w Render, ale nie rozumiem do końca dlaczego. Raczej remove to + i w Tank.
     {
         return (float)(lastTurnSpeed * automobile.TURN_SPEED_RENDER_MULT);
     }
@@ -797,20 +792,8 @@ public class EntityTruck extends EntityVehicle implements WW2Truck, SdkVehicle, 
     @Override
     public void writeNbt(NbtCompound nbttagcompound)
     {
-        NbtList nbttaglist = new NbtList();
-        for(int i = 0; i < cargoItems.length; i++)
-        {
-            if(cargoItems[i] != null)
-            {
-                NbtCompound nbttagcompound1 = new NbtCompound();
-                nbttagcompound1.putByte("Slot", (byte)i);
-                cargoItems[i].writeNbt(nbttagcompound1);
-                nbttaglist.add(nbttagcompound1);
-            }
-        }
-
+        super.writeNbt(nbttagcompound);
         nbttagcompound.putInt("Health", health);
-        nbttagcompound.put("Items", nbttaglist);
         nbttagcompound.putInt("Engine", engineType);
         nbttagcompound.putInt("Fuel", vehicleFuel);
         nbttagcompound.putString("Type", automobile.name);
@@ -825,18 +808,7 @@ public class EntityTruck extends EntityVehicle implements WW2Truck, SdkVehicle, 
         standingEyeHeight = automobile.standingOko;
         setBoundingBoxSpacing(automobile.autoWidth, automobile.autoHeight);
         setPosition(x, y, z);
-        NbtList nbttaglist = nbttagcompound.getList("Items");
-        cargoItems = new ItemStack[size()];
-        for(int i = 0; i < nbttaglist.size(); i++)
-        {
-            NbtCompound nbttagcompound1 = (NbtCompound)nbttaglist.get(i);
-            int k = nbttagcompound1.getByte("Slot") & 0xff;
-            if(k >= 0 && k < cargoItems.length)
-            {
-                cargoItems[k] = new ItemStack(nbttagcompound1);
-            }
-        }
-
+        super.readNbt(nbttagcompound);
         health = nbttagcompound.getInt("Health");
         vehicleFuel = nbttagcompound.getInt("Fuel");
         engineType = nbttagcompound.getInt("Engine");
@@ -924,25 +896,10 @@ public class EntityTruck extends EntityVehicle implements WW2Truck, SdkVehicle, 
         }
     }
 
-//    public boolean shouldRenderAtDistance(double d) {
+    /// Do przetestowania na dłuższych dystansach...
+//    public boolean shouldRenderAtDistance(double d) { ///
 //        return true;
 //    }
-
-    @Override
-    public void setControls(boolean forward, boolean back, boolean left, boolean right, boolean up, boolean down, boolean fire) {
-        clientFORWARD = forward;
-        clientBACK = back;
-        clientLEFT= left;
-        clientRIGHT= right;
-        clientUP= up;
-        clientDOWN= down;
-        clientFIRE= fire;
-    }
-
-    @Override
-    public void reloadKey() {
-
-    }
 
     @Override
     public void exitKey(PlayerEntity playerEntity) {
@@ -960,21 +917,6 @@ public class EntityTruck extends EntityVehicle implements WW2Truck, SdkVehicle, 
             playerEntity.vehicle.passenger = null;
         }
         playerEntity.vehicle = null;
-    }
-
-    @Override
-    public void inventoryKey(PlayerEntity playerEntity) {
-        GuiHelper.openGUI(
-                playerEntity,
-                Identifier.of(Namespace.of("ww2"), "openVehicle"),
-                this,
-                new InventoryVehicle(playerEntity.inventory, this)
-        );
-    }
-
-    @Override
-    public void bombKey() {
-
     }
 
     @Override
@@ -1023,32 +965,9 @@ public class EntityTruck extends EntityVehicle implements WW2Truck, SdkVehicle, 
     }
 
     @Override
-    public String getAmmoName() {
-        return "";
-    }
-
-    @Override
-    public String getBombName() {
-        return "";
-    }
-
-    @Override
-    public boolean canPassengerUseGun() {
-        return false;
-    }
-
-    @Override
     public Identifier getHandlerIdentifier() {
         return Identifier.of(mod_Vehicles.MOD_ID, "Truck");
     }
-
-    boolean clientFORWARD = false;
-    boolean clientBACK = false;
-    boolean clientLEFT= false;
-    boolean clientRIGHT= false;
-    boolean clientUP= false;
-    boolean clientDOWN= false;
-    boolean clientFIRE= false;
 
     private double lastTurnSpeed;
     public boolean lastOnGround;
@@ -1104,50 +1023,6 @@ public class EntityTruck extends EntityVehicle implements WW2Truck, SdkVehicle, 
         }else{
             super.processServerEntityStatus(status);
         }
-    }
-
-    /// Client interpolation and pos/rot
-    @Environment(EnvType.CLIENT)
-    private int clientInterpolationSteps;
-    @Environment(EnvType.CLIENT)
-    private double clientX;
-    @Environment(EnvType.CLIENT)
-    private double clientY;
-    @Environment(EnvType.CLIENT)
-    private double clientZ;
-    @Environment(EnvType.CLIENT)
-    private double clientYaw;
-    @Environment(EnvType.CLIENT)
-    private double clientPitch;
-    @Environment(EnvType.CLIENT)
-    private double clientPrevY;
-
-    /// Client velocity
-    @Environment(EnvType.CLIENT)
-    public double clientVelocityX;
-    @Environment(EnvType.CLIENT)
-    public double clientVelocityY;
-    @Environment(EnvType.CLIENT)
-    public double clientVelocityZ;
-    public boolean lastOnClientGround;
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public void setPositionAndAnglesAvoidEntities(double x, double y, double z, float pitch, float yaw, int interpolationSteps) {
-        clientX = x;
-        clientY = y;
-        clientZ = z;
-        clientYaw = pitch;
-        clientPitch = yaw;
-        clientInterpolationSteps = interpolationSteps + 1;
-    }
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public void setVelocityClient(double x, double y, double z) {
-        clientVelocityX = x;
-        clientVelocityY = y;
-        clientVelocityZ = z;
     }
 
     @Override

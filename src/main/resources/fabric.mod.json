@@ -15,12 +15,13 @@
 
   "license": "CC0-1.0",
   "icon": "assets/ww2/iconM4.png",
-
   "environment": "*",
+  "accessWidener": "ww2.accesswidener",
   "entrypoints": {
     "stationapi:event_bus": [
       "net.kozibrodka.ww2.events.ww2Parts",
       "net.kozibrodka.ww2.events.mod_Vehicles",
+      "net.kozibrodka.ww2.events.EntityListener",
       "net.kozibrodka.ww2.events.RecipeListener",
       "net.kozibrodka.ww2.events.GuiListener",
       "net.kozibrodka.ww2.events.PacketListener"

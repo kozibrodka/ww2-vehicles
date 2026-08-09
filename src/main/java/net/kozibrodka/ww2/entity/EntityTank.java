@@ -8,8 +8,6 @@ import net.kozibrodka.sdk_api.utils.*;
 import net.kozibrodka.ww2.entityBullet.ShellFactory;
 import net.kozibrodka.ww2.events.mod_Vehicles;
 import net.kozibrodka.ww2.events.ww2Parts;
-import net.kozibrodka.ww2.gui.InventoryTank;
-import net.kozibrodka.ww2.gui.InventoryVehicle;
 import net.kozibrodka.ww2.network.CarCrashPacket;
 import net.kozibrodka.ww2.network.PassengerEnterPacket;
 import net.kozibrodka.ww2.network.TruckLoadPacket;
@@ -18,7 +16,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Monster;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -26,12 +23,10 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.modificationstation.stationapi.api.gui.screen.container.GuiHelper;
 import net.modificationstation.stationapi.api.network.packet.PacketHelper;
 import net.modificationstation.stationapi.api.server.entity.EntitySpawnDataProvider;
 import net.modificationstation.stationapi.api.server.entity.HasTrackingParameters;
 import net.modificationstation.stationapi.api.util.Identifier;
-import net.modificationstation.stationapi.api.util.Namespace;
 import net.modificationstation.stationapi.api.util.TriState;
 
 import java.util.Arrays;
@@ -39,7 +34,7 @@ import java.util.List;
 import java.util.Objects;
 
 @HasTrackingParameters(trackingDistance = 160, updatePeriod = 2, sendVelocity = TriState.TRUE)
-public class EntityTank extends EntityVehicle implements WW2Tank, SdkVehicle, EntitySpawnDataProvider {
+public class EntityTank extends EntityVehicle implements WW2Tank, EntitySpawnDataProvider {
 
     public EntityTank(World world)
     {
@@ -50,11 +45,8 @@ public class EntityTank extends EntityVehicle implements WW2Tank, SdkVehicle, En
         prevMotionY = 0.0D;
         prevMotionZ = 0.0D;
         lastCollidedEntity = null;
-        blocksSameBlockSpawning = true;  //preventEntitySpawning
         soundLoopTime = 0;
-//        standingEyeHeight = 0.625F;
         stepHeight = 1.0F; //stepHeight
-        ignoreFrustumCull = true; //ignoreFrustumCheck
         gunYaw = 0.0F;
         gunPitch = 0.0F;
         gunMachineGun = new ItemStack(mod_Vehicles.itemGunMachineGun);
@@ -773,20 +765,8 @@ public class EntityTank extends EntityVehicle implements WW2Tank, SdkVehicle, En
     @Override
     public void writeNbt(NbtCompound nbttagcompound)
     {
-        NbtList nbttaglist = new NbtList();
-        for(int i = 0; i < cargoItems.length; i++)
-        {
-            if(cargoItems[i] != null)
-            {
-                NbtCompound nbttagcompound1 = new NbtCompound();
-                nbttagcompound1.putByte("Slot", (byte)i);
-                cargoItems[i].writeNbt(nbttagcompound1);
-                nbttaglist.add(nbttagcompound1);
-            }
-        }
-
+        super.writeNbt(nbttagcompound);
         nbttagcompound.putInt("Health", health);
-        nbttagcompound.put("Items", nbttaglist);
         nbttagcompound.putFloat("GunYaw", gunYaw);
         nbttagcompound.putFloat("GunPitch", gunPitch);
         nbttagcompound.putInt("Engine", engineType);
@@ -803,18 +783,7 @@ public class EntityTank extends EntityVehicle implements WW2Tank, SdkVehicle, En
         standingEyeHeight = automobile.standingOko;
         setBoundingBoxSpacing(automobile.autoWidth, automobile.autoHeight);
         setPosition(x, y, z);
-        NbtList nbttaglist = nbttagcompound.getList("Items");
-        cargoItems = new ItemStack[size()];
-        for(int i = 0; i < nbttaglist.size(); i++)
-        {
-            NbtCompound nbttagcompound1 = (NbtCompound)nbttaglist.get(i);
-            int k = nbttagcompound1.getByte("Slot") & 0xff;
-            if(k >= 0 && k < cargoItems.length)
-            {
-                cargoItems[k] = new ItemStack(nbttagcompound1);
-            }
-        }
-
+        super.readNbt(nbttagcompound);
         health = nbttagcompound.getInt("Health");
         gunYaw = nbttagcompound.getFloat("GunYaw");
         gunPitch = nbttagcompound.getFloat("GunPitch");
@@ -850,18 +819,7 @@ public class EntityTank extends EntityVehicle implements WW2Tank, SdkVehicle, En
 //    public boolean shouldRenderAtDistance(double d) {
 //        return true;
 //    }
-
-    @Override
-    public void setControls(boolean forward, boolean back, boolean left, boolean right, boolean up, boolean down, boolean fire) {
-        clientFORWARD = forward;
-        clientBACK = back;
-        clientLEFT= left;
-        clientRIGHT= right;
-        clientUP= up;
-        clientDOWN= down;
-        clientFIRE= fire;
-    }
-
+    /// SDK INTERFACE
     @Override
     public void reloadKey() {
         changeShell(currentShell);
@@ -874,25 +832,8 @@ public class EntityTank extends EntityVehicle implements WW2Tank, SdkVehicle, En
     }
 
     @Override
-    public void inventoryKey(PlayerEntity playerEntity) {
-//        GuiHelper.openGUI(
-//                playerEntity,
-//                Identifier.of(Namespace.of("ww2"), "openTank"),
-//                this,
-//                new InventoryTank(playerEntity.inventory, this)
-//        );
-        GuiHelper.openGUI(
-                playerEntity,
-                Identifier.of(Namespace.of("ww2"), "openVehicle"),
-                this,
-                new InventoryVehicle(playerEntity.inventory, this)
-        );
-        //TODO DEBUG
-    }
-
-    @Override
     public void bombKey() {
-        if(automobile.antiAircraft){
+        if(automobile.antiAircraft){ //TODO AA-CODE - wszystko do wymiany...
             if(world.isRemote || shellDelay > 0 || !automobile.hasTurret)
             {
                 return;
@@ -1030,11 +971,6 @@ public class EntityTank extends EntityVehicle implements WW2Tank, SdkVehicle, En
         return false;
     }
 
-    @Override
-    public Identifier getHandlerIdentifier() {
-        return Identifier.of(mod_Vehicles.MOD_ID, "Tank");
-    }
-
     private double lastTurnSpeed;
     public boolean lastOnGround;
     public boolean doorOpen;
@@ -1064,14 +1000,6 @@ public class EntityTank extends EntityVehicle implements WW2Tank, SdkVehicle, En
     public int uphillTicks;
     public boolean receivedP = false;
     public boolean collPlayerDublet;
-
-    boolean clientFORWARD = false;
-    boolean clientBACK = false;
-    boolean clientLEFT= false;
-    boolean clientRIGHT= false;
-    boolean clientUP= false;
-    boolean clientDOWN= false;
-    boolean clientFIRE= false;
 
     public void broadcastEventExit(){
         world.broadcastEntityEvent(this, (byte)6);
@@ -1131,50 +1059,6 @@ public class EntityTank extends EntityVehicle implements WW2Tank, SdkVehicle, En
         }
     }
 
-    /// Client interpolation and pos/rot
-    @Environment(EnvType.CLIENT)
-    private int clientInterpolationSteps;
-    @Environment(EnvType.CLIENT)
-    private double clientX;
-    @Environment(EnvType.CLIENT)
-    private double clientY;
-    @Environment(EnvType.CLIENT)
-    private double clientZ;
-    @Environment(EnvType.CLIENT)
-    private double clientYaw;
-    @Environment(EnvType.CLIENT)
-    private double clientPitch;
-    @Environment(EnvType.CLIENT)
-    private double clientPrevY;
-
-    /// Client velocity
-    @Environment(EnvType.CLIENT)
-    public double clientVelocityX;
-    @Environment(EnvType.CLIENT)
-    public double clientVelocityY;
-    @Environment(EnvType.CLIENT)
-    public double clientVelocityZ;
-    public boolean lastOnClientGround;
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public void setPositionAndAnglesAvoidEntities(double x, double y, double z, float pitch, float yaw, int interpolationSteps) {
-        clientX = x;
-        clientY = y;
-        clientZ = z;
-        clientYaw = pitch;
-        clientPitch = yaw;
-        clientInterpolationSteps = interpolationSteps + 1;
-    }
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public void setVelocityClient(double x, double y, double z) {
-        clientVelocityX = x;
-        clientVelocityY = y;
-        clientVelocityZ = z;
-    }
-
     @Override
     protected void initDataTracker()
     {
@@ -1185,6 +1069,7 @@ public class EntityTank extends EntityVehicle implements WW2Tank, SdkVehicle, En
         dataTracker.startTracking(29, 0); //HEALTH
     }
 
+    /// CLIENT TICK
     public void remoteTick(){
         if(clientInterpolationSteps == 0 || automobile == null){
             return;
@@ -1309,7 +1194,7 @@ public class EntityTank extends EntityVehicle implements WW2Tank, SdkVehicle, En
         return dataTracker.getInt(18);
     }
 
-    /// Shells
+    /// Shells ENUMs
     public enum ShellType{
         NULL(0, ""),
         AP(mod_Vehicles.tankShell.id, "§9AP"),
@@ -1402,101 +1287,8 @@ public class EntityTank extends EntityVehicle implements WW2Tank, SdkVehicle, En
         }
     }
 
-//    @Override
-//    public int size()
-//    {
-//        return inventorySize;
-//    }
-//
-//    @Override
-//    public ItemStack getStack(int i)
-//    {
-//        return cargoItems[i];
-//    }
-//
-//    @Override
-//    public ItemStack removeStack(int i, int j)
-//    {
-//        if(cargoItems[i] != null)
-//        {
-//            if(cargoItems[i].count <= j)
-//            {
-//                ItemStack itemstack = cargoItems[i];
-//                cargoItems[i] = null;
-//                checkAmmoPresence();
-//                return itemstack;
-//            }
-//            ItemStack itemstack1 = cargoItems[i].split(j);
-//            if(cargoItems[i].count == 0)
-//            {
-//                cargoItems[i] = null;
-//            }
-//            return itemstack1;
-//        } else
-//        {
-//            return null;
-//        }
-//    }
-//
-//    @Override
-//    public void setStack(int i, ItemStack itemstack)
-//    {
-//        cargoItems[i] = itemstack;
-//        if(itemstack != null && itemstack.count > getMaxCountPerStack())
-//        {
-//            itemstack.count = getMaxCountPerStack();
-//        }
-//        if(itemstack != null && itemstack.itemId == 263 && i == 0 && passenger != null && (passenger instanceof PlayerEntity))
-//        {
-////            ((PlayerBase)passenger).increaseStat(mod_Planes.startPlane, 1); //TODO: achievement
-//        }
-//        if(itemstack != null && i >= slots_FirstShell() && i < slots_Last()){
-//            checkAmmoPresence();
-//        }
-//    }
-//
-//    @Override
-//    public String getName()
-//    {
-//        return automobile.name;
-//    }
-//
-//    @Override
-//    public int getMaxCountPerStack()
-//    {
-//        return 64;
-//    }
-//
-//    @Override
-//    public void markDirty()
-//    {
-//    }
-//
-//    @Override
-//    public boolean canPlayerUse(PlayerEntity entityplayer)
-//    {
-//        return entityplayer.getSquaredDistance(x, y, z) <= 64D;
-//    }
-
-//    public int firstCargoSlot;
-//    int firstBulletSlot;
-//    int lastSlot;
-//
-//    public int slots_Fuel(){
-//        return 0;
-//    }
-//    public int slots_FirstCargo(){
-//        return 1;
-//    }
-//    public int slots_FirstBullet(){
-//        return automobile.numCargoSlots + 1;
-//    }
-//    public int slots_FirstShell() {
-//        return automobile.numCargoSlots + automobile.numBulletSlots + 1;
-//    }
-//    public int slots_Last() {
-//        return automobile.numCargoSlots + automobile.numBulletSlots + automobile.numShellSlots + 1;
-//    }
-
-
+    @Override
+    public Identifier getHandlerIdentifier() {
+        return Identifier.of(mod_Vehicles.MOD_ID, "Tank");
+    }
 }

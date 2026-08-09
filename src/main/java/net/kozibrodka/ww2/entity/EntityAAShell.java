@@ -67,6 +67,7 @@ public class EntityAAShell extends Entity
         standingEyeHeight = 0.0F;
     }
 
+    @Override
     protected void initDataTracker()
     {
     }
@@ -93,6 +94,7 @@ public class EntityAAShell extends Entity
         timeTillDeath = 0;
     }
 
+    @Override
     public void setVelocityClient(double d, double d1, double d2)
     {
         velocityX = d;
@@ -106,6 +108,7 @@ public class EntityAAShell extends Entity
         }
     }
 
+    @Override
     public void tick()
     {
         super.tick();
@@ -289,6 +292,7 @@ public class EntityAAShell extends Entity
         setPosition(x, y, z);
     }
 
+    @Override
     public void writeNbt(NbtCompound nbttagcompound)
     {
         nbttagcompound.putShort("xTile", (short)xTile);
@@ -299,6 +303,7 @@ public class EntityAAShell extends Entity
         nbttagcompound.putByte("inGround", (byte)(inGround ? 1 : 0));
     }
 
+    @Override
     public void readNbt(NbtCompound nbttagcompound)
     {
         xTile = nbttagcompound.getShort("xTile");
@@ -323,11 +328,13 @@ public class EntityAAShell extends Entity
 //        }
 //    }
 
+    @Override
     public boolean shouldRender(double d) {
         return true;
     }
 
 
+    @Override
     public float getShadowRadius()
     {
         return 0.0F;

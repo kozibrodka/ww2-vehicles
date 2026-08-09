@@ -1,33 +1,29 @@
 package net.kozibrodka.ww2.events;
 
 import net.glasslauncher.mods.gcapi3.api.ConfigRoot;
-import net.kozibrodka.ww2.entityBullet.TankBulletMachineGun;
-import net.kozibrodka.ww2.entityBullet.TankShellAP;
-import net.kozibrodka.ww2.entityBullet.TankShellHE;
-import net.kozibrodka.ww2.entityBullet.TankShellOBS;
 import net.kozibrodka.ww2.glasscfg.VehiclesCFG;
-import net.kozibrodka.ww2.entity.*;
+import net.kozibrodka.ww2.item.ItemCannon;
 import net.kozibrodka.ww2.item.ItemTruck;
 import net.kozibrodka.ww2.item.ItemVehicle;
 import net.kozibrodka.ww2.item.SdkItemGunMachineGun;
 import net.kozibrodka.ww2.properties.*;
+import net.kozibrodka.ww2.properties_cannon.Properties_Bofors;
+import net.kozibrodka.ww2.properties_cannon.Properties_Flakvierling;
 import net.kozibrodka.ww2.properties_car.PropertiesClassic_Jeep;
 import net.kozibrodka.ww2.properties_car.PropertiesClassic_Kubelwagen;
 import net.kozibrodka.ww2.properties_tank.PropertiesClassic_Panzer;
 import net.kozibrodka.ww2.properties_tank.PropertiesClassic_Sherman;
+import net.kozibrodka.ww2.properties_unused.*;
 import net.kozibrodka.ww2.recipe.BlockVehicleWorkbench;
 import net.kozibrodka.ww2.recipe.VehicleRecipeRegistry;
 import net.kozibrodka.ww2.test164.ItemVehicle164;
 import net.mine_diver.unsafeevents.listener.EventListener;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
-import net.modificationstation.stationapi.api.event.entity.EntityRegisterEvent;
 import net.modificationstation.stationapi.api.event.recipe.RecipeRegisterEvent;
 import net.modificationstation.stationapi.api.event.registry.BlockRegistryEvent;
-import net.modificationstation.stationapi.api.event.registry.EntityHandlerRegistryEvent;
 import net.modificationstation.stationapi.api.event.registry.ItemRegistryEvent;
 import net.modificationstation.stationapi.api.mod.entrypoint.Entrypoint;
-import net.modificationstation.stationapi.api.registry.Registry;
 import net.modificationstation.stationapi.api.template.item.TemplateItem;
 import net.modificationstation.stationapi.api.template.block.TemplateBlock;
 import net.modificationstation.stationapi.api.util.Identifier;
@@ -53,12 +49,14 @@ public class mod_Vehicles {
     public static Item aaShellTank;
     public static Item vehicleBlowTorch;
     public static Item itemGunMachineGun;
+    public static Item aaShell;
 
-
-    public static Item vehicleClassic_Sherman;
+    public static Item vehicleClassic_Sherman; //todo rename all
     public static Item vehicleClassic_Panzer;
     public static Item vehicleClassic_WillysJeep;
     public static Item vehicleClassic_Kubelwagen;
+    public static Item bofors;
+    public static Item flakvierling;
 
     public static Item vehicleOld_M41;
     public static Item vehicleOld_Panzer4G;
@@ -84,15 +82,18 @@ public class mod_Vehicles {
         tankBullet = new TemplateItem(Identifier.of(MOD_ID, "tankBullet")).setTranslationKey(MOD_ID, "tankBullet");
         aaShellTank = new TemplateItem(Identifier.of(MOD_ID, "aaShellTank")).setTranslationKey(MOD_ID, "aaShellTank");
         vehicleBlowTorch = new TemplateItem(Identifier.of(MOD_ID, "vehicleBlowTorch")).setTranslationKey(MOD_ID, "vehicleBlowTorch").setMaxCount(1).setMaxDamage(64);;
-
         itemGunMachineGun = new SdkItemGunMachineGun(Identifier.of(MOD_ID, "itemGunMachineGun")).setTranslationKey(MOD_ID, "itemGunMachineGun");
 
-       //TODO: ADD MACHINE GUN TYPE for vehicles, engine types work, DMG overall & props & collision, Truck playerXOffset, MINA!, ZAPORA ANTY-CZOLGOWA! (ala płotek), blowtorch effect, Gaśnica!
+        aaShell = new TemplateItem(Identifier.of(MOD_ID, "aaShell")).setTranslationKey(MOD_ID, "aaShell");
+
+        //TODO: ADD MACHINE GUN TYPE for vehicles, engine types work, DMG overall & props & collision, Truck playerXOffset, MINA!, ZAPORA ANTY-CZOLGOWA! (ala płotek), blowtorch effect, Gaśnica!
         if(true) {
             new TankType(new PropertiesClassic_Sherman());
             new TankType(new PropertiesClassic_Panzer());
             new TruckType(new PropertiesClassic_Jeep());
             new TruckType(new PropertiesClassic_Kubelwagen());
+            new CannonType(new Properties_Bofors());
+            new CannonType(new Properties_Flakvierling());
         }
         if(false) {
             new TankType(new PropertiesOld_M41());
@@ -105,20 +106,19 @@ public class mod_Vehicles {
 
         if(true) {
             new TankType(new Properties_Tiger1());
-//            new TankType(new Properties_Tiger2()); /// TIGER-2 PSUJE RECIPE - bo dodaje pustą
+            new TankType(new Properties_Tiger2()); /// TIGER-2 PSUJE RECIPE - bo dodaje pustą
 //            new TruckType(new Properties_WillyJeep());
 //            new TruckType(new Properties_VWType82());
         }
 
-        //TODO "pozwolenie" na dodanie czołgów dodaje VehicleType ale nie dodaje itema aby przy wyłączniu nie było resetu chunków przez NBT null error.
         /// UPDATE! - dodajemy Itemy, ale ukrywamy w AMI + nie dodajemy recipes.
 
         for (int i = 0; i < TankType.types.size(); i++) {
-            TankType vehicletype = (TankType) TankType.types.get(i);
-            System.out.println("mod_WW2 added tank: " + vehicletype.name);
+            TankType tankType = (TankType) TankType.types.get(i);
+            System.out.println("mod_WW2 added tank: " + tankType.name);
 
-            vehicleMapping.put(vehicletype.name, vehicletype);
-            vehicletype.przedmiot = new ItemVehicle(Identifier.of(MOD_ID, vehicletype.name), vehicletype.name).setTranslationKey(MOD_ID, vehicletype.name).setMaxCount(1);
+            tankMapping.put(tankType.name, tankType);
+            tankType.przedmiot = new ItemVehicle(Identifier.of(MOD_ID, tankType.name), tankType.name).setTranslationKey(MOD_ID, tankType.name).setMaxCount(1);
         }
 
         for (int i = 0; i < TruckType.types.size(); i++) {
@@ -127,6 +127,14 @@ public class mod_Vehicles {
 
             truckMapping.put(truckType.name, truckType);
             truckType.przedmiot = new ItemTruck(Identifier.of(MOD_ID, truckType.name), truckType.name).setTranslationKey(MOD_ID, truckType.name).setMaxCount(1);
+        }
+
+        for (int i = 0; i < CannonType.types.size(); i++) {
+            CannonType cannonType = (CannonType) CannonType.types.get(i);
+            System.out.println("mod_Planes added cannon: " + cannonType.name);
+
+            cannonMapping.put(cannonType.name, cannonType);
+            cannonType.przedmiot = new ItemCannon(Identifier.of(MOD_ID, cannonType.name), cannonType.name).setTranslationKey(MOD_ID, cannonType.name).setMaxCount(1);
         }
 
         vehicle_test164 = new ItemVehicle164(Identifier.of(MOD_ID, "vehicle_test164")).setTranslationKey(MOD_ID, "vehicle_test164");
@@ -143,55 +151,20 @@ public class mod_Vehicles {
 
 
     @EventListener
-    public static void registerEntities(EntityRegisterEvent event) {
-        event.register(Identifier.of(MOD_ID, "Tank"), EntityTank.class);
-        event.register(Identifier.of(MOD_ID, "Truck"), EntityTruck.class);
-        event.register(Identifier.of(MOD_ID, "PassSeatVehicle"), EntityPassengerSeat.class);
-
-        event.register(Identifier.of(MOD_ID, "TankBulletMachineGun"), TankBulletMachineGun.class);
-        event.register(Identifier.of(MOD_ID, "TankShellAP"), TankShellAP.class);
-        event.register(Identifier.of(MOD_ID, "TankShellHE"), TankShellHE.class);
-        event.register(Identifier.of(MOD_ID, "TankShellOBS"), TankShellOBS.class);
-
-        event.register(Identifier.of(MOD_ID, "Shell_OLD"), EntityShell_OLD.class);
-        event.register(Identifier.of(MOD_ID, "Shell"), SdkEntityTankShell.class);
-        event.register(Identifier.of(MOD_ID, "AAShellTank"), EntityAAShell.class);
-
-    }
-
-    @EventListener
-    public static void registerMobHandlers(EntityHandlerRegistryEvent event) {
-        Registry.register(event.registry, MOD_ID.id("Tank"), EntityTank::new);
-        Registry.register(event.registry, MOD_ID.id("Truck"), EntityTruck::new);
-        Registry.register(event.registry, MOD_ID.id("PassSeatVehicle"), EntityPassengerSeat::new);
-
-        Registry.register(event.registry, MOD_ID.id("TankBulletMachineGun"), TankBulletMachineGun::new);
-        Registry.register(event.registry, MOD_ID.id("TankShellAP"), TankShellAP::new);
-        Registry.register(event.registry, MOD_ID.id("TankShellHE"), TankShellHE::new);
-        Registry.register(event.registry, MOD_ID.id("TankShellOBS"), TankShellOBS::new);
-
-        Registry.register(event.registry, MOD_ID.id("Shell_OLD"), EntityShell_OLD::new);
-        Registry.register(event.registry, MOD_ID.id("Shell"), SdkEntityTankShell::new);
-        Registry.register(event.registry, MOD_ID.id("AAShellTank"), EntityAAShell::new);
-    }
-
-    @EventListener
     public void registerRecipes(RecipeRegisterEvent event){
         VehicleRecipeRegistry.getInstance().initVehicleRecipe();
     }
 
     public static TankType getTankType(String s) {
-        return (TankType) vehicleMapping.get(s);
+        return (TankType) tankMapping.get(s);
     }
     public static TruckType getTruckType(String s) {
         return (TruckType) truckMapping.get(s);
     }
+    public static CannonType getCannonType(String s) {return (CannonType) cannonMapping.get(s);}
 
-    ///todo Co to kurwa jest???
-//    public static VehicleType type = null;
-//    public static TruckType type_truck = null;
-
-    private static Map<String, TankType> vehicleMapping = new HashMap<>();
-    private static Map<String, TruckType> truckMapping = new HashMap<>();
+    private static final Map<String, TankType> tankMapping = new HashMap<>();
+    private static final Map<String, TruckType> truckMapping = new HashMap<>();
+    private static final Map<String, CannonType> cannonMapping = new HashMap<>();
 
 }

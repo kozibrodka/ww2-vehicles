@@ -59,36 +59,36 @@ public class InventoryVehicle extends ScreenHandler
     }
 
     private EntityVehicle vehicle;
-
-    private int animalFuel;
-//    private int fuelDuration;
-
-    @Environment(EnvType.SERVER)
-    @Override
-    public void addListener(ScreenHandlerListener listener) {
-        super.addListener(listener);
-        listener.onPropertyUpdate(this, 0, vehicle.vehicleFuel);
-//        listener.onPropertyUpdate(this, 1, vehicle.automobile.vehicleFuelAdd);
-    }
-
-    @Override
-    public void sendContentUpdates() {
-        super.sendContentUpdates();
-
-        for (Object listener : listeners) {
-            ScreenHandlerListener shl = (ScreenHandlerListener) listener;
-            if (this.animalFuel != vehicle.vehicleFuel) shl.onPropertyUpdate(this, 0, vehicle.vehicleFuel);
-//            if (this.fuelDuration != vehicle.automobile.vehicleFuelAdd) shl.onPropertyUpdate(this, 1, vehicle.automobile.vehicleFuelAdd);
-        }
-
-        this.animalFuel = vehicle.vehicleFuel;
-//        this.fuelDuration = vehicle.automobile.vehicleFuelAdd;
-    }
-
-    @Environment(EnvType.CLIENT)
-    @Override
-    public void setProperty(int id, int value) {
-        if (id == 0) vehicle.vehicleFuel = value;
-//        if (id == 1) vehicle.automobile.vehicleFuelAdd = value;
-    }
+//
+//    private int animalFuel;
+////    private int fuelDuration;
+//
+//    @Environment(EnvType.SERVER)
+//    @Override
+//    public void addListener(ScreenHandlerListener listener) {
+//        super.addListener(listener);
+//        listener.onPropertyUpdate(this, 0, vehicle.vehicleFuel);
+////        listener.onPropertyUpdate(this, 1, vehicle.automobile.vehicleFuelAdd);
+//    }
+//
+//    @Override
+//    public void sendContentUpdates() {
+//        super.sendContentUpdates();
+//
+//        for (Object listener : listeners) {
+//            ScreenHandlerListener shl = (ScreenHandlerListener) listener;
+//            if (this.animalFuel != vehicle.vehicleFuel) shl.onPropertyUpdate(this, 0, vehicle.vehicleFuel);
+////            if (this.fuelDuration != vehicle.automobile.vehicleFuelAdd) shl.onPropertyUpdate(this, 1, vehicle.automobile.vehicleFuelAdd);
+//        }
+//
+//        this.animalFuel = vehicle.vehicleFuel;
+////        this.fuelDuration = vehicle.automobile.vehicleFuelAdd;
+//    }
+//
+//    @Environment(EnvType.CLIENT)
+//    @Override
+//    public void setProperty(int id, int value) {
+//        if (id == 0) vehicle.vehicleFuel = value;
+////        if (id == 1) vehicle.automobile.vehicleFuelAdd = value;
+//    }
 }

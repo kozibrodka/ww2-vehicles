@@ -29,6 +29,7 @@ public class TextureListener {
         mod_Vehicles.aaShellTank.setTexture(Identifier.of(MOD_ID, "item/AAShellTank"));
         mod_Vehicles.vehicleBlowTorch.setTexture(Identifier.of(MOD_ID, "item/blowtorch"));
         mod_Vehicles.itemGunMachineGun.setTexture(Identifier.of(MOD_ID, "item/PlaneGun"));
+        mod_Vehicles.aaShell.setTexture(Identifier.of(MOD_ID, "item/AAShell"));
 
         mod_Vehicles.wrenchGoldDebug.setTexture(Identifier.of(MOD_ID, "item/itemWrenchGold"));
 
@@ -100,6 +101,8 @@ public class TextureListener {
         event.renderers.put(TankBulletMachineGun.class, new SdkRenderBulletMachineGun());
         event.renderers.put(EntityTank.class, new RenderTank());
         event.renderers.put(EntityTruck.class, new RenderTruck());
+        event.renderers.put(EntityCannon.class, new RenderCannon());
+
         event.renderers.put(EntityVehicleTEST164.class, new RenderVehicle164());
 
         /// HIDE TO SHOW PASSSEAT DEBUG MODEL
