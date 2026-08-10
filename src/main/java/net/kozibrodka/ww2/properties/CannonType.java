@@ -12,10 +12,19 @@ public class CannonType {
         artWidth = klasa.artWidth;
         artHeight = klasa.artHeight;
         recoil = klasa.recoil;
-        accuracy = klasa.accuracy;
-        velocity = klasa.velocity;
-        range = klasa.range;
-        damage = klasa.damage;
+
+        cannonDamage = klasa.cannonDamage;
+        cannonVehicleDamage = klasa.cannonVehicleDamage;
+        cannonPenetration = klasa.cannonPenetration;
+        cannonBulletDrop = klasa.cannonBulletDrop;
+        cannonSpread = klasa.cannonSpread;
+        cannonMuzzleVelocity = klasa.cannonMuzzleVelocity;
+        cannonExploPower = klasa.cannonExploPower;
+        cannonRange = klasa.cannonRange;
+        shellXOffset = klasa.shellXOffset;
+        shellYOffset = klasa.shellYOffset;
+        shellZOffset = klasa.shellZOffset;
+
         shootDelay = klasa.shootDelay;
         numBarrels = klasa.numBarrels;
         numCargoSlots = klasa.numCargoSlots;
@@ -27,13 +36,17 @@ public class CannonType {
         gunnerY = klasa.gunnerY;
         gunnerZ = klasa.gunnerZ;
         shootSound = klasa.shootSound;
-        reloadSound = klasa.reloadSound;
+        overheatSound = klasa.overheatSound;
         model = klasa.model;
         texture = klasa.texture;
         name = klasa.name;
         longName = klasa.longName;
         topViewLimit = klasa.topViewLimit;
         bottomViewLimit = klasa.bottomViewLimit;
+        cannonYawSpeed = klasa.cannonYawSpeed;
+        cannonPitchSpeed = klasa.cannonPitchSpeed;
+        maxCannonDeviation = klasa.maxCannonDeviation;
+        bodyTurnSpeed = klasa.bodyTurnSpeed;
         przedmiot = klasa.przedmiot;
         types.add(this);
     }
@@ -41,10 +54,20 @@ public class CannonType {
     public float artWidth;
     public float artHeight;
     public int recoil = 5;
-    public float accuracy;
-    public float velocity;
-    public int range;
-    public float damage;
+
+    public int cannonDamage;
+    public int cannonVehicleDamage;
+    public float cannonPenetration;
+    public float cannonBulletDrop;
+    public float cannonSpread;
+    public float cannonMuzzleVelocity;
+    public float cannonExploPower;
+    public int cannonRange;
+
+    public int shellXOffset[];
+    public int shellYOffset[];
+    public int shellZOffset[];
+
     public int shootDelay;
     public int numBarrels;
     public boolean isAntiAircraft;
@@ -56,13 +79,17 @@ public class CannonType {
     public int numBulletSlots;
     public int numShellSlots;
     public String shootSound;
-    public String reloadSound; //todo reload sound do wyjebanie.... ale będą inne dźwięki więc zrobie refactor rename
+    public String overheatSound;
     public ModelCannon model;
     public String texture;
     public String name;
     public String longName;
-    public float topViewLimit = 75.0F;
-    public float bottomViewLimit = 0.0F;
+    public float topViewLimit;
+    public float bottomViewLimit;
+    public float cannonYawSpeed;
+    public float cannonPitchSpeed;
+    public float maxCannonDeviation;
+    public float bodyTurnSpeed;
     public Item przedmiot;
     public static List types = new ArrayList();
 }

@@ -575,6 +575,7 @@ public class EntityTank extends EntityVehicle implements WW2Tank, EntitySpawnDat
             }
             while(gunPitch > automobile.gunPitchMax) gunPitch = automobile.gunPitchMax;
             while(gunPitch < automobile.gunPitchMin) gunPitch = automobile.gunPitchMin;
+            System.out.println(gunYaw);
         }
     }
 
@@ -889,7 +890,7 @@ public class EntityTank extends EntityVehicle implements WW2Tank, EntitySpawnDat
 
             if(itemAmmo != 0)
             {
-                SdkEntityTankShell tShell = ShellFactory.getShellBasedOnTank(world,this,automobile, currentShell);
+                SdkEntityTankShell tShell = ShellFactory.getShellBasedOnTank(world,this, automobile, currentShell);
                 world.spawnEntity(tShell);
                 removeStack(itemAmmo, 1);
                 shellDelay = automobile.vehicleShellDelay;

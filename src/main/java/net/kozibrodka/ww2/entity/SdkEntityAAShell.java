@@ -17,15 +17,15 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class SdkEntityTankShell extends SdkEntityBullet { //todo rename bez sdk
+public class SdkEntityAAShell extends SdkEntityBullet { //todo rename bez sdk
 
-    public SdkEntityTankShell(World world)
+    public SdkEntityAAShell(World world)
     {
         super(world);
         setBoundingBoxSpacing(0.25F, 0.25F);
     }
 
-    public SdkEntityTankShell(World world, double d, double d1, double d2)
+    public SdkEntityAAShell(World world, double d, double d1, double d2)
     {
         this(world);
         this.setPosition(d, d1, d2);
@@ -33,6 +33,7 @@ public class SdkEntityTankShell extends SdkEntityBullet { //todo rename bez sdk
         this.serverSpawned = true;
         this.doFlash(false);
         this.bulletDrop = 0.005F; //todo - musi sie zgadzac,
+        this.penetration = 2.5F;
         setBoundingBoxSpacing(0.25F, 0.25F);
     }
 
@@ -43,7 +44,7 @@ public class SdkEntityTankShell extends SdkEntityBullet { //todo rename bez sdk
     public float spread;
     public float muzzleVelocity;
 
-    public SdkEntityTankShell(World world, EntityTank tankEntity, TankType tankType)
+    public SdkEntityAAShell(World world, EntityTank tankEntity, TankType tankType)
     {
         /// założenie Entity = Czołg, nie gracz
         this(world);
@@ -83,7 +84,7 @@ public class SdkEntityTankShell extends SdkEntityBullet { //todo rename bez sdk
         this.doFlash(true);
     }
 
-    public SdkEntityTankShell(World world, EntityCannon cannonEntity, CannonType cannonType)
+    public SdkEntityAAShell(World world, EntityCannon cannonEntity, CannonType cannonType)
     {
         this(world);
         this.owner = cannonEntity;
@@ -118,7 +119,10 @@ public class SdkEntityTankShell extends SdkEntityBullet { //todo rename bez sdk
         if (cannonEntity.passenger instanceof PlayerEntity) {
             this.owner = cannonEntity.passenger;
         }
-        setVelocityClientShell(d16/3.0D, d18/3.0D, d20/3.0D);
+        //todo potrzebne setPositionAndAnglesKeepPrevAngles() ale bez częścu setPosiion, zobacz w SdkEntiytBullet....
+        //todo i wtedy manualne ustawienie Velocity tak jak w Bulle zadziała, bo będą prawdiłowe kąty ustawione...
+
+        setVelocityClientShell(d16/3.0D, d18/3.0D, d20/3.0D); //todo - co to kurwa jest?????
         this.setBulletHeading(this.velocityX, this.velocityY, this.velocityZ, this.muzzleVelocity, f7 / 2.0F);
         this.doFlash(true);
     }
@@ -272,6 +276,17 @@ public class SdkEntityTankShell extends SdkEntityBullet { //todo rename bez sdk
             playImpactSound(world, Block.BLOCKS[inTile].material);
             explode();
         }
+        /// Anti-Aircraft Behaviour
+        List list1 = world.collectEntitiesByClass(WW2Plane.class, Box.createCached(x - 4D, y - 4D, z - 4D, x + 4D, y + 4D, z + 4D));
+        if(!list1.isEmpty()) //20
+        {
+            for (Object o : list1) {
+                Entity entityplane = (Entity) o; //TODO: czy to zadziała??
+                entityplane.damage(this, vehicleDamage);  //50
+            }
+            explode();
+        }
+        ///
         x += velocityX;
         y += velocityY;
         z += velocityZ;
@@ -310,28 +325,22 @@ public class SdkEntityTankShell extends SdkEntityBullet { //todo rename bez sdk
 
     @Override
     public void playServerSound(World world) {
-        world.playSound(this, "ww2:tankshell", 4.0F, 1.0F / (random.nextFloat() * 0.1F + 0.95F));
+        world.playSound(this, "ww2:aafire", 4.0F, 1.0F / (random.nextFloat() * 0.1F + 0.95F));
     }
 
     private void explode()
     {
-        boolean flagW = false;
-        if(checkWaterCollisions()){
-            flagW = true;
-            for (int i = 0; i < 32; i++) {
-                world.addParticle("splash", x + world.random.nextDouble() - 0.5D, y + (world.random.nextDouble()*3.0D), z + world.random.nextDouble() - 0.5D, 1, 1, 1);
-                world.addParticle("bubble", x, y, z, (world.random.nextDouble() - 0.5D) * 3.0D, (world.random.nextDouble() - 0.5D) * 10.0D, (world.random.nextDouble() - 0.5D) * 3.0D);
-            }
-        }else {
-            for (int i = 0; i < 32; i++) {
-                world.addParticle("explode", x, y, z, world.random.nextDouble() - 0.5D, world.random.nextDouble() - 0.5D, world.random.nextDouble() - 0.5D);
-                world.addParticle("smoke", x, y, z, world.random.nextDouble() - 0.5D, world.random.nextDouble() - 0.5D, world.random.nextDouble() - 0.5D);
-            }
+        for(int j = 0; j < 1000; j++)
+        {
+            WW2EntitySmokeFX entitysmokefx = new WW2EntitySmokeFX(world, x + random.nextGaussian(), y + random.nextGaussian(), z + random.nextGaussian(), 0.01D, 0.01D, 0.01D);
+            entitysmokefx.velocityX = random.nextGaussian() / 20D;
+            entitysmokefx.velocityY = random.nextGaussian() / 20D;
+            entitysmokefx.velocityZ = random.nextGaussian() / 20D;
+            entitysmokefx.renderDistanceMultiplier = 200D;
+            SdkToolsRender.minecraft.particleManager.addParticle(entitysmokefx);
         }
-        SdkExplosion explosion = new SdkExplosion(world, null, x, y, z, exploPower, exploFire, exploDeBlocks, getServerExploSound(), flagW);
-        explosion.setVolume(4.0F);
-        explosion.explodeA();
-        explosion.explodeB(true);
+        world.playSound(this, "ww2:flak", 4.0F, 1.2F / (random.nextFloat() * 0.2F + 0.9F));
+
         markDead();
     }
 

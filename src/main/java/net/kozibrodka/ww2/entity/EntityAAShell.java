@@ -5,6 +5,7 @@ import net.kozibrodka.sdk_api.ingame.mod_SdkGuns;
 import net.kozibrodka.sdk_api.utils.SdkTools;
 import net.kozibrodka.sdk_api.utils.SdkToolsRender;
 import net.kozibrodka.sdk_api.utils.WW2Plane;
+import net.kozibrodka.sdk_api.utils.WW2Tank;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;

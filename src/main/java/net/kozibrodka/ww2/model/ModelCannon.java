@@ -5,11 +5,11 @@ import net.kozibrodka.tmt.TURBO_MODEL_125.ModelBase;
 import net.kozibrodka.tmt.TURBO_MODEL_125.ModelRendererTurbo;
 
 public class ModelCannon extends ModelBase {
-    public ModelRendererTurbo[] baseModel;
-    public ModelRendererTurbo[] seatModel;
-    public ModelRendererTurbo[] gunModel;
-    public ModelRendererTurbo[][] barrelModel;
-    public ModelRendererTurbo[][] ammoModel;
+    public ModelRendererTurbo[] baseModel = new ModelRendererTurbo[0];
+    public ModelRendererTurbo[] seatModel = new ModelRendererTurbo[0];
+    public ModelRendererTurbo[] gunModel = new ModelRendererTurbo[0];
+    public ModelRendererTurbo[][] barrelModel = new ModelRendererTurbo[0][0];
+    public ModelRendererTurbo[][] ammoModel = new ModelRendererTurbo[0][0];
     public int barrelX;
     public int barrelY;
     public int barrelZ;
@@ -27,9 +27,9 @@ public class ModelCannon extends ModelBase {
             this.seatModel[i].render(f5);
         }
 
-        for(i = 0; i < this.gunModel.length; ++i) {
-            this.gunModel[i].setPosition((float)this.barrelX, (float)this.barrelY, (float)this.barrelZ);
-            this.gunModel[i].rotateAngleZ = -aa.gunPitch / 180.0F * (float)Math.PI;
+        for (i = 0; i < this.gunModel.length; ++i) {
+            this.gunModel[i].setPosition((float) this.barrelX, (float) this.barrelY, (float) this.barrelZ);
+            this.gunModel[i].rotateAngleZ = -aa.gunPitch / 180.0F * (float) Math.PI;
             this.gunModel[i].render(f5);
         }
 
@@ -42,12 +42,12 @@ public class ModelCannon extends ModelBase {
             }
         }
 
-        for(i = 0; i < this.ammoModel.length; ++i) {
-                for(j = 0; j < this.ammoModel[i].length; ++j) {
-                    this.ammoModel[i][j].setPosition((float)this.barrelX, (float)this.barrelY, (float)this.barrelZ);
-                    this.ammoModel[i][j].rotateAngleZ = -aa.gunPitch / 180.0F * (float)Math.PI;
-                    this.ammoModel[i][j].render(f5);
-                }
+        for (i = 0; i < this.ammoModel.length; ++i) {
+            for (j = 0; j < this.ammoModel[i].length; ++j) {
+                this.ammoModel[i][j].setPosition((float) this.barrelX, (float) this.barrelY, (float) this.barrelZ);
+                this.ammoModel[i][j].rotateAngleZ = -aa.gunPitch / 180.0F * (float) Math.PI;
+                this.ammoModel[i][j].render(f5);
+            }
         }
 
     }
@@ -68,10 +68,12 @@ public class ModelCannon extends ModelBase {
             this.seatModel[i].setRotationPoint(this.seatModel[i].rotationPointX, -this.seatModel[i].rotationPointY, -this.seatModel[i].rotationPointZ);
         }
 
-        for(i = 0; i < this.gunModel.length; ++i) {
-            this.gunModel[i].doMirror(false, true, true);
-            this.gunModel[i].setRotationPoint(this.gunModel[i].rotationPointX, -this.gunModel[i].rotationPointY, -this.gunModel[i].rotationPointZ);
-        }
+//        if(this.gunModel != null) {
+            for (i = 0; i < this.gunModel.length; ++i) {
+                this.gunModel[i].doMirror(false, true, true);
+                this.gunModel[i].setRotationPoint(this.gunModel[i].rotationPointX, -this.gunModel[i].rotationPointY, -this.gunModel[i].rotationPointZ);
+            }
+//        }
 
         int j;
         for(i = 0; i < this.barrelModel.length; ++i) {
@@ -81,12 +83,14 @@ public class ModelCannon extends ModelBase {
             }
         }
 
-        for(i = 0; i < this.ammoModel.length; ++i) {
-            for(j = 0; j < this.ammoModel[i].length; ++j) {
-                this.ammoModel[i][j].doMirror(false, true, true);
-                this.ammoModel[i][j].setRotationPoint(this.ammoModel[i][j].rotationPointX, -this.ammoModel[i][j].rotationPointY, -this.ammoModel[i][j].rotationPointZ);
+//        if(this.ammoModel != null) {
+            for (i = 0; i < this.ammoModel.length; ++i) {
+                for (j = 0; j < this.ammoModel[i].length; ++j) {
+                    this.ammoModel[i][j].doMirror(false, true, true);
+                    this.ammoModel[i][j].setRotationPoint(this.ammoModel[i][j].rotationPointX, -this.ammoModel[i][j].rotationPointY, -this.ammoModel[i][j].rotationPointZ);
+                }
             }
-        }
+//        }
 
     }
 }

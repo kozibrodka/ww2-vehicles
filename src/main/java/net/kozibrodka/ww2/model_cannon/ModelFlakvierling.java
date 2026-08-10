@@ -14,6 +14,12 @@ public class ModelFlakvierling extends ModelCannon
         this.baseModel[1].addBox(-20.0f, -4.0f, -4.0f, 8, 4, 8, 0.0f);
         this.baseModel[2].addBox(4.0f, -4.0f, 8.0f, 8, 4, 8, 0.0f);
         this.baseModel[3].addBox(4.0f, -4.0f, -16.0f, 8, 4, 8, 0.0f);
+        float offY = (float) Math.PI; //300
+//        float offY = 0;
+        this.baseModel[0].rotateAngleY = offY;
+        this.baseModel[1].rotateAngleY = offY;
+        this.baseModel[2].rotateAngleY = offY;
+        this.baseModel[3].rotateAngleY = offY;
         (this.seatModel = new ModelRendererTurbo[5])[0] = new ModelRendererTurbo(this, 0, 30, 128, 64);
         this.seatModel[1] = new ModelRendererTurbo(this, 96, 0, 128, 64);
         this.seatModel[2] = new ModelRendererTurbo(this, 96, 0, 128, 64);

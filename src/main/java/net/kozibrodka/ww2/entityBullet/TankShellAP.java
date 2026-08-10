@@ -1,8 +1,10 @@
 package net.kozibrodka.ww2.entityBullet;
 
+import net.kozibrodka.ww2.entity.EntityCannon;
 import net.kozibrodka.ww2.entity.EntityTank;
 import net.kozibrodka.ww2.entity.SdkEntityTankShell;
 import net.kozibrodka.ww2.events.mod_Vehicles;
+import net.kozibrodka.ww2.properties.CannonType;
 import net.kozibrodka.ww2.properties.TankType;
 import net.minecraft.world.World;
 import net.modificationstation.stationapi.api.server.entity.EntitySpawnDataProvider;
@@ -23,6 +25,11 @@ public class TankShellAP extends SdkEntityTankShell implements EntitySpawnDataPr
 
     public TankShellAP(World world, EntityTank tankEntity, TankType tankType) {
         super(world, tankEntity, tankType);
+        this.exploPower = 1.0F;
+    }
+
+    public TankShellAP(World world, EntityCannon cannonEntity, CannonType cannonType) {
+        super(world, cannonEntity, cannonType);
         this.exploPower = 1.0F;
     }
 

@@ -1,7 +1,11 @@
 package net.kozibrodka.ww2.entityBullet;
 
+import net.kozibrodka.sdk_api.utils.SdkEntityBullet;
+import net.kozibrodka.ww2.entity.EntityCannon;
 import net.kozibrodka.ww2.entity.EntityTank;
+import net.kozibrodka.ww2.entity.SdkEntityAAShell;
 import net.kozibrodka.ww2.entity.SdkEntityTankShell;
+import net.kozibrodka.ww2.properties.CannonType;
 import net.kozibrodka.ww2.properties.TankType;
 import net.minecraft.world.World;
 
@@ -24,6 +28,24 @@ public class ShellFactory {
             case OBS -> {
                 return new TankShellOBS(world, tankEntity, tankType);
             }
+        }
+        return null;
+    }
+
+    public static SdkEntityBullet getShellBasedOnCannon(World world, EntityCannon entityCannon, CannonType cannonType, EntityCannon.ArtShellType shellEnum){
+        switch (shellEnum){
+            case AP -> {
+                return new TankShellAP(world, entityCannon, cannonType);
+            }
+            case HE -> {
+                return new TankShellHE(world, entityCannon, cannonType);
+            }
+            case AA -> {
+                return new SdkEntityAAShell(world, entityCannon, cannonType);
+            }
+//            case OBS -> {
+//                return new TankShellOBS(world, entityCannon, cannonType);
+//            }
         }
         return null;
     }

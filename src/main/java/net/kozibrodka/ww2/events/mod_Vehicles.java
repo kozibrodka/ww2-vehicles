@@ -9,6 +9,7 @@ import net.kozibrodka.ww2.item.SdkItemGunMachineGun;
 import net.kozibrodka.ww2.properties.*;
 import net.kozibrodka.ww2.properties_cannon.Properties_Bofors;
 import net.kozibrodka.ww2.properties_cannon.Properties_Flakvierling;
+import net.kozibrodka.ww2.properties_cannon.Properties_Pak40;
 import net.kozibrodka.ww2.properties_car.PropertiesClassic_Jeep;
 import net.kozibrodka.ww2.properties_car.PropertiesClassic_Kubelwagen;
 import net.kozibrodka.ww2.properties_tank.PropertiesClassic_Panzer;
@@ -57,6 +58,7 @@ public class mod_Vehicles {
     public static Item vehicleClassic_Kubelwagen;
     public static Item bofors;
     public static Item flakvierling;
+    public static Item pak40;
 
     public static Item vehicleOld_M41;
     public static Item vehicleOld_Panzer4G;
@@ -92,6 +94,7 @@ public class mod_Vehicles {
             new TankType(new PropertiesClassic_Panzer());
             new TruckType(new PropertiesClassic_Jeep());
             new TruckType(new PropertiesClassic_Kubelwagen());
+            new CannonType(new Properties_Pak40());
             new CannonType(new Properties_Bofors());
             new CannonType(new Properties_Flakvierling());
         }
@@ -131,10 +134,11 @@ public class mod_Vehicles {
 
         for (int i = 0; i < CannonType.types.size(); i++) {
             CannonType cannonType = (CannonType) CannonType.types.get(i);
-            System.out.println("mod_Planes added cannon: " + cannonType.name);
+            System.out.println("mod_Planes added cannon: " + cannonType.name); //TODO!! name nie może zawierać CYFR... bo nei załaduje itema.
 
             cannonMapping.put(cannonType.name, cannonType);
             cannonType.przedmiot = new ItemCannon(Identifier.of(MOD_ID, cannonType.name), cannonType.name).setTranslationKey(MOD_ID, cannonType.name).setMaxCount(1);
+            System.out.println(cannonType.przedmiot);
         }
 
         vehicle_test164 = new ItemVehicle164(Identifier.of(MOD_ID, "vehicle_test164")).setTranslationKey(MOD_ID, "vehicle_test164");
