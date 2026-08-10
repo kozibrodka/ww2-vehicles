@@ -49,8 +49,8 @@ public class Properties_Tiger2 extends Tank_properties {
         barrelZ = -6;
         gunYawMin = -180;
         gunYawMax = 180;
-        gunPitchMin = -45;
-        gunPitchMax = 8;
+        topViewLimit = -45;
+        bottomViewLimit = 8;
 
         MAX_SPEED = 0.15D;
         TURN_SPEED_STOPPED = 3.5D;

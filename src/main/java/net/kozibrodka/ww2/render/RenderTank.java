@@ -63,12 +63,12 @@ public class RenderTank extends EntityRenderer {
                 gunYaw = vehicle.automobile.gunYawMin - 90.0F;
             }
 
-            if(gunPitch < vehicle.automobile.gunPitchMax) {
-                gunPitch = vehicle.automobile.gunPitchMax;
+            if(gunPitch < vehicle.automobile.bottomViewLimit) {
+                gunPitch = vehicle.automobile.bottomViewLimit;
             }
 
-            if(gunPitch > vehicle.automobile.gunPitchMin) {
-                gunPitch = vehicle.automobile.gunPitchMin;
+            if(gunPitch > vehicle.automobile.topViewLimit) {
+                gunPitch = vehicle.automobile.topViewLimit;
             }
 
             GL11.glTranslatef(modVehicle.gunModel[0].rotationPointX / 16.0F, modVehicle.gunModel[0].rotationPointY / 16.0F, modVehicle.gunModel[0].rotationPointZ / 16.0F);

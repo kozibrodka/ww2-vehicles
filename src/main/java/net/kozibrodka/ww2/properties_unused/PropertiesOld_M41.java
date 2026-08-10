@@ -42,8 +42,8 @@ public class PropertiesOld_M41 extends Tank_properties {
         barrelZ = -6;
         gunYawMin = -180;
         gunYawMax = 180;
-        gunPitchMin = -45;
-        gunPitchMax = 10;
+        topViewLimit = -45;
+        bottomViewLimit = 10;
 
         MAX_SPEED = 0.15D;
         TURN_SPEED_STOPPED = 3.5D;

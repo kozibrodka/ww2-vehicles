@@ -45,8 +45,8 @@ public class PropertiesClassic_Panzer extends Tank_properties {
         barrelZ = -10;
         gunYawMin = -180;
         gunYawMax = 180;
-        gunPitchMin = -45;
-        gunPitchMax = 0;
+        topViewLimit = -45;
+        bottomViewLimit = 0;
 
         cannonDamage = 12; //toodo wszystko
         cannonVehicleDamage = 10;

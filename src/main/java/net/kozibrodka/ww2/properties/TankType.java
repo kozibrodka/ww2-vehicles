@@ -45,8 +45,8 @@ public class TankType {
           barrelZ = klasa.barrelZ;
           gunYawMin = klasa.gunYawMin;
           gunYawMax = klasa.gunYawMax;
-          gunPitchMin = klasa.gunPitchMin;
-          gunPitchMax = klasa.gunPitchMax;
+          topViewLimit = klasa.topViewLimit;
+          bottomViewLimit = klasa.bottomViewLimit;
           autoWidth = klasa.autoWidth;
           autoHeight = klasa.autoHeight;
           standingOko = klasa.standingOko;
@@ -137,8 +137,8 @@ public class TankType {
     public int barrelZ;
     public float gunYawMin;
     public float gunYawMax;
-    public float gunPitchMin;
-    public float gunPitchMax;
+    public float topViewLimit;
+    public float bottomViewLimit;
     public float turretYawSpeed;
     public float turretPitchSpeed;
 

@@ -19,7 +19,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -573,8 +572,8 @@ public class EntityTank extends EntityVehicle implements WW2Tank, EntitySpawnDat
                     gunPitch -= automobile.turretPitchSpeed;
                 }
             }
-            while(gunPitch > automobile.gunPitchMax) gunPitch = automobile.gunPitchMax;
-            while(gunPitch < automobile.gunPitchMin) gunPitch = automobile.gunPitchMin;
+            if(gunPitch > automobile.bottomViewLimit) {gunPitch = automobile.bottomViewLimit;}
+            if(gunPitch < -automobile.topViewLimit) {gunPitch = -automobile.topViewLimit;}
             System.out.println(gunYaw);
         }
     }

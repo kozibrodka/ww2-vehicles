@@ -43,8 +43,8 @@ public class PropertiesOld_Hummel extends Tank_properties {
         barrelZ = -8;
         gunYawMin = -180;
         gunYawMax = 180;
-        gunPitchMin = -45;
-        gunPitchMax = 2;
+        topViewLimit = -45;
+        bottomViewLimit = 2;
 
         MAX_SPEED = 0.10D;
         TURN_SPEED_STOPPED = 2D;

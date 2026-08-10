@@ -44,8 +44,8 @@ public class PropertiesOld_Flakpanzer4 extends Tank_properties {
         barrelZ = -8;
         gunYawMin = -180;
         gunYawMax = 180;
-        gunPitchMin = -90;
-        gunPitchMax = -10; //-10
+        topViewLimit = -90;
+        bottomViewLimit = -10; //-10
 
         MAX_SPEED = 0.15D;
         TURN_SPEED_STOPPED = 2D;

@@ -18,6 +18,9 @@ CANNON:
 - //TODO coś nie tak z trajektorią POCISKu, szczególnie widać jak są 4 lufy...
 
 
+---- Spróbuj dać Kąt bez minusa + potem Clean-up render w osobnym commicie.
+
+
 //TODO bulletsy server spawned nie szukają Entity? - usunąłem to dla Shellsa, i wtedy nie potrzeba broadCastować eventów. - czy to się sprawdzi dla kul zwykłych, czy zbyt wiele jest "missów" wtedy - przeanalizować na SDK guns.
 
 - //todo Potem albo ustawienie tych szybkości wszystkich albo czołg.

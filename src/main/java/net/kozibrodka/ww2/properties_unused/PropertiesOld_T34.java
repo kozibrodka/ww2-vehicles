@@ -43,8 +43,8 @@ public class PropertiesOld_T34 extends Tank_properties {
         barrelZ = -6;
         gunYawMin = -180;
         gunYawMax = 180;
-        gunPitchMin = -45;
-        gunPitchMax = 5;
+        topViewLimit = -45;
+        bottomViewLimit = 5;
 
         cannonDamage = 0; //toodo wszystko
         cannonVehicleDamage = 0;

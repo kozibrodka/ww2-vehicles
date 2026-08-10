@@ -42,8 +42,8 @@ public class PropertiesOld_Panzer4G extends Tank_properties {
         barrelZ = -9;
         gunYawMin = -180;
         gunYawMax = 180;
-        gunPitchMin = -45;
-        gunPitchMax = 8;
+        topViewLimit = -45;
+        bottomViewLimit = 8;
 
         MAX_SPEED = 0.18D;
         TURN_SPEED_STOPPED = 5D;

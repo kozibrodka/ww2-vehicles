@@ -216,7 +216,7 @@ public class EntityCannon extends EntityVehicle implements WW2Cannon, EntitySpaw
             }
 
             setRotation(yaw, pitch);
-//            System.out.println(gunYaw);
+            System.out.println(gunYaw + " " + yaw);
 
 
             if(clientFIRE){

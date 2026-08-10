@@ -46,8 +46,8 @@ public class PropertiesClassic_Sherman extends Tank_properties {
         barrelZ = -10;
         gunYawMin = -180;
         gunYawMax = 180;
-        gunPitchMin = -45;
-        gunPitchMax = 2; //TODO
+        topViewLimit = 45;
+        bottomViewLimit = 2; //TODO
         turretPitchSpeed = 0.5F; //TODO
         turretYawSpeed = 1.5F; //TODO (1.0F)
 

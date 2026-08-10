@@ -44,8 +44,8 @@ public class Tank_properties {
     public int barrelZ;
     public float gunYawMin;
     public float gunYawMax;
-    public float gunPitchMin;
-    public float gunPitchMax;
+    public float topViewLimit;
+    public float bottomViewLimit;
     public float turretYawSpeed;
     public float turretPitchSpeed;
 
