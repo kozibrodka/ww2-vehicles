@@ -98,7 +98,7 @@ public class mod_Vehicles {
             new CannonType(new Properties_Bofors());
             new CannonType(new Properties_Flakvierling());
         }
-        if(false) {
+        if(true) {
             new TankType(new PropertiesOld_M41());
             new TankType(new PropertiesOld_T34());
             new TankType(new PropertiesOld_Panzer4G());

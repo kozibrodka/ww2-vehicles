@@ -35,10 +35,10 @@ public class PropertiesOld_Flakpanzer4 extends Tank_properties {
         autoHeight = 2.5F;
         standingOko = 0.625F;
 
-        playerYOffset = 1.15D;
-        shellXOffset = 55;
-        shellYOffset = 10;
-        shellZOffset = 3;
+        playerXOffset = 0;
+        playerYOffset = 19;
+        playerZOffset = 0;;
+        barrelLength = 55;
         barrelX = -48;
         barrelY = 2;
         barrelZ = -8;

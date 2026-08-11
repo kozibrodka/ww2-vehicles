@@ -34,12 +34,13 @@ public class TankType {
           numBulletSlots = klasa.numBulletSlots;
           numShellSlots = klasa.numShellSlots;
 
-          playerXOffset = klasa.playerXOffset;
+          playerXOffset = -klasa.playerXOffset; /// Przód(x), Prawo(y) = wartość na plus
           playerYOffset = klasa.playerYOffset;
-          playerZOffset = klasa.playerZOffset;
-          shellXOffset = klasa.shellXOffset;
-          shellYOffset = klasa.shellYOffset;
-          shellZOffset = klasa.shellZOffset;
+          playerZOffset = -klasa.playerZOffset;
+          barrelLength = -klasa.barrelLength;
+          barrelPivotXOffset = -klasa.barrelPivotXOffset;
+          barrelPivotYOffset = klasa.barrelPivotYOffset;
+          barrelPivotZOffset = -klasa.barrelPivotZOffset;  ///
           barrelX = klasa.barrelX;
           barrelY = klasa.barrelY;
           barrelZ = klasa.barrelZ;
@@ -126,12 +127,13 @@ public class TankType {
     public float standingOko;
     public int gunFlakRange;
 
-    public double playerXOffset;
-    public double playerYOffset;
-    public double playerZOffset;
-    public int shellXOffset;
-    public int shellYOffset;
-    public int shellZOffset;
+    public int playerXOffset;
+    public int playerYOffset;
+    public int playerZOffset;
+    public int barrelLength;
+    public int barrelPivotXOffset ;  /// Z modelu można przekopiować łatwo
+    public int barrelPivotYOffset ;
+    public int barrelPivotZOffset ;
     public int barrelX;
     public float barrelY;
     public int barrelZ;

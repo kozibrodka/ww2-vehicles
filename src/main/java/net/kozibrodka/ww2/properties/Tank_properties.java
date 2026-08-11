@@ -33,12 +33,13 @@ public class Tank_properties {
     public float autoHeight;
     public float standingOko;
 
-    public double playerXOffset;
-    public double playerYOffset;
-    public double playerZOffset;
-    public int shellXOffset;
-    public int shellYOffset;
-    public int shellZOffset;
+    public int playerXOffset;
+    public int playerYOffset;
+    public int playerZOffset;
+    public int barrelLength;
+    public int barrelPivotXOffset ;  /// Z modelu można przekopiować łatwo
+    public int barrelPivotYOffset ;
+    public int barrelPivotZOffset ;
     public int barrelX;
     public float barrelY;
     public int barrelZ;

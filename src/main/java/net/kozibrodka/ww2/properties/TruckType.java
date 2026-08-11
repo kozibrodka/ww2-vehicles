@@ -30,9 +30,9 @@ public class TruckType {
           numBulletSlots = klasa.numBulletSlots;
           numShellSlots = klasa.numShellSlots;
 
-          playerXOffset = klasa.playerXOffset;
+          playerXOffset = -klasa.playerXOffset;  /// Przód(x), Prawo(y) = wartość na plus  //TODO zmienić na INT i w kodzie /16.
           playerYOffset = klasa.playerYOffset;
-          playerZOffset = klasa.playerZOffset;
+          playerZOffset = -klasa.playerZOffset;
           autoWidth = klasa.autoWidth;
           autoHeight = klasa.autoHeight;
           standingOko = klasa.standingOko;

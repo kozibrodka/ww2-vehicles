@@ -32,9 +32,9 @@ public class CannonType {
         numShellSlots = klasa.numShellSlots;
         isAntiAircraft = klasa.isAntiAircraft;
         MAX_HEALTH = klasa.MAX_HEALTH;
-        gunnerX = klasa.gunnerX;
+        gunnerX = -klasa.gunnerX;  /// Przód(x), Prawo(y) = wartość na plus
         gunnerY = klasa.gunnerY;
-        gunnerZ = klasa.gunnerZ;
+        gunnerZ = -klasa.gunnerZ;
         shootSound = klasa.shootSound;
         overheatSound = klasa.overheatSound;
         model = klasa.model;

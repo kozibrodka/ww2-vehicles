@@ -29,9 +29,9 @@ public class PropertiesClassic_Jeep extends Truck_properties {
         autoWidth = 1.8F;
         autoHeight = 1.05F;
         standingOko = 0F;
-        playerXOffset = -0.3D;
+        playerXOffset = 0.3D; //todo z podzieleniem na 16
         playerYOffset = 0.4D;
-        playerZOffset = 0.5D;
+        playerZOffset = -0.5D;
 
         numPassengers = 3;
         passengerSeats = new PassengerSeatData[numPassengers];

@@ -65,7 +65,7 @@ public class Properties_Flakvierling extends Cannon_properties {
         cannonVehicleDamage = 25;
         cannonPenetration = 2.5F;
         cannonBulletDrop = 0.005F;
-        cannonSpread = 1.0F;
+        cannonSpread = 0.0F;
         cannonMuzzleVelocity = 3.0F;
         cannonExploPower = 4.0F;
         cannonRange = 20;

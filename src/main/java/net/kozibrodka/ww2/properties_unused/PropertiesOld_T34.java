@@ -34,10 +34,10 @@ public class PropertiesOld_T34 extends Tank_properties {
         autoHeight = 2.5F;
         standingOko = 0.625F;
 
-        playerYOffset = 1.05D;
-        shellXOffset = 70;
-        shellYOffset = 20;
-        shellZOffset = 0;
+        playerXOffset = 0;
+        playerYOffset = 16;
+        playerZOffset = 0;;
+        barrelLength = 70;
         barrelX = -48;
         barrelY = 2;
         barrelZ = -6;

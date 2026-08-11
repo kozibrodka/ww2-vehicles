@@ -28,7 +28,6 @@ public class PropertiesClassic_Sherman extends Tank_properties {
         hasGuns = true;
         vehicleFuelAdd = 1000;
         vehicleShootDelay = 3;
-        vehicleShellDelay = 85;
         numCargoSlots = 5;
         numBulletSlots = 5;
         numShellSlots = 5;
@@ -36,21 +35,24 @@ public class PropertiesClassic_Sherman extends Tank_properties {
         autoHeight = 3.0F;
         standingOko = 0F;
 
-        playerYOffset = 2.2D;
-        playerXOffset = -0.4D;
-        shellXOffset = 75;
-        shellYOffset = 45;
-        shellZOffset = 0;
+        playerXOffset = 8;
+        playerYOffset = 30;
+        playerZOffset = 6;
+        barrelLength = 65;
+        barrelPivotXOffset = 15;
+        barrelPivotYOffset = 42;
+        barrelPivotZOffset = 0;
         barrelX = -28;
         barrelY = 5;
         barrelZ = -10;
         gunYawMin = -180;
         gunYawMax = 180;
         topViewLimit = 45;
-        bottomViewLimit = 2; //TODO
+        bottomViewLimit = -2; //TODO
         turretPitchSpeed = 0.5F; //TODO
         turretYawSpeed = 1.5F; //TODO (1.0F)
 
+        vehicleShellDelay = 10; //85
         cannonDamage = 10; //toodo wszystko
         cannonVehicleDamage = 100;
         cannonPenetration = 3.5F;

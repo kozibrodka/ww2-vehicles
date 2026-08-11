@@ -28,13 +28,13 @@ public class SdkEntityAAShell extends SdkEntityBullet { //todo rename bez sdk
     public SdkEntityAAShell(World world, double d, double d1, double d2)
     {
         this(world);
+        setBoundingBoxSpacing(0.25F, 0.25F);
         this.setPosition(d, d1, d2);
         this.standingEyeHeight = 0.0F;
         this.serverSpawned = true;
         this.doFlash(false);
-        this.bulletDrop = 0.005F; //todo - musi sie zgadzac,
+        this.bulletDrop = 0.005F;
         this.penetration = 2.5F;
-        setBoundingBoxSpacing(0.25F, 0.25F);
     }
 
 
@@ -58,11 +58,12 @@ public class SdkEntityAAShell extends SdkEntityBullet { //todo rename bez sdk
         this.exploPower = tankType.cannonExploPower;
         this.exploDeBlocks = true;
         this.exploFire = false;
+        this.standingEyeHeight = 0.0F;
 
         setBoundingBoxSpacing(0.25F, 0.25F);
-        double d2 = (double)tankEntity.automobile.shellXOffset / 16D;
-        double d4 = 0.0D;
-        double d6 = (double)tankEntity.automobile.shellZOffset / 16D;
+        double d2 = (double)tankEntity.automobile.barrelLength / 16D;
+        double d4 = (double)tankEntity.automobile.barrelLength / 16D; //todo
+        double d6 = (double)tankEntity.automobile.barrelLength / 16D;
         double d8 = Math.cos(((double)(-(tankEntity.yaw + (-tankEntity.gunYaw))) / 180D) * 3.1415926535897931D); //gunYawShoot
         double d10 = Math.sin(((double)(-(tankEntity.yaw + (-tankEntity.gunYaw))) / 180D) * 3.1415926535897931D); //gunYawShoot
         double d12 = Math.cos(((double)(-(tankEntity.pitch + tankEntity.gunPitch)) / 180D) * 3.1415926535897931D);
@@ -70,8 +71,7 @@ public class SdkEntityAAShell extends SdkEntityBullet { //todo rename bez sdk
         double d16 = (d2 * d12 - d4 * d14) * d8 + d6 * d10;
         double d18 = d2 * d14 + d4 * d12;
         double d20 = (d4 * d14 - d2 * d12) * d10 + d6 * d8;
-        this.setPosition(tankEntity.x + d16, tankEntity.y + d18 + (double)tankEntity.automobile.shellYOffset / 16D, tankEntity.z + d20);
-        this.standingEyeHeight = 0.0F;
+        this.setPositionAndAnglesKeepPrevAngles(tankEntity.x + d16, tankEntity.y + d18, tankEntity.z + d20, tankEntity.yaw - 90F + tankEntity.gunYaw, tankEntity.pitch + tankEntity.gunPitch);
         float f7 = this.spread;
         if (!tankEntity.onGround) {
             f7 *= 2.0F;
@@ -79,7 +79,9 @@ public class SdkEntityAAShell extends SdkEntityBullet { //todo rename bez sdk
         if (tankEntity.passenger instanceof PlayerEntity) {
             this.owner = tankEntity.passenger;
         }
-        setVelocityClientShell(d16/3.0D, d18/3.0D, d20/3.0D);
+        velocityX = -MathHelper.sin((yaw / 180F) * 3.141593F) * MathHelper.cos((pitch / 180F) * 3.141593F);
+        velocityZ = MathHelper.cos((yaw / 180F) * 3.141593F) * MathHelper.cos((pitch / 180F) * 3.141593F);
+        velocityY = -MathHelper.sin((pitch / 180F) * 3.141593F);
         this.setBulletHeading(this.velocityX, this.velocityY, this.velocityZ, this.muzzleVelocity, f7 / 2.0F);
         this.doFlash(true);
     }
@@ -98,20 +100,20 @@ public class SdkEntityAAShell extends SdkEntityBullet { //todo rename bez sdk
         this.exploDeBlocks = true;
         this.exploFire = false;
         this.maxTimeAir = cannonType.cannonRange;
+        this.standingEyeHeight = 0.0F;
 
         setBoundingBoxSpacing(0.25F, 0.25F);
         double d2 = (double)cannonEntity.cannonType.shellXOffset[cannonEntity.currentBarrel] / 16D;
-        double d4 = 0.0D;
+        double d4 = (double)cannonEntity.cannonType.shellYOffset[cannonEntity.currentBarrel] / 16D;
         double d6 = (double)cannonEntity.cannonType.shellZOffset[cannonEntity.currentBarrel] / 16D;
-        double d8 = Math.cos(((double)(-(cannonEntity.yaw + (-cannonEntity.gunYaw))) / 180D) * 3.1415926535897931D); //gunYawShoot
-        double d10 = Math.sin(((double)(-(cannonEntity.yaw + (-cannonEntity.gunYaw))) / 180D) * 3.1415926535897931D); //gunYawShoot
+        double d8 = Math.cos(((double)(-(cannonEntity.yaw + cannonEntity.gunYaw)) / 180D) * 3.1415926535897931D); //gunYawShoot
+        double d10 = Math.sin(((double)(-(cannonEntity.yaw + cannonEntity.gunYaw)) / 180D) * 3.1415926535897931D); //gunYawShoot
         double d12 = Math.cos(((double)(-(cannonEntity.pitch + cannonEntity.gunPitch)) / 180D) * 3.1415926535897931D);
         double d14 = Math.sin(((double)(-(cannonEntity.pitch + cannonEntity.gunPitch)) / 180D) * 3.1415926535897931D);
         double d16 = (d2 * d12 - d4 * d14) * d8 + d6 * d10;
         double d18 = d2 * d14 + d4 * d12;
         double d20 = (d4 * d14 - d2 * d12) * d10 + d6 * d8;
-        this.setPosition(cannonEntity.x + d16, cannonEntity.y + d18 + (double)cannonEntity.cannonType.shellYOffset[cannonEntity.currentBarrel] / 16D, cannonEntity.z + d20);
-        this.standingEyeHeight = 0.0F;
+        this.setPositionAndAnglesKeepPrevAngles(cannonEntity.x + d16, cannonEntity.y + d18, cannonEntity.z + d20, cannonEntity.yaw - 90F + cannonEntity.gunYaw, cannonEntity.pitch + cannonEntity.gunPitch);
         float f7 = this.spread;
         if (!cannonEntity.onGround) {
             f7 *= 2.0F;
@@ -119,10 +121,10 @@ public class SdkEntityAAShell extends SdkEntityBullet { //todo rename bez sdk
         if (cannonEntity.passenger instanceof PlayerEntity) {
             this.owner = cannonEntity.passenger;
         }
-        //todo potrzebne setPositionAndAnglesKeepPrevAngles() ale bez częścu setPosiion, zobacz w SdkEntiytBullet....
-        //todo i wtedy manualne ustawienie Velocity tak jak w Bulle zadziała, bo będą prawdiłowe kąty ustawione...
-
-        setVelocityClientShell(d16/3.0D, d18/3.0D, d20/3.0D); //todo - co to kurwa jest?????
+//        System.out.println("X: " + x +" Y: " + y + " Z: " + z);
+        velocityX = -MathHelper.sin((yaw / 180F) * 3.141593F) * MathHelper.cos((pitch / 180F) * 3.141593F);
+        velocityZ = MathHelper.cos((yaw / 180F) * 3.141593F) * MathHelper.cos((pitch / 180F) * 3.141593F);
+        velocityY = -MathHelper.sin((pitch / 180F) * 3.141593F);
         this.setBulletHeading(this.velocityX, this.velocityY, this.velocityZ, this.muzzleVelocity, f7 / 2.0F);
         this.doFlash(true);
     }

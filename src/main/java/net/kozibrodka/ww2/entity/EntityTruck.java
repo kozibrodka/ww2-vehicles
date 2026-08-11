@@ -458,6 +458,13 @@ public class EntityTruck extends EntityVehicle implements WW2Truck, EntitySpawnD
             setRotationPitch(Math.max(Math.min((float)((-90D * velocityY) / getSpeed()) * (float)forwOrBack, 90F), -90F) / 2.0F);
             velocityY = y - prevY - automobile.FALL_SPEED;
         }
+        //TODO DEBUG
+        if(clientDOWN){
+            this.pitch = 45F;
+        }if (clientUP){
+        this.pitch = -45F;
+        }
+        //TODO DEBUG
         lastOnGround = onGround;
         /// Handling Collision
         List list = world.getEntities(this, boundingBox.expand(0.2D, 0.0D, 0.2D));
@@ -825,17 +832,22 @@ public class EntityTruck extends EntityVehicle implements WW2Truck, EntitySpawnD
             if(passenger == null){
                 return;
             }
+        passenger.velocityX = 0.0D;
+        passenger.velocityY = 0.0D;
+        passenger.velocityZ = 0.0D;
+
             double d = automobile.playerXOffset;;
             double d1 = getPassengerRidingHeight() + passenger.getStandingEyeHeight();
+//            double d1 = automobile.playerYOffset + 1;
             double d2 = automobile.playerZOffset;
             double d3 = Math.cos(((double)(-yaw) / 180D) * 3.1415926535897931D);
             double d4 = Math.sin(((double)(-yaw) / 180D) * 3.1415926535897931D);
             /// Issue: Little "freeze" on drop
-            double d5 = Math.cos(((double)pitch / 180D) * 3.1415926535897931D); /// GÓRA - DÓŁ
+//            double d5 = Math.cos(((double)pitch / 180D) * 3.1415926535897931D); /// GÓRA - DÓŁ
 //            double d6 = Math.sin(((double)pitch / 180D) * 3.1415926535897931D) * 0.5D; /// Przesunięcie PRZÓD-TYŁ
             double d6 = Math.sin(((double)pitch / 180D) * 3.1415926535897931D * 0.25D); /// Przesunięcie PRZÓD-TYŁ 25%
             /// Oryginal
-//            double d5 = Math.cos(((double)pitch / 180D) * 3.1415926535897931D);
+            double d5 = Math.cos(((double)pitch / 180D) * 3.1415926535897931D);
 //            double d6 = Math.sin(((double)pitch / 180D) * 3.1415926535897931D);
             /// Simple no drop freeze
 //            double d5 = Math.cos(((double)0 / 180D) * 3.1415926535897931D);
@@ -847,6 +859,10 @@ public class EntityTruck extends EntityVehicle implements WW2Truck, EntitySpawnD
             double d10 = d * d6 + d1 * d5;
             double d11 = (d1 * d6 - d * d5) * d4 + d2 * d3;
             passenger.setPosition(x + d9 + d7, y + d10, z + d11 + d8);
+
+        passenger.velocityX = 0.0D;
+        passenger.velocityY = 0.0D;
+        passenger.velocityZ = 0.0D;
     }
 
     public void updateTowedPosition() /// Zupełnie nie wiadomo co jescze...

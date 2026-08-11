@@ -36,17 +36,19 @@ public class PropertiesClassic_Panzer extends Tank_properties {
         autoHeight = 3.0F;
         standingOko = 0F;
 
-        playerYOffset = 1.8D;
-        shellXOffset = 75;
-        shellYOffset = 40;
-        shellZOffset = 0;
+        playerXOffset = 30;
+        playerYOffset = 35;
+        playerZOffset = 30;
+        barrelLength = 75;
         barrelX = -28;
         barrelY = 5;
         barrelZ = -10;
         gunYawMin = -180;
         gunYawMax = 180;
-        topViewLimit = -45;
-        bottomViewLimit = 0;
+        topViewLimit = 45;
+        bottomViewLimit = -10;
+        turretPitchSpeed = 2.5F;
+        turretYawSpeed = 5.5F;
 
         cannonDamage = 12; //toodo wszystko
         cannonVehicleDamage = 10;

@@ -28,12 +28,12 @@ public class SdkEntityTankShell extends SdkEntityBullet { //todo rename bez sdk
     public SdkEntityTankShell(World world, double d, double d1, double d2)
     {
         this(world);
+        setBoundingBoxSpacing(0.25F, 0.25F);
         this.setPosition(d, d1, d2);
         this.standingEyeHeight = 0.0F;
         this.serverSpawned = true;
         this.doFlash(false);
-        this.bulletDrop = 0.005F; //todo - musi sie zgadzac,
-        setBoundingBoxSpacing(0.25F, 0.25F);
+        this.bulletDrop = 0.005F;
     }
 
 
@@ -57,20 +57,163 @@ public class SdkEntityTankShell extends SdkEntityBullet { //todo rename bez sdk
         this.exploPower = tankType.cannonExploPower;
         this.exploDeBlocks = true;
         this.exploFire = false;
-
-        setBoundingBoxSpacing(0.25F, 0.25F);
-        double d2 = (double)tankEntity.automobile.shellXOffset / 16D;
-        double d4 = 0.0D;
-        double d6 = (double)tankEntity.automobile.shellZOffset / 16D;
-        double d8 = Math.cos(((double)(-(tankEntity.yaw + (-tankEntity.gunYaw))) / 180D) * 3.1415926535897931D); //gunYawShoot
-        double d10 = Math.sin(((double)(-(tankEntity.yaw + (-tankEntity.gunYaw))) / 180D) * 3.1415926535897931D); //gunYawShoot
-        double d12 = Math.cos(((double)(-(tankEntity.pitch + tankEntity.gunPitch)) / 180D) * 3.1415926535897931D);
-        double d14 = Math.sin(((double)(-(tankEntity.pitch + tankEntity.gunPitch)) / 180D) * 3.1415926535897931D);
-        double d16 = (d2 * d12 - d4 * d14) * d8 + d6 * d10;
-        double d18 = d2 * d14 + d4 * d12;
-        double d20 = (d4 * d14 - d2 * d12) * d10 + d6 * d8;
-        this.setPosition(tankEntity.x + d16, tankEntity.y + d18 + (double)tankEntity.automobile.shellYOffset / 16D, tankEntity.z + d20);
         this.standingEyeHeight = 0.0F;
+        ///
+        System.out.println("NOWY TANK SHELL");
+        ///
+
+//// 1. OffSety z pikseli modelu na bloki
+//        double pivotX = (double)tankEntity.automobile.barrelPivotXOffset / 16.0;
+//        double pivotY = (double)tankEntity.automobile.barrelPivotYOffset / 16.0;
+//        double pivotZ = (double)tankEntity.automobile.barrelPivotZOffset / 16.0;
+//        double barrelLength = (double)tankEntity.automobile.barrelLength / 16.0;
+//
+//// 2. Kąty w radianach
+//        double radYaw = Math.toRadians(-tankEntity.yaw);
+//        double radGun = Math.toRadians(tankEntity.gunYaw - 180.0F);
+//        double radPitch = Math.toRadians(tankEntity.pitch);
+//        double radGunPitch = Math.toRadians(tankEntity.gunPitch);
+//
+//// =========================================================================
+//// A. POZYCJA GLOBALNA JARZMA (Obliczenia dla długości lufy = 0)
+//// =========================================================================
+//        double cosG = Math.cos(radGun), sinG = Math.sin(radGun);
+//        double pTX = pivotX * cosG - pivotZ * sinG;
+//        double pTZ = pivotX * sinG + pivotZ * cosG;
+//        double pTY = pivotY;
+//
+//        double cosP = Math.cos(radPitch), sinP = Math.sin(radPitch);
+//        double pLocalX = pTX * cosP - pTY * sinP;
+//        double pLocalY = pTX * sinP + pTY * cosP;
+//        double pLocalZ = pTZ;
+//
+//        double cosY = Math.cos(radYaw), sinY = Math.sin(radYaw);
+//        double pivotWorldX = pLocalX * cosY + pLocalZ * sinY;
+//        double pivotWorldY = pLocalY;
+//        double pivotWorldZ = -pLocalX * sinY + pLocalZ * cosY;
+//
+//// =========================================================================
+//// B. POZYCJA GLOBALNA WYLOTU (Na bazie pozycji jarzma dodajemy wysunięcie lufy)
+//// =========================================================================
+//        double cosGP = Math.cos(radGunPitch), sinGP = Math.sin(radGunPitch);
+//        double localBarrelX = barrelLength * cosGP;
+//        double localBarrelY = barrelLength * sinGP;
+//
+//// Obrót wieży i kadłuba dla samego wysunięcia lufy
+//        double bTX = localBarrelX * cosG;
+//        double bTZ = localBarrelX * sinG;
+//        double bTY = localBarrelY;
+//
+//        double bLocalX = bTX * cosP - bTY * sinP;
+//        double bLocalY = bTX * sinP + bTY * cosP;
+//        double bLocalZ = bTZ;
+//
+//// Końcowa pozycja wylotu pocisku w świecie
+//        double worldX = pivotWorldX + (bLocalX * cosY + bLocalZ * sinY);
+//        double worldY = pivotWorldY + bLocalY;
+//        double worldZ = pivotWorldZ + (-bLocalX * sinY + bLocalZ * cosY);
+//
+//// =========================================================================
+//// C. WYLICZENIE KĄTÓW NA BAZIE WEKTORA (Wylot - Jarzmo)
+//// =========================================================================
+//// Wektor kierunku lufy to po prostu przesunięcie wylotu względem jarzma
+//        double dirX = worldX - pivotWorldX;
+//        double dirY = worldY - pivotWorldY;
+//        double dirZ = worldZ - pivotWorldZ;
+//
+//        double horizontalDistance = Math.sqrt(dirX * dirX + dirZ * dirZ);
+//
+//// Konwersja wektora na kąty dla silnika Beta 1.7.3
+//        float bulletYaw = (float)(Math.atan2(dirZ, dirX) * 180.0D / Math.PI) - 90.0F;
+//        float bulletPitch = (float)-(Math.atan2(dirY, horizontalDistance) * 180.0D / Math.PI);
+//
+//// 3. Ustawienie pozycji i kątów lotu kuli
+//        this.setPositionAndAnglesKeepPrevAngles(
+//                tankEntity.x + worldX,
+//                tankEntity.y + worldY,
+//                tankEntity.z + worldZ,
+//                bulletYaw,
+//                bulletPitch
+//        );
+        ///
+//        setBoundingBoxSpacing(0.25F, 0.25F);
+//        double d2 = (double)tankEntity.automobile.shellXOffset / 16D;
+//        double d4 = (double)tankEntity.automobile.shellYOffset / 16D;
+//        double d6 = (double)tankEntity.automobile.shellZOffset / 16D;
+//        double d8 = Math.cos(((double)(-(tankEntity.yaw + tankEntity.gunYaw)) / 180D) * 3.1415926535897931D); //gunYawShoot
+//        double d10 = Math.sin(((double)(-(tankEntity.yaw + tankEntity.gunYaw)) / 180D) * 3.1415926535897931D); //gunYawShoot
+//        double d12 = Math.cos(((double)(-(tankEntity.pitch + tankEntity.gunPitch)) / 180D) * 3.1415926535897931D);
+//        double d14 = Math.sin(((double)(-(tankEntity.pitch + tankEntity.gunPitch)) / 180D) * 3.1415926535897931D);
+//        double d16 = (d2 * d12 - d4 * d14) * d8 + d6 * d10;
+//        double d18 = d2 * d14 + d4 * d12;
+//        double d20 = (d4 * d14 - d2 * d12) * d10 + d6 * d8;
+//        this.setPositionAndAnglesKeepPrevAngles(tankEntity.x + d16, tankEntity.y + d18, tankEntity.z + d20, tankEntity.yaw - 90F + tankEntity.gunYaw, tankEntity.pitch + tankEntity.gunPitch);
+        ///
+// 1. OffSety z pikseli modelu na bloki
+        double pivotX = (double)tankEntity.automobile.barrelPivotXOffset / 16.0;
+        double pivotY = (double)tankEntity.automobile.barrelPivotYOffset / 16.0;
+        double pivotZ = (double)tankEntity.automobile.barrelPivotZOffset / 16.0;
+        double barrelLength = (double)tankEntity.automobile.barrelLength / 16.0;
+
+// 2. Kąty w radianach
+        double radYaw = Math.toRadians(-tankEntity.yaw);
+        double radGun = Math.toRadians(tankEntity.gunYaw - 180.0F);
+        double radPitch = Math.toRadians(tankEntity.pitch);
+        double radGunPitch = Math.toRadians(tankEntity.gunPitch);
+
+// 3. KROK 1: Obrót samej długości lufy w pionie (uniesienie)
+        double cosGP = Math.cos(radGunPitch), sinGP = Math.sin(radGunPitch);
+        double localBarrelX = barrelLength * cosGP;
+        double localBarrelY = barrelLength * sinGP;
+
+// 4. KROK 2: Obrót wieży (gunYaw) dla samego wektora lufy
+        double cosG = Math.cos(radGun), sinG = Math.sin(radGun);
+        double bTX = localBarrelX * cosG;
+        double bTZ = localBarrelX * sinG;
+        double bTY = localBarrelY;
+
+// 5. KROK 3: Pochylenie całego czołgu (pitch) dla samego wektora lufy
+        double cosP = Math.cos(radPitch), sinP = Math.sin(radPitch);
+        double bLocalX = bTX * cosP - bTY * sinP;
+        double bLocalY = bTX * sinP + bTY * cosP;
+        double bLocalZ = bTZ;
+
+// 6. KROK 4: Globalna transformacja pozioma świata gry (Yaw) -> WYLICZENIE CZYSTEGO WEKTORA KIERUNKU
+        double cosY = Math.cos(radYaw), sinY = Math.sin(radYaw);
+        double dirX = bLocalX * cosY + bLocalZ * sinY;
+        double dirY = bLocalY;
+        double dirZ = -bLocalX * sinY + bLocalZ * cosY;
+
+// =========================================================================
+// OBLICZANIE KOŃCOWEJ POZYCJI WYLOTU (Dodanie przesunięć jarzma na samym końcu)
+// =========================================================================
+// Transformacja jarzma (pivotu) czołgu przepuszczona przez te same funkcje trygonometryczne
+        double pTX = pivotX * cosG - pivotZ * sinG;
+        double pTZ = pivotX * sinG + pivotZ * cosG;
+        double pLocalX = pTX * cosP - pivotY * sinP;
+        double pLocalY = pTX * sinP + pivotY * cosP;
+
+        double worldX = dirX + (pLocalX * cosY + pTZ * sinY);
+        double worldY = dirY + pLocalY;
+        double worldZ = dirZ + (-pLocalX * sinY + pTZ * cosY);
+
+// =========================================================================
+// WEKTOROWA KONWERSJA NA KĄTY SŁUŻBOWE MINECRAFTA (Zawsze idealna)
+// =========================================================================
+        double horizontalDistance = Math.sqrt(dirX * dirX + dirZ * dirZ);
+        float bulletYaw = (float)(Math.atan2(dirZ, dirX) * 180.0D / Math.PI) - 90.0F;
+        float bulletPitch = (float)-(Math.atan2(dirY, horizontalDistance) * 180.0D / Math.PI);
+
+// 7. Ustawienie pozycji i kątów lotu kuli
+        this.setPositionAndAnglesKeepPrevAngles(
+                tankEntity.x + worldX,
+                tankEntity.y + worldY,
+                tankEntity.z + worldZ,
+                bulletYaw,
+                bulletPitch
+        );
+
+        ///
         float f7 = this.spread;
         if (!tankEntity.onGround) {
             f7 *= 2.0F;
@@ -78,7 +221,9 @@ public class SdkEntityTankShell extends SdkEntityBullet { //todo rename bez sdk
         if (tankEntity.passenger instanceof PlayerEntity) {
             this.owner = tankEntity.passenger;
         }
-        setVelocityClientShell(d16/3.0D, d18/3.0D, d20/3.0D);
+        velocityX = -MathHelper.sin((yaw / 180F) * 3.141593F) * MathHelper.cos((pitch / 180F) * 3.141593F);
+        velocityZ = MathHelper.cos((yaw / 180F) * 3.141593F) * MathHelper.cos((pitch / 180F) * 3.141593F);
+        velocityY = -MathHelper.sin((pitch / 180F) * 3.141593F);
         this.setBulletHeading(this.velocityX, this.velocityY, this.velocityZ, this.muzzleVelocity, f7 / 2.0F);
         this.doFlash(true);
     }
@@ -97,20 +242,20 @@ public class SdkEntityTankShell extends SdkEntityBullet { //todo rename bez sdk
         this.exploDeBlocks = true;
         this.exploFire = false;
         this.maxTimeAir = cannonType.cannonRange;
-
+        this.standingEyeHeight = 0.0F;
         setBoundingBoxSpacing(0.25F, 0.25F);
         double d2 = (double)cannonEntity.cannonType.shellXOffset[cannonEntity.currentBarrel] / 16D;
-        double d4 = 0.0D;
+        double d4 = (double)cannonEntity.cannonType.shellYOffset[cannonEntity.currentBarrel] / 16D;
         double d6 = (double)cannonEntity.cannonType.shellZOffset[cannonEntity.currentBarrel] / 16D;
-        double d8 = Math.cos(((double)(-(cannonEntity.yaw + (-cannonEntity.gunYaw))) / 180D) * 3.1415926535897931D); //gunYawShoot
-        double d10 = Math.sin(((double)(-(cannonEntity.yaw + (-cannonEntity.gunYaw))) / 180D) * 3.1415926535897931D); //gunYawShoot
+        double d8 = Math.cos(((double)(-(cannonEntity.yaw + cannonEntity.gunYaw)) / 180D) * 3.1415926535897931D); //gunYawShoot
+        double d10 = Math.sin(((double)(-(cannonEntity.yaw + cannonEntity.gunYaw)) / 180D) * 3.1415926535897931D); //gunYawShoot
         double d12 = Math.cos(((double)(-(cannonEntity.pitch + cannonEntity.gunPitch)) / 180D) * 3.1415926535897931D);
         double d14 = Math.sin(((double)(-(cannonEntity.pitch + cannonEntity.gunPitch)) / 180D) * 3.1415926535897931D);
         double d16 = (d2 * d12 - d4 * d14) * d8 + d6 * d10;
         double d18 = d2 * d14 + d4 * d12;
         double d20 = (d4 * d14 - d2 * d12) * d10 + d6 * d8;
-        this.setPosition(cannonEntity.x + d16, cannonEntity.y + d18 + (double)cannonEntity.cannonType.shellYOffset[cannonEntity.currentBarrel] / 16D, cannonEntity.z + d20);
-        this.standingEyeHeight = 0.0F;
+        this.setPositionAndAnglesKeepPrevAngles(cannonEntity.x + d16, cannonEntity.y + d18, cannonEntity.z + d20, cannonEntity.yaw - 90F + cannonEntity.gunYaw, cannonEntity.pitch + cannonEntity.gunPitch);
+        ///
         float f7 = this.spread;
         if (!cannonEntity.onGround) {
             f7 *= 2.0F;
@@ -118,7 +263,9 @@ public class SdkEntityTankShell extends SdkEntityBullet { //todo rename bez sdk
         if (cannonEntity.passenger instanceof PlayerEntity) {
             this.owner = cannonEntity.passenger;
         }
-        setVelocityClientShell(d16/3.0D, d18/3.0D, d20/3.0D);
+        velocityX = -MathHelper.sin((yaw / 180F) * 3.141593F) * MathHelper.cos((pitch / 180F) * 3.141593F);
+        velocityZ = MathHelper.cos((yaw / 180F) * 3.141593F) * MathHelper.cos((pitch / 180F) * 3.141593F);
+        velocityY = -MathHelper.sin((pitch / 180F) * 3.141593F);
         this.setBulletHeading(this.velocityX, this.velocityY, this.velocityZ, this.muzzleVelocity, f7 / 2.0F);
         this.doFlash(true);
     }
@@ -147,6 +294,13 @@ public class SdkEntityTankShell extends SdkEntityBullet { //todo rename bez sdk
 
     @Override
     public void tick() {
+        if(timeInAir == 0) {
+            velocityX = 0;
+            velocityY = 0;
+            velocityZ = 0;
+            return;
+        }
+        /// DEBUG for setting ShellPosParameters for Tanks. ^
         baseTick();
         if (!serverSoundPlayed) {
             playServerSound(world);

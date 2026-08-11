@@ -51,7 +51,7 @@ public class EntityCannon extends EntityVehicle implements WW2Cannon, EntitySpaw
     public EntityCannon(World world) {
         super(world);
         standingEyeHeight = 0.0F;
-        gunYaw = -180.0F;
+        gunYaw = 180.0F;
         gunPitch = 0.0F;
         shootDelay = 0;
         currentBarrel = 0;
@@ -147,19 +147,10 @@ public class EntityCannon extends EntityVehicle implements WW2Cannon, EntitySpaw
     public void tick() {
         super.tick();
         if(passenger != null) {
-            /// PRZED ZMIANAMI
-//            gunYaw = (((passenger.yaw + 90F) - yaw)) % 360.0F;
-//            while (gunYaw > 0) gunYaw -= 360F;
-//            while (gunYaw < -360) gunYaw += 360F;
-            /// PO zmianach
-//            gunYaw = (-((passenger.yaw + 90F) - yaw)) % 360.0F;
-//            while (gunYaw > 0) gunYaw -= 360F;
-//            while (gunYaw < -360) gunYaw += 360F;
-            /// Yaw
-            float passYaw = (-((passenger.yaw + 90F) - yaw)) % 360.0F;
-            while (gunYaw > 0) gunYaw -= 360F;
-            while (gunYaw < -360) gunYaw += 360F;
-            while (passYaw > 0) passYaw -= 360F;
+            float passYaw = ((passenger.yaw + 90F) - yaw) % 360.0F;
+            while (gunYaw > 360) gunYaw -= 360F;
+            while (gunYaw < 0) gunYaw += 360F;
+            while (passYaw < 0) passYaw += 360F;
             float checkYaw = Math.abs(gunYaw-passYaw);
             if(checkYaw < cannonType.cannonYawSpeed || checkYaw > (360.0F - cannonType.cannonYawSpeed)){
                 gunYaw = passYaw;
@@ -181,14 +172,14 @@ public class EntityCannon extends EntityVehicle implements WW2Cannon, EntitySpaw
             }
             /// +++
             if(cannonType.maxCannonDeviation > 0) {
-                if (gunYaw > -180) {
-                    if (gunYaw > (-180 + cannonType.maxCannonDeviation)) {
-                        gunYaw = -180 + cannonType.maxCannonDeviation;
+                if (gunYaw > 180) {
+                    if (gunYaw > (180 + cannonType.maxCannonDeviation)) {
+                        gunYaw = 180 + cannonType.maxCannonDeviation;
                     }
                 }
-                if (gunYaw < -180) {
-                    if (gunYaw < (-180 - cannonType.maxCannonDeviation)) {
-                        gunYaw = -180 - cannonType.maxCannonDeviation;
+                if (gunYaw < 180) {
+                    if (gunYaw < (180 - cannonType.maxCannonDeviation)) {
+                        gunYaw = 180 - cannonType.maxCannonDeviation;
                     }
                 }
 
@@ -205,7 +196,7 @@ public class EntityCannon extends EntityVehicle implements WW2Cannon, EntitySpaw
                     gunPitch -= cannonType.cannonPitchSpeed;
                 }
             }
-            if(gunPitch > cannonType.bottomViewLimit) {gunPitch = cannonType.bottomViewLimit;}
+            if(gunPitch > -cannonType.bottomViewLimit) {gunPitch = -cannonType.bottomViewLimit;}
             if(gunPitch < -cannonType.topViewLimit) {gunPitch = -cannonType.topViewLimit;}
             /// Body Yaw
             if(clientRIGHT){
@@ -214,11 +205,14 @@ public class EntityCannon extends EntityVehicle implements WW2Cannon, EntitySpaw
             if(clientLEFT){
                 this.yaw -= cannonType.bodyTurnSpeed;
             }
-
+            if(clientDOWN){
+                this.pitch = 45F;
+            }else if (clientUP){
+                this.pitch = -45F;
+            } else {
+                this.pitch = 0;
+            }
             setRotation(yaw, pitch);
-            System.out.println(gunYaw + " " + yaw);
-
-
             if(clientFIRE){
                 fireCannon();
             }
@@ -312,16 +306,18 @@ public class EntityCannon extends EntityVehicle implements WW2Cannon, EntitySpaw
     @Override
     public void updatePassengerPosition(){
         double d2 = (double)cannonType.gunnerX / 16D;
-        double d4 = 0.0D;
+        double d4 = (double)cannonType.gunnerY / 16D;
         double d6 = (double)cannonType.gunnerZ / 16D;
-        double d8 = Math.cos(((double)(-(yaw + (-gunYaw))) / 180D) * 3.1415926535897931D);
-        double d10 = Math.sin(((double)(-(yaw + (-gunYaw))) / 180D) * 3.1415926535897931D);
-        double d12 = Math.cos(((double)(-(pitch + gunPitch)) / 180D) * 3.1415926535897931D);
-        double d14 = Math.sin(((double)(-(pitch + gunPitch)) / 180D) * 3.1415926535897931D);
+        double d8 = Math.cos(((double)(-(yaw + gunYaw)) / 180D) * 3.1415926535897931D);
+        double d10 = Math.sin(((double)(-(yaw + gunYaw)) / 180D) * 3.1415926535897931D);
+
+        double d12 = Math.cos(((double)(-(pitch)) / 180D) * 3.1415926535897931D);
+        double d14 = Math.sin(((double)(-(pitch)) / 180D) * 3.1415926535897931D);
+
         double d16 = (d2 * d12 - d4 * d14) * d8 + d6 * d10;
         double d18 = d2 * d14 + d4 * d12;
         double d20 = (d4 * d14 - d2 * d12) * d10 + d6 * d8;
-        passenger.setPosition(this.x + d16, this.y + d18 + (double)cannonType.gunnerY / 16D, this.z + d20);
+        passenger.setPosition(this.x + d16, this.y + d18, this.z + d20);
     }
 
     @Override

@@ -38,12 +38,10 @@ public class Properties_Tiger2 extends Tank_properties {
         autoHeight = 3.2F;
         standingOko = 0.625F;
 
-        playerXOffset = 0.0D;
-        playerYOffset = 1.8D;
-        playerZOffset = 0.0D;
-        shellXOffset = 70;
-        shellYOffset = 35;
-        shellZOffset = 0;
+        playerXOffset = 0;
+        playerYOffset = 30;
+        playerZOffset = 0;
+        barrelLength = 70;
         barrelX = -48;
         barrelY = 2;
         barrelZ = -6;

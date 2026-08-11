@@ -25,16 +25,11 @@ public class RenderTruck extends EntityRenderer {
         /// Move model (usefull for new Willy jeep)
 //        GL11.glTranslatef(4.0F, 0.0F, 0.0F);
         ///
-//        GL11.glTranslatef((float)d, (float)d1, (float)d2);
-//        GL11.glRotatef(f + 90.0F, 0.0F, 1.0F, 0.0F);
-//        GL11.glRotatef(vehicle.prevPitch + (vehicle.axes.getPitch() - vehicle.prevPitch) * f1, 0.0F, 0.0F, 1.0F);
-//        GL11.glRotatef(-vehicle.prevRotationRoll - (vehicle.axes.getRoll() - vehicle.prevRotationRoll) * f1, 1.0F, 0.0F, 0.0F);
         this.bindTexture("/assets/ww2/stationapi/textures/mob/truck/" + vehicle.automobile.texture);
         ModelTruck modVehicle = vehicle.automobile.model;
         if(modVehicle != null) {
             modVehicle.render(0.0F, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F, vehicle);
         }
-//        GL11.glPushMatrix();
         GL11.glPopMatrix();
     }
 

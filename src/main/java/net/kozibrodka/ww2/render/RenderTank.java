@@ -22,10 +22,6 @@ public class RenderTank extends EntityRenderer {
         GL11.glTranslatef((float)d, (float)d1, (float)d2);
         GL11.glRotatef(180F - f, 0.0F, 1.0F, 0.0F);
         GL11.glRotatef(-f2, 0.0F, 0.0F, 1.0F);
-//        GL11.glTranslatef((float)d, (float)d1, (float)d2);
-//        GL11.glRotatef(f + 90.0F, 0.0F, 1.0F, 0.0F);
-//        GL11.glRotatef(vehicle.prevPitch + (vehicle.axes.getPitch() - vehicle.prevPitch) * f1, 0.0F, 0.0F, 1.0F);
-//        GL11.glRotatef(-vehicle.prevRotationRoll - (vehicle.axes.getRoll() - vehicle.prevRotationRoll) * f1, 1.0F, 0.0F, 0.0F);
         this.bindTexture("/assets/ww2/stationapi/textures/mob/tank/" + vehicle.automobile.texture);
         ModelTank modVehicle = vehicle.automobile.model;
         if(modVehicle != null) {
@@ -82,7 +78,7 @@ public class RenderTank extends EntityRenderer {
             gunYaw = vehicle.gunYaw;
             gunPitch = vehicle.gunPitch;
             GL11.glTranslatef(modVehicle.turretModel[0].rotationPointX / 16.0F, modVehicle.turretModel[0].rotationPointY / 16.0F, modVehicle.turretModel[0].rotationPointZ / 16.0F);
-            GL11.glRotatef(180.0F + gunYaw, 0.0F, 1.0F, 0.0F);
+            GL11.glRotatef(180.0F - gunYaw, 0.0F, 1.0F, 0.0F);
             GL11.glTranslatef(-modVehicle.turretModel[0].rotationPointX / 16.0F, -modVehicle.turretModel[0].rotationPointY / 16.0F, -modVehicle.turretModel[0].rotationPointZ / 16.0F);
             modVehicle.renderTurret(0.0F, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F, vehicle, gunYaw, gunPitch);
         }

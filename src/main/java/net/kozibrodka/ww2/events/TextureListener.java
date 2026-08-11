@@ -107,8 +107,10 @@ public class TextureListener {
 
         /// HIDE TO SHOW PASSSEAT DEBUG MODEL
         if(mod_Vehicles.ww2Glass.debugPassSeats) {
+            /// puste ewentualnie wtedy - biały square
+            event.renderers.put(EntityPassengerSeat.class, new RenderTestSeatBoat());
+        }else{
             event.renderers.put(EntityPassengerSeat.class, new RenderPassSeat());
-//            event.renderers.put(EntityPassengerSeat.class, new RenderTestSeatBoat());
         }
     }
 

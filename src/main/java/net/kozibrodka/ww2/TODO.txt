@@ -1,5 +1,5 @@
 WSKAZÓWKI:
-- broadcastEventy do wartości BYTE - wykorzystaj - EZZ
+- broadcastEventy do wartości BYTE - wykorzystaj - EZZ  - czy broadcastEvent działa z HasTrackingParameters wysoki interwal?
 - Wstawienie do RenderPassSeat nie powoduje tego przesuwania, jak na tym "default" białym kwadracie - dobrze się sprawdzi do renderowania GUNSów
 ISSUES:
 - Wysiadki przycinki, Alternate Exit jedynie zmiejsza szanse, to jest Vanilla Bug, jak stanę na łódce to też po jakimś czasie się zglitchuje [VANILLA BUG]
@@ -10,20 +10,19 @@ TODO BEFORE RELEASE:
 - Wychodznie z pojazdu przycnika, może spróbuj dodać velocity?
 - WSPÓLNE GUI - done for Truck/TANK - remove old GUIS
 
+//todo na szybko z wczoraj
+- zobacz w tym claude AI, czy kod jest dobrze zoptymalizowany.
+- Trzeba wprowadzić kod z czołgu dla Cannon.
 
 CANNON:
 -clean-up interface of WW2Cannon - maybe add Towing?
-- CRAftingi
+- CRAftingi, Towing,
 - overheat - ogarnij, tylko wstępnie zrobione jest
-- //TODO coś nie tak z trajektorią POCISKu, szczególnie widać jak są 4 lufy...
+- zobacz dokładnie gdzie zaczynają kule MG czołgu na freeze.
 
-
----- Spróbuj dać Kąt bez minusa + potem Clean-up render w osobnym commicie.
 
 
 //TODO bulletsy server spawned nie szukają Entity? - usunąłem to dla Shellsa, i wtedy nie potrzeba broadCastować eventów. - czy to się sprawdzi dla kul zwykłych, czy zbyt wiele jest "missów" wtedy - przeanalizować na SDK guns.
-
-- //todo Potem albo ustawienie tych szybkości wszystkich albo czołg.
 
 - Multiplayer - done for truck/tank
 - Są pewne brakujące partsy. Stapi-resources. święty gral + itemsww2 sprawdź.   MetalWingSection np. Ogarnij to i rozpisz.
@@ -36,7 +35,8 @@ Pierwszy mały update:
 - Healing pojazdu
 - Przegrzewanie się MG czołgu...
 TODO AFTER : (zero nowych pojazdów przez ogarnięciem wszyskich systemów)
-- TMT 1.6.4 - aby móc załadować modele... - da komfort psychiczny
+- TMT 1.6.4 - Donem trzeba uporządkowac repo (master commit)
+- Player jego rotacja w Render...
 
 - Tank Cannon Recoil effect.
 - Kiedy Vehicle jeździ na Plecach Animalsa, np, jest na świni, powinno "zgnieść"

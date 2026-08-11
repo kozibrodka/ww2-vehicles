@@ -34,10 +34,10 @@ public class PropertiesOld_Hummel extends Tank_properties {
         autoHeight = 2.5F;
         standingOko = 0.625F;
 
-        playerYOffset = 1.15D;
-        shellXOffset = 90;
-        shellYOffset = 20;
-        shellZOffset = 0;
+        playerXOffset = 0;
+        playerYOffset = 19;
+        playerZOffset = 0;;
+        barrelLength = 90;
         barrelX = -48;
         barrelY = 2;
         barrelZ = -8;

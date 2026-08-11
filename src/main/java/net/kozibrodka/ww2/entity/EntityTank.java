@@ -46,7 +46,7 @@ public class EntityTank extends EntityVehicle implements WW2Tank, EntitySpawnDat
         lastCollidedEntity = null;
         soundLoopTime = 0;
         stepHeight = 1.0F; //stepHeight
-        gunYaw = 0.0F;
+        gunYaw = 180.0F;
         gunPitch = 0.0F;
         gunMachineGun = new ItemStack(mod_Vehicles.itemGunMachineGun);
         renderDistanceMultiplier = 2; //jakos to dostosoawac
@@ -398,6 +398,13 @@ public class EntityTank extends EntityVehicle implements WW2Tank, EntitySpawnDat
             setRotationPitch(Math.max(Math.min((float)((-90D * velocityY) / getSpeed()) * (float)forwOrBack, 90F), -90F) / 2.0F);
             velocityY = y - prevY - automobile.FALL_SPEED;
         }
+        //TODO DEBUG
+        if(clientDOWN){
+            this.pitch = 45F;
+        }if (clientUP){
+        this.pitch = -45F;
+        }
+        //TODO DEBUG
         lastOnGround = onGround;
         /// Handling Collision
         List list = world.getEntities(this, boundingBox.expand(0.20000000000000001D, 0.0D, 0.20000000000000001D));
@@ -537,10 +544,10 @@ public class EntityTank extends EntityVehicle implements WW2Tank, EntitySpawnDat
             {
                 gunYaw = -(180);
             }else{
-                float passYaw = (-((passenger.yaw + 90F) - yaw)) % 360.0F;
-                while (gunYaw > 0) gunYaw -= 360F;
-                while (gunYaw < -360) gunYaw += 360F;
-                while (passYaw > 0) passYaw -= 360F;
+                float passYaw = ((passenger.yaw + 90F) - yaw) % 360.0F;
+                while (gunYaw > 360) gunYaw -= 360F;
+                while (gunYaw < 0) gunYaw += 360F;
+                while (passYaw < 0) passYaw += 360F;
                 float checkYaw = Math.abs(gunYaw-passYaw);
                 if(checkYaw < automobile.turretYawSpeed || checkYaw > (360.0F - automobile.turretYawSpeed)){
                     gunYaw = passYaw;
@@ -561,7 +568,8 @@ public class EntityTank extends EntityVehicle implements WW2Tank, EntitySpawnDat
                     }
                 }
             }
-            float passPitch = passenger.pitch - pitch;
+//            float passPitch = passenger.pitch - pitch;
+            float passPitch = passenger.pitch - Math.abs(pitch);
             if(Math.abs(passPitch - gunPitch) < automobile.turretPitchSpeed){
                 gunPitch = passPitch;
             }else{
@@ -572,9 +580,10 @@ public class EntityTank extends EntityVehicle implements WW2Tank, EntitySpawnDat
                     gunPitch -= automobile.turretPitchSpeed;
                 }
             }
-            if(gunPitch > automobile.bottomViewLimit) {gunPitch = automobile.bottomViewLimit;}
+            if(gunPitch > -automobile.bottomViewLimit) {gunPitch = -automobile.bottomViewLimit;}
             if(gunPitch < -automobile.topViewLimit) {gunPitch = -automobile.topViewLimit;}
-            System.out.println(gunYaw);
+//            System.out.println(yaw + " " + gunYaw);
+//            System.out.println(pitch + " " + gunPitch);
         }
     }
 
@@ -798,23 +807,59 @@ public class EntityTank extends EntityVehicle implements WW2Tank, EntitySpawnDat
         return automobile.playerYOffset;
     }
 
-    @Override
     public void updatePassengerPosition(){
+///// 1. offSety pozycji Kierowcy
+//        double dX = (double)automobile.playerXOffset / 16.0;
+//        double dY = (double)automobile.playerYOffset / 16.0 + passenger.standingEyeHeight;
+//        double dZ = (double)automobile.playerZOffset / 16.0;
+//
+///// 2. Kąty w radianach (gunYaw z korektą 180 stopni zsynchronizowany z ujemnym yaw świata)
+//        double radYaw = Math.toRadians(-yaw);
+//        double radGun = Math.toRadians(gunYaw - 180.0F);
+//        double radPitch = Math.toRadians(pitch);
+//
+///// 3. Obrót osi fotela (dX, dZ) o kąt wieży (gunYaw)
+//        double cosG = Math.cos(radGun), sinG = Math.sin(radGun);
+//        double tX = dX * cosG - dZ * sinG;
+//        double tZ = dX * sinG + dZ * cosG;
+//
+///// 4. Nałożenie kąta Pitch (tylko na oś przód/tył 'tX' i wysokość 'dY')
+//        double cosP = Math.cos(radPitch), sinP = Math.sin(radPitch);
+//        double localX = tX * cosP - dY * sinP;
+//        double localY = tX * sinP + dY * cosP;
+//
+///// 5. Globalna transformacja Yaw na współrzędne świata gry + stały promień rotacji (0.4)
+//        double cosY = Math.cos(radYaw), sinY = Math.sin(radYaw);
+//        double totalYawRad = Math.toRadians(yaw + gunYaw - 180.0F);
+//
+//        double worldX = localX * cosY + tZ * sinY + (Math.cos(totalYawRad) * 0.4 * cosP);
+//        double worldY = localY;
+//        double worldZ = -localX * sinY + tZ * cosY + (Math.sin(totalYawRad) * 0.4 * cosP);
+//
+//        passenger.setPosition(x + worldX, y + worldY, z + worldZ);
+        /// 1. OffSety pozycji z pikseli na bloki
+        double dX = (double)automobile.playerXOffset / 16.0;
+        double dY = (double)automobile.playerYOffset / 16.0 + passenger.standingEyeHeight;
+        double dZ = (double)automobile.playerZOffset / 16.0;
 
-        double d = automobile.playerXOffset;;
-        double d1 = getPassengerRidingHeight() + passenger.getStandingEyeHeight();
-        double d2 = automobile.playerZOffset;
-        double d3 = Math.cos(((double)(-yaw) / 180D) * 3.1415926535897931D);
-        double d4 = Math.sin(((double)(-yaw) / 180D) * 3.1415926535897931D);
-        double d5 = Math.cos(((double)pitch / 180D) * 3.1415926535897931D);
-        double d6 = Math.sin(((double)pitch / 180D) * 3.1415926535897931D);
-        double d7 = Math.cos(((double)yaw * 3.1415926535897931D) / 180D) * 0.40000000000000002D * d5;
-        double d8 = Math.sin(((double)yaw * 3.1415926535897931D) / 180D) * 0.40000000000000002D * d5;
-        double d9 = (d * d5 - d1 * d6) * d3 + d2 * d4;
-        double d10 = d * d6 + d1 * d5;
-        double d11 = (d1 * d6 - d * d5) * d4 + d2 * d3;
-        passenger.setPosition(x + d9 + d7, y + d10, z + d11 + d8);
+        /// 2. Kąty w radianach (totalYawRad wyliczamy raz, a radYaw to po prostu -yaw)
+        double totalYawRad = Math.toRadians(yaw + gunYaw - 180.0F);
+        double cosG = Math.cos(Math.toRadians(gunYaw - 180.0F)), sinG = Math.sin(Math.toRadians(gunYaw - 180.0F));
+        double cosP = Math.cos(Math.toRadians(pitch)), sinP = Math.sin(Math.toRadians(pitch));
+        double cosY = Math.cos(Math.toRadians(-yaw)), sinY = Math.sin(Math.toRadians(-yaw));
+
+        /// 3. Obrót o kąt wieży (gunYaw) wpisany bezpośrednio w zmienne tX i tZ
+        double tX = dX * cosG - dZ * sinG;
+        double tZ = dX * sinG + dZ * cosG;
+
+        /// 4. Ostateczna, jednofazowa transformacja pozycji bez zmiennych pośrednich localX/localY/worldX
+        passenger.setPosition(
+                x + (tX * cosP - dY * sinP) * cosY + tZ * sinY + (Math.cos(totalYawRad) * 0.4 * cosP),
+                y + tX * sinP + dY * cosP,
+                z + (dY * sinP - tX * cosP) * sinY + tZ * cosY + (Math.sin(totalYawRad) * 0.4 * cosP)
+        );
     }
+
 
 //    public boolean shouldRenderAtDistance(double d) {
 //        return true;
@@ -834,40 +879,40 @@ public class EntityTank extends EntityVehicle implements WW2Tank, EntitySpawnDat
     @Override
     public void bombKey() {
         if(automobile.antiAircraft){ //TODO AA-CODE - wszystko do wymiany...
-            if(world.isRemote || shellDelay > 0 || !automobile.hasTurret)
-            {
-                return;
-            }
-            int k2 = 0;
-            for(int j1 = slots_FirstShell; j1 < slots_Last; j1++)
-            {
-                if(cargoItems[j1] != null && cargoItems[j1].itemId == mod_Vehicles.aaShellTank.id)
-                {
-                    k2 = j1;
-                }
-            }
-
-            if(k2 != 0)
-            {
-                double d2 = (double)automobile.shellXOffset / 16D;
-                double d4 = 0.0D;
-                double d6 = (double)automobile.shellZOffset / 16D;
-                double d8 = Math.cos(((double)(-(yaw + (-gunYaw))) / 180D) * 3.1415926535897931D);
-                double d10 = Math.sin(((double)(-(yaw + (-gunYaw))) / 180D) * 3.1415926535897931D);
-                double d12 = Math.cos(((double)(-(pitch + gunPitch)) / 180D) * 3.1415926535897931D);
-                double d14 = Math.sin(((double)(-(pitch + gunPitch)) / 180D) * 3.1415926535897931D);
-                double d16 = (d2 * d12 - d4 * d14) * d8 + d6 * d10;
-                double d18 = d2 * d14 + d4 * d12;
-                double d20 = (d4 * d14 - d2 * d12) * d10 + d6 * d8;
-
-                world.spawnEntity(new EntityAAShell(world, x + d16, y + d18 + (automobile.shellYOffset / 16D), z + d20, d16 / 3D, d18 / 3D, d20 / 3D, 7, 4, 2, automobile.gunFlakRange)); //wyjebałem stare properties DMG
-                world.playSound(this, automobile.shootSound, 1.0F, 1.0F);
-
-                mod_SdkFlasher.LightEntity(world, this, 15, 2);
-                removeStack(k2, 1);
-                shellDelay = automobile.vehicleShellDelay;
-                automobile.shellZOffset = -automobile.shellZOffset;
-            }
+//            if(world.isRemote || shellDelay > 0 || !automobile.hasTurret)
+//            {
+//                return;
+//            }
+//            int k2 = 0;
+//            for(int j1 = slots_FirstShell; j1 < slots_Last; j1++)
+//            {
+//                if(cargoItems[j1] != null && cargoItems[j1].itemId == mod_Vehicles.aaShellTank.id)
+//                {
+//                    k2 = j1;
+//                }
+//            }
+//
+//            if(k2 != 0)
+//            {
+//                double d2 = (double)automobile.barrelLength / 16D;
+//                double d4 = 0.0D;
+//                double d6 = (double)automobile.shellZOffset / 16D;
+//                double d8 = Math.cos(((double)(-(yaw + (-gunYaw))) / 180D) * 3.1415926535897931D);
+//                double d10 = Math.sin(((double)(-(yaw + (-gunYaw))) / 180D) * 3.1415926535897931D);
+//                double d12 = Math.cos(((double)(-(pitch + gunPitch)) / 180D) * 3.1415926535897931D);
+//                double d14 = Math.sin(((double)(-(pitch + gunPitch)) / 180D) * 3.1415926535897931D);
+//                double d16 = (d2 * d12 - d4 * d14) * d8 + d6 * d10;
+//                double d18 = d2 * d14 + d4 * d12;
+//                double d20 = (d4 * d14 - d2 * d12) * d10 + d6 * d8;
+//
+//                world.spawnEntity(new EntityAAShell(world, x + d16, y + d18 + (automobile.shellYOffset / 16D), z + d20, d16 / 3D, d18 / 3D, d20 / 3D, 7, 4, 2, automobile.gunFlakRange)); //wyjebałem stare properties DMG
+//                world.playSound(this, automobile.shootSound, 1.0F, 1.0F);
+//
+//                mod_SdkFlasher.LightEntity(world, this, 15, 2);
+//                removeStack(k2, 1);
+//                shellDelay = automobile.vehicleShellDelay;
+//                automobile.shellZOffset = -automobile.shellZOffset;
+//            }
         }else{
             if(shellDelay <= 0 && currentShell == ShellType.NULL){
                 broadcastEventEmptySound();
