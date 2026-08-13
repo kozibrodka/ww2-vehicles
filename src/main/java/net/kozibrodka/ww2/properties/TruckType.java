@@ -37,14 +37,6 @@ public class TruckType {
           autoHeight = klasa.autoHeight;
           standingOko = klasa.standingOko;
 
-          dyeColor = klasa.dyeColor;
-          item_body = klasa.item_body;
-          item_wheel = klasa.item_wheel;
-          itemlist1 = klasa.itemlist1;
-          itemlist2 = klasa.itemlist2;
-          itemlist3 = klasa.itemlist3;
-          itemlist4 = klasa.itemlist4;
-
           ACCEL_FORWARD_STOPPED = klasa.ACCEL_FORWARD_STOPPED;
           ACCEL_FORWARD_FULL = klasa.ACCEL_FORWARD_FULL;
           ACCEL_BACKWARD_STOPPED = klasa.ACCEL_BACKWARD_STOPPED;
@@ -67,6 +59,8 @@ public class TruckType {
           COLLISION_FLIGHT_PLAYER = klasa.COLLISION_FLIGHT_PLAYER;
           COLLISION_FLIGHT_ENTITY = klasa.COLLISION_FLIGHT_ENTITY;
           UPHILL_SLOWDOWN = klasa.UPHILL_SLOWDOWN;
+          recipeItem = klasa.recipeItem;
+          recipelist = klasa.recipelist;
 
           types.add(this);
     }
@@ -93,17 +87,9 @@ public class TruckType {
     public int numPassengers;
     public PassengerSeatData passengerSeats[];
 
-    public double playerXOffset;
-    public double playerYOffset;
-    public double playerZOffset;
-
-    public ItemStack dyeColor;
-    public ItemStack item_body;
-    public ItemStack item_wheel;
-    public String itemlist1;
-    public String itemlist2;
-    public String itemlist3;
-    public String itemlist4;
+    public int playerXOffset;
+    public int playerYOffset;
+    public int playerZOffset;
 
     public double ACCEL_FORWARD_STOPPED;
     public double ACCEL_FORWARD_FULL;
@@ -127,4 +113,7 @@ public class TruckType {
     public boolean COLLISION_FLIGHT_PLAYER;
     public boolean COLLISION_FLIGHT_ENTITY;
     public double UPHILL_SLOWDOWN;
+
+    public ItemStack[] recipeItem;
+    public String[] recipelist;
 }

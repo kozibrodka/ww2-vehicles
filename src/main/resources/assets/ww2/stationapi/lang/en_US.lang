@@ -1,7 +1,9 @@
 item.@.classic_Sherman.name=Sherman
-item.@.classic_Panzer.name=Panzer
+item.@.classic_Panzer.name=Panzer IV
 item.@.classic_Jeep.name=Willy's Jeep
 item.@.classic_Kubel.name=Kubelwagen
+item.@.classic_Bofors.name=Bofors 40mm AA Gun
+item.@.classic_Flakviering.name=Flakvierling-38 AA Gun
 item.@.old_M41.name=M4 Sherman
 item.@.old_Panzer4G.name=Panzer IV G
 item.@.old_Panzer4H.name=Panzer IV H
@@ -14,7 +16,7 @@ item.@.vehicleFuel.name=Petroleum
 item.@.tankShell.name=AP Shell
 item.@.tankShellHE.name=HE Shell
 item.@.tankBullet.name=Tank Bullet
-item.@.aaShellTank.name=AAV Shell
+item.@.aaShellTank.name=AA Vehicle Shell
 item.@.vehicleBlowTorch.name=Vehicle Blowtorch
 item.@.itemGunMachineGun.name=mg_tank
 
@@ -39,6 +41,8 @@ item.@.metalWingpPropv6.name=Metal Wing Prop v6
 item.@.metalWingpPropv8.name=Metal Wing Prop v8
 item.@.metalWingpPropRot.name=Metal Wing Prop Rot
 item.@.vehicleSeat.name=Vehicle Seat
+item.@.aaBarrel.name=Anti-Aircraft Barrel
+item.@.aaShell.name=Anti-Aircraft Shell
 
 item.@.smallEngine.name=V4 Engine
 item.@.mediumEngine.name=V6 Engine

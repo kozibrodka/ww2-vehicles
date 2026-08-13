@@ -142,7 +142,7 @@ public class EntityPassengerSeat extends Entity implements SdkVehicle, EntitySpa
     @Override
     public double getPassengerRidingHeight()
     {
-        if(passenger instanceof PlayerEntity){
+        if(passenger instanceof PlayerEntity){ /// Analiza tego, to chyba dopiero może być problem jak wprowadzony zostały by rotacje bodyPitch/ROll
             return 0.025D;
         }else{
             return 0.3D;
@@ -150,34 +150,26 @@ public class EntityPassengerSeat extends Entity implements SdkVehicle, EntitySpa
     }
 
     public void updateFromVehiclePosition(){
+        double dX = relativeX;
+        double dY = relativeY;
+        double dZ = relativeZ;
 
-        /// GRANICA ///
+        double cosP = Math.cos(Math.toRadians(mother.pitch));
+        double sinP = Math.sin(Math.toRadians(mother.pitch)); // tłumienie przód-tył (bez zmian)
+        double cosY = Math.cos(Math.toRadians(-mother.yaw));
+        double sinY = Math.sin(Math.toRadians(-mother.yaw));
 
-        double d = relativeX;
-        double d1 = relativeY;
-        double d2 = relativeZ;
-        double d3 = Math.cos(((double)(-mother.yaw) / 180D) * 3.1415926535897931D);
-        double d4 = Math.sin(((double)(-mother.yaw) / 180D) * 3.1415926535897931D);
+        // lokalny X (siedzenie po pitchu + lean 0.4 do przodu po pitchu), przed obrotem yaw
+        double localX = dX * cosP - dY * sinP + 0.4 * cosP;
 
-//        double d5 = Math.cos(((double)mother.pitch / 180D) * 3.1415926535897931D); /// GÓRA - DÓŁ
-//        double d6 = Math.sin(((double)mother.pitch / 180D) * 3.1415926535897931D) * 0.5D; /// Przesunięcie PRZÓD-TYŁ
-        /// Issue: Little "freeze" on drop
-
-            double d5 = Math.cos(((double)pitch / 180D) * 3.1415926535897931D);
-            double d6 = Math.sin(((double)pitch / 180D) * 3.1415926535897931D);
-        /// Oryginal
-
-//            double d5 = Math.cos(((double)0 / 180D) * 3.1415926535897931D);
-//            double d6 = Math.sin(((double)0 / 180D) * 3.1415926535897931D);
-        /// Simple no drop freeze
-
-        double d7 = Math.cos(((double)mother.yaw * 3.1415926535897931D) / 180D) * 0.40000000000000002D * d5;
-        double d8 = Math.sin(((double)mother.yaw * 3.1415926535897931D) / 180D) * 0.40000000000000002D * d5;
-        double d9 = (d * d5 - d1 * d6) * d3 + d2 * d4;
-        double d10 = d * d6 + d1 * d5;
-        double d11 = (d1 * d6 - d * d5) * d4 + d2 * d3;
         setRotation(mother.yaw, mother.pitch);
-        setPosition(mother.x + d9 + d7, mother.y + d10, mother.z + d11 + d8);
+        setPosition(
+                mother.x + localX * cosY + dZ * sinY,
+                mother.y + dX * sinP + dY * cosP,
+                mother.z - localX * sinY + dZ * cosY
+        );
+        /// Pozostaje nierozwiązania kwestia Renderu passSeat przy pitch!=0,  jakby rotationPoint (PivotPoint) był błędny>
+        /// Czy dało by się ustawić punkt Rotacji dla Renderu Pass seat, dokładnie ten sam co dla renderu Całego Auta???
     }
 
     @Override
@@ -375,30 +367,47 @@ public class EntityPassengerSeat extends Entity implements SdkVehicle, EntitySpa
         }
     }
 
-    //    @Override
-//    public void updatePassengerPosition()  //updateRiderPosition
-//    {
-//        if(passenger == null)
-//        {
-//            return;
-//        }
-//        if(passenger == SdkTools.minecraft.player || (passenger instanceof WolfEntity))
-//        {
-//            double d = relativeX;
-//            double d1 = getMountedYOffset() + passenger.getStandingEyeHeight() + relativeY;
-//            double d2 = relativeZ;
-//            double d3 = Math.cos(((double)(-yaw) / 180D) * 3.1415926535897931D);
-//            double d4 = Math.sin(((double)(-yaw) / 180D) * 3.1415926535897931D);
-//            double d5 = Math.cos(((double)pitch / 180D) * 3.1415926535897931D);
-//            double d6 = Math.sin(((double)pitch / 180D) * 3.1415926535897931D);
-//            double d7 = Math.cos(((double)yaw * 3.1415926535897931D) / 180D) * 0.40000000000000002D * d5;
-//            double d8 = Math.sin(((double)yaw * 3.1415926535897931D) / 180D) * 0.40000000000000002D * d5;
-//            double d9 = (d * d5 - d1 * d6) * d3 + d2 * d4;
-//            double d10 = d * d6 + d1 * d5;
-//            double d11 = (d1 * d6 - d * d5) * d4 + d2 * d3;
-//            passenger.setPosition(x + d9 + d7, y + d10, z + d11 + d8);
-//        } else
-//        {
-//        }
+    //    public void updateFromVehiclePosition_old(){ /// dla Seatsa
+//        double d = relativeX;
+//        double d1 = relativeY;
+//        double d2 = relativeZ;
+//        double d3 = Math.cos(((double)(-mother.yaw) / 180D) * 3.1415926535897931D);
+//        double d4 = Math.sin(((double)(-mother.yaw) / 180D) * 3.1415926535897931D);
+//        double d5 = Math.cos(((double)mother.pitch / 180D) * 3.1415926535897931D);
+//        double d6 = Math.sin(((double)mother.pitch / 180D) * 3.1415926535897931D);
+//        double d7 = Math.cos(((double)mother.yaw * 3.1415926535897931D) / 180D) * 0.40000000000000002D * d5;
+//        double d8 = Math.sin(((double)mother.yaw * 3.1415926535897931D) / 180D) * 0.40000000000000002D * d5;
+//        double d9 = (d * d5 - d1 * d6) * d3 + d2 * d4;
+//        double d10 = d * d6 + d1 * d5;
+//        double d11 = (d1 * d6 - d * d5) * d4 + d2 * d3;
+//        setRotation(mother.yaw, mother.pitch);
+//        setPosition(mother.x + d9 + d7, mother.y + d10, mother.z + d11 + d8);
+//        /// Oryginal
 //    }
+
+    //    @Override
+//    public void updatePassengerPosition(){ /// "old" dla Tanka - przed optmalizacja
+//        /// 1. OffSety z int na pixele. (1=0.0625 kratki = 1pixel w grze na bloku)
+//        double dX = (double)automobile.playerXOffset / 16.0;
+//        double dY = (double)automobile.playerYOffset / 16.0 + passenger.standingEyeHeight;
+//        double dZ = (double)automobile.playerZOffset / 16.0;
+//
+//        /// 2. Kąty w radianach (totalYawRad wyliczamy raz, a radYaw to po prostu -yaw)
+//        double totalYawRad = Math.toRadians(yaw + gunYaw - 180.0F);
+//        double cosG = Math.cos(Math.toRadians(gunYaw - 180.0F)), sinG = Math.sin(Math.toRadians(gunYaw - 180.0F));
+//        double cosP = Math.cos(Math.toRadians(pitch)), sinP = Math.sin(Math.toRadians(pitch));
+//        double cosY = Math.cos(Math.toRadians(-yaw)), sinY = Math.sin(Math.toRadians(-yaw));
+//
+//        /// 3. Obrót o kąt wieży (gunYaw) wpisany bezpośrednio w zmienne tX i tZ
+//        double tX = dX * cosG - dZ * sinG;
+//        double tZ = dX * sinG + dZ * cosG;
+//
+//        /// 4. Ostateczna, jednofazowa transformacja pozycji bez zmiennych pośrednich localX/localY/worldX
+//        passenger.setPosition(
+//                x + (tX * cosP - dY * sinP) * cosY + tZ * sinY + (Math.cos(totalYawRad) * 0.4 * cosP),
+//                y + tX * sinP + dY * cosP,
+//                z + (dY * sinP - tX * cosP) * sinY + tZ * cosY + (Math.sin(totalYawRad) * 0.4 * cosP)
+//        );
+//    }
+
 }

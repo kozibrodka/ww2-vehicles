@@ -2,6 +2,7 @@ package net.kozibrodka.ww2.properties;
 
 import net.kozibrodka.ww2.model.ModelCannon;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +22,12 @@ public class CannonType {
         cannonMuzzleVelocity = klasa.cannonMuzzleVelocity;
         cannonExploPower = klasa.cannonExploPower;
         cannonRange = klasa.cannonRange;
-        shellXOffset = klasa.shellXOffset;
         shellYOffset = klasa.shellYOffset;
         shellZOffset = klasa.shellZOffset;
+        barrelLength = -klasa.barrelLength;
+        barrelPivotXOffset = -klasa.barrelPivotXOffset;
+        barrelPivotYOffset = klasa.barrelPivotYOffset;
+        barrelPivotZOffset = -klasa.barrelPivotZOffset;  ///
 
         shootDelay = klasa.shootDelay;
         numBarrels = klasa.numBarrels;
@@ -48,6 +52,8 @@ public class CannonType {
         maxCannonDeviation = klasa.maxCannonDeviation;
         bodyTurnSpeed = klasa.bodyTurnSpeed;
         przedmiot = klasa.przedmiot;
+        recipeItem = klasa.recipeItem;
+        recipelist = klasa.recipelist;
         types.add(this);
     }
 
@@ -67,6 +73,11 @@ public class CannonType {
     public int shellXOffset[];
     public int shellYOffset[];
     public int shellZOffset[];
+
+    public int barrelLength;
+    public int barrelPivotXOffset ;  /// Z modelu można przekopiować łatwo
+    public int barrelPivotYOffset ;
+    public int barrelPivotZOffset ;
 
     public int shootDelay;
     public int numBarrels;
@@ -92,4 +103,7 @@ public class CannonType {
     public float bodyTurnSpeed;
     public Item przedmiot;
     public static List types = new ArrayList();
+
+    public ItemStack[] recipeItem;
+    public String[] recipelist;
 }

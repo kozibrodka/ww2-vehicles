@@ -185,7 +185,7 @@ public class EntityCannon extends EntityVehicle implements WW2Cannon, EntitySpaw
 
             }
             /// Pitch
-            float passPitch = passenger.pitch - pitch;
+            float passPitch = passenger.pitch - Math.abs(pitch);
             if(Math.abs(passPitch - gunPitch) < cannonType.cannonPitchSpeed){
                 gunPitch = passPitch;
             }else{
@@ -284,40 +284,39 @@ public class EntityCannon extends EntityVehicle implements WW2Cannon, EntitySpaw
         dropItem(cannonType.przedmiot.id, 1);
     }
 
-    public void updatePassengerPosition_old() { /// stara funkcja, gdzie tylko wieżyczka się obraca a Yaw zawsze w miejscu stoi.
-        if(passenger != null) {
-            double x = (double)cannonType.gunnerX / 16.0D;
-            double y = (double)cannonType.gunnerY / 16.0D;
-            double z = (double)cannonType.gunnerZ / 16.0D;
-            /// OLD
-//            double cosYaw = Math.cos((double)(-gunYaw) / 180.0D * Math.PI);
-//            double sinYaw = Math.sin((double)(-gunYaw) / 180.0D * Math.PI);
-            /// NEW
-            double cosYaw = Math.cos((double)(gunYaw) / 180.0D * Math.PI);
-            double sinYaw = Math.sin((double)(gunYaw) / 180.0D * Math.PI);
-            double cosPitch = Math.cos((double)gunPitch / 180.0D * Math.PI);
-            double sinPitch = Math.sin((double)gunPitch / 180.0D * Math.PI);
-            double x2 = x * cosYaw + z * sinYaw;
-            double z2 = -x * sinYaw + z * cosYaw;
-            passenger.setPosition(this.x + x2, this.y + y, this.z + z2);
-        }
-    }
-
     @Override
     public void updatePassengerPosition(){
-        double d2 = (double)cannonType.gunnerX / 16D;
-        double d4 = (double)cannonType.gunnerY / 16D;
-        double d6 = (double)cannonType.gunnerZ / 16D;
-        double d8 = Math.cos(((double)(-(yaw + gunYaw)) / 180D) * 3.1415926535897931D);
-        double d10 = Math.sin(((double)(-(yaw + gunYaw)) / 180D) * 3.1415926535897931D);
+        /// 1. OffSety z int na pixele. (1=0.0625 kratki = 1pixel w grze na bloku)
+        double dX = cannonType.gunnerX / 16.0;
+        double dY = cannonType.gunnerY / 16.0 + passenger.standingEyeHeight;
+        double dZ = cannonType.gunnerZ / 16.0;
 
-        double d12 = Math.cos(((double)(-(pitch)) / 180D) * 3.1415926535897931D);
-        double d14 = Math.sin(((double)(-(pitch)) / 180D) * 3.1415926535897931D);
+        /// 2. Kąty w radianach
+        double cosG = Math.cos(Math.toRadians(gunYaw - 180.0F));
+        double sinG = Math.sin(Math.toRadians(gunYaw - 180.0F));
+        double cosP = Math.cos(Math.toRadians(pitch));
+        double sinP = Math.sin(Math.toRadians(pitch));
+        double cosY = Math.cos(Math.toRadians(-yaw));
+        double sinY = Math.sin(Math.toRadians(-yaw));
 
-        double d16 = (d2 * d12 - d4 * d14) * d8 + d6 * d10;
-        double d18 = d2 * d14 + d4 * d12;
-        double d20 = (d4 * d14 - d2 * d12) * d10 + d6 * d8;
-        passenger.setPosition(this.x + d16, this.y + d18, this.z + d20);
+        /// --- wektor siedzenia (dX, dY, dZ) ---
+        double sX1 = dX * cosG - dZ * sinG;
+        double sZ1 = dX * sinG + dZ * cosG;
+        double sX2 = sX1 * cosP - dY * sinP;
+        double sY2 = sX1 * sinP + dY * cosP;
+
+        /// --- wektor pochylenia siedzenia do przodu (0.4, 0, 0) ---
+        /// x1 = 0.4*cosG, z1 = 0.4*sinG  (bo lokalny y=0, z=0 na starcie)
+        double lX1 = 0.4 * cosG;
+        double lZ1 = 0.4 * sinG;
+        double lX2 = lX1 * cosP;          // -0*sinP pominięte
+        double lY2 = lX1 * sinP;          // +0*cosP pominięte
+
+        passenger.setPosition(
+                x + (sX2 * cosY + sZ1 * sinY) + (lX2 * cosY + lZ1 * sinY),
+                y + sY2 + lY2,
+                z + (-sX2 * sinY + sZ1 * cosY) + (-lX2 * sinY + lZ1 * cosY)
+        );
     }
 
     @Override

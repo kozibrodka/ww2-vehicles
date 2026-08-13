@@ -29,16 +29,20 @@ public class PropertiesClassic_Jeep extends Truck_properties {
         autoWidth = 1.8F;
         autoHeight = 1.05F;
         standingOko = 0F;
-        playerXOffset = 0.3D; //todo z podzieleniem na 16
-        playerYOffset = 0.4D;
-        playerZOffset = -0.5D;
+        playerXOffset = 4; //todo z podzieleniem na 16
+        playerYOffset = -2;
+        playerZOffset = -8;
+
+//        playerXOffset = 4; ///stare wartosci
+//        playerYOffset = 6;
+//        playerZOffset = -8;
 
         numPassengers = 3;
         passengerSeats = new PassengerSeatData[numPassengers];
-        passengerSeats[0] = new PassengerSeatData(0,-8D, 6D, -8D);
-        passengerSeats[1] = new PassengerSeatData(1,8D, 6D, 8D);
-//        passengerSeats[2] = new PassengerSeatData(8D, 6D, -8D);
-        passengerSeats[2] = new PassengerSeatData(2,16D, 6D, -8D); ///DEBUG - collision test
+        passengerSeats[0] = new PassengerSeatData(0,4D, 6D, 8D);
+        passengerSeats[1] = new PassengerSeatData(1,-11D, 6D, -8D);
+        passengerSeats[2] = new PassengerSeatData(2, -11D, 6D, 8D);
+//        passengerSeats[2] = new PassengerSeatData(2,-24D, 6D, 8D); ///DEBUG - collision test
 
         MAX_SPEED = 0.5D;
 //        TURN_SPEED_STOPPED = 8D;
@@ -66,13 +70,21 @@ public class PropertiesClassic_Jeep extends Truck_properties {
         COLLISION_FLIGHT_ENTITY = true;
         UPHILL_SLOWDOWN = 0.9D;
 
-        item_body =  new ItemStack(ww2Parts.smallCarChassis.id, 1, 0);
-        item_wheel =  new ItemStack(ww2Parts.largeWheel.id, 1, 0); //TODO
-        dyeColor = new ItemStack(Item.DYE.id, 1, 2);
-        itemlist1 = "   ";
-        itemlist2 = "ASD";
-        itemlist3 = "X X";
-        itemlist4 = "X X";
+//        item_body =  new ItemStack(ww2Parts.smallCarChassis.id, 1, 0);
+//        item_wheel =  new ItemStack(ww2Parts.largeWheel.id, 1, 0); //TODO
+//        dyeColor = new ItemStack(Item.DYE.id, 1, 2);
+//        itemlist1 = "   ";
+//        itemlist2 = "ASD";
+//        itemlist3 = "X X";
+//        itemlist4 = "X X";
+
+        recipelist[0] = "   ";
+        recipelist[1] = "ASD";
+        recipelist[2] = "X X";
+        recipelist[3] = "X X";
+        recipeItem[4] = new ItemStack(ww2Parts.smallCarChassis); /// "S" | body
+        recipeItem[5] = new ItemStack(Item.DYE, 1, 2); /// "D" | symbol
+        recipeItem[6] = new ItemStack(ww2Parts.largeWheel); /// "X" | wheel
 
     }
 }

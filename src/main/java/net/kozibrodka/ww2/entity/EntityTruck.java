@@ -9,6 +9,7 @@ import net.kozibrodka.ww2.events.ww2Parts;
 import net.kozibrodka.ww2.network.*;
 import net.kozibrodka.ww2.properties.PassengerSeatData;
 import net.kozibrodka.ww2.properties.TruckType;
+import net.kozibrodka.ww2.utils.WW2Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Monster;
@@ -97,7 +98,7 @@ public class EntityTruck extends EntityVehicle implements WW2Truck, EntitySpawnD
             if(world != null)
             {
                 PassengerSeatData passData = automobile.passengerSeats[i];
-                seats[i] = new EntityPassengerSeat(world, passData.number, passData.offSetX, passData.offSetY, passData.offSetZ, this);
+                seats[i] = new EntityPassengerSeat(world, passData.number, -passData.offSetX, passData.offSetY, -passData.offSetZ, this);
                 world.spawnEntity(seats[i]);
             }
         }
@@ -639,35 +640,18 @@ public class EntityTruck extends EntityVehicle implements WW2Truck, EntitySpawnD
     public void dropParts(){
         int r8 = 2;
         float f8 = 1.5F;
-        if(random.nextInt(r8) == 0)
-            dropItem(automobile.item_body.itemId, 1, f8);
-        if(random.nextInt(r8) == 0)
-            dropItem(automobile.item_wheel.itemId, 1, f8);
-        if(random.nextInt(r8) == 0)
-            dropItem(automobile.item_wheel.itemId, 1, f8);
-        if(random.nextInt(r8) == 0)
-            dropItem(automobile.item_wheel.itemId, 1, f8);
-        if(random.nextInt(r8) == 0)
-            dropItem(automobile.item_wheel.itemId, 1, f8);
-        dropItem(automobile.dyeColor.itemId, random.nextInt(2) + 1, f8);
 
-        switch(engineType)
-        {
-            case 1: // '\001'
-                if(random.nextInt(r8) == 0)
-                    dropItem(ww2Parts.smallEngine.id, 1, f8);
-                break;
-
-            case 2: // '\002'
-                if(random.nextInt(r8) == 0)
-                    dropItem(ww2Parts.mediumEngine.id, 1, f8);
-                break;
-
-            case 3: // '\003'
-                if(random.nextInt(r8) == 0)
-                    dropItem(ww2Parts.largeEngine.id, 1, f8);
-                break;
-
+        int index = 0;
+        for(String znak : WW2Utils.recipeCharList){
+            int ilosc = WW2Utils.countCharInRecipeList(automobile.recipelist, znak.charAt(0));
+            for (int i = 0; i < ilosc; i++) {
+                if(String.valueOf(znak.charAt(0)).equals("A")){ /// SILNIK
+                    dropItem(new ItemStack(WW2Utils.engines[engineType-1].getItem().id,1,0), 1.5F);
+                }else{
+                    dropItem(new ItemStack(automobile.recipeItem[index].getItem().id, 1 ,automobile.recipeItem[index].getDamage()), 1.5F);
+                }
+            }
+            index++;
         }
     }
 
@@ -822,47 +806,25 @@ public class EntityTruck extends EntityVehicle implements WW2Truck, EntitySpawnD
     }
 
     @Override
-    public double getPassengerRidingHeight()
-    {
-        return automobile.playerYOffset;
-    }
+    public void updatePassengerPosition() {  /// optymalization - claudeAI
+        double dX = automobile.playerXOffset / 16.0;
+        double dY = automobile.playerYOffset / 16.0 + passenger.standingEyeHeight;
+        double dZ = automobile.playerZOffset / 16.0;
 
-    @Override
-    public void updatePassengerPosition(){
-            if(passenger == null){
-                return;
-            }
-        passenger.velocityX = 0.0D;
-        passenger.velocityY = 0.0D;
-        passenger.velocityZ = 0.0D;
+        double cosP = Math.cos(Math.toRadians(pitch));
+        double sinP = Math.sin(Math.toRadians(pitch)) * 0.50D; /// sztuczne wytłumienie przesunięcia przód-tył, ponieważ PlayerEntity nie ma rotacji, przez co przy prawidłowym goemetrycznym ustawieniu, wygląda jakby był przesunięty za mocno
+        double cosY = Math.cos(Math.toRadians(-yaw));
+        double sinY = Math.sin(Math.toRadians(-yaw));
 
-            double d = automobile.playerXOffset;;
-            double d1 = getPassengerRidingHeight() + passenger.getStandingEyeHeight();
-//            double d1 = automobile.playerYOffset + 1;
-            double d2 = automobile.playerZOffset;
-            double d3 = Math.cos(((double)(-yaw) / 180D) * 3.1415926535897931D);
-            double d4 = Math.sin(((double)(-yaw) / 180D) * 3.1415926535897931D);
-            /// Issue: Little "freeze" on drop
-//            double d5 = Math.cos(((double)pitch / 180D) * 3.1415926535897931D); /// GÓRA - DÓŁ
-//            double d6 = Math.sin(((double)pitch / 180D) * 3.1415926535897931D) * 0.5D; /// Przesunięcie PRZÓD-TYŁ
-            double d6 = Math.sin(((double)pitch / 180D) * 3.1415926535897931D * 0.25D); /// Przesunięcie PRZÓD-TYŁ 25%
-            /// Oryginal
-            double d5 = Math.cos(((double)pitch / 180D) * 3.1415926535897931D);
-//            double d6 = Math.sin(((double)pitch / 180D) * 3.1415926535897931D);
-            /// Simple no drop freeze
-//            double d5 = Math.cos(((double)0 / 180D) * 3.1415926535897931D);
-//            double d6 = Math.sin(((double)0 / 180D) * 3.1415926535897931D);
+        // lokalny X (siedzenie po pitchu + lean 0.4 do przodu po pitchu), przed obrotem yaw
+        double localX = dX * cosP - dY * sinP + 0.4 * cosP;
 
-            double d7 = Math.cos(((double)yaw * 3.1415926535897931D) / 180D) * 0.4D * d5;
-            double d8 = Math.sin(((double)yaw * 3.1415926535897931D) / 180D) * 0.4D * d5;
-            double d9 = (d * d5 - d1 * d6) * d3 + d2 * d4;
-            double d10 = d * d6 + d1 * d5;
-            double d11 = (d1 * d6 - d * d5) * d4 + d2 * d3;
-            passenger.setPosition(x + d9 + d7, y + d10, z + d11 + d8);
-
-        passenger.velocityX = 0.0D;
-        passenger.velocityY = 0.0D;
-        passenger.velocityZ = 0.0D;
+        passenger.setPosition(
+                x + localX * cosY + dZ * sinY,
+                y + dX * sinP + dY * cosP,
+                z - localX * sinY + dZ * cosY
+        );
+    /// Claude w pewnym momencie zasugerowało, że dodanie standingEyeHeight do zmiennej dY, to błąd matematyczny. Ja się z tym nie zgadzam.
     }
 
     public void updateTowedPosition() /// Zupełnie nie wiadomo co jescze...
@@ -937,6 +899,10 @@ public class EntityTruck extends EntityVehicle implements WW2Truck, EntitySpawnD
 
     @Override
     public void rocketKey() {
+        boolean COMPLETELY_OVERHAULD_THIS_LOGIC = true; /// after release - not that impotant
+        if(COMPLETELY_OVERHAULD_THIS_LOGIC){
+            return;
+        }
         if(towingEntity == null)
         {
             List list = world.getEntities(this, boundingBox.expand(0.1D, 0.0D, 0.1D));
@@ -946,7 +912,7 @@ public class EntityTruck extends EntityVehicle implements WW2Truck, EntitySpawnD
                 {
                     Entity entity = (Entity)list.get(j2);
 
-                    if(entity instanceof WW2Cannon && towingEntity == null)
+                    if(entity instanceof WW2Cannon && towingEntity == null) //todo TOwing powinno być obsługiwane w klasie Cannon imo.
                     {
                         towEntity(entity);
                     }else

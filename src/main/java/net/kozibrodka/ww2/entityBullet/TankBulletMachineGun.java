@@ -40,4 +40,17 @@ public class TankBulletMachineGun extends SdkEntityBullet implements EntitySpawn
     public Identifier getHandlerIdentifier() {
         return Identifier.of(mod_Vehicles.MOD_ID, "TankBulletMachineGun");
     }
+
+    @Override
+    public void tick(){
+        if(timeInAir == 0) {
+            velocityX = 0;
+            velocityY = 0;
+            velocityZ = 0;
+            return;
+        }
+        /// DEBUG for setting ShellPosParameters for Tanks. ^
+        super.tick();
+    }
+
 }

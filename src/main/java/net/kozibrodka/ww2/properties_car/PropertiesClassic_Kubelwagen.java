@@ -29,9 +29,9 @@ public class PropertiesClassic_Kubelwagen extends Truck_properties {
         autoWidth = 1.8F;
         autoHeight = 1.05F;
         standingOko = 0F;
-        playerXOffset = -0.3D;
-        playerYOffset = 0.4D;
-        playerZOffset = 0.5D;
+        playerXOffset = 2;
+        playerYOffset = -2;
+        playerZOffset = -8;
 
         numPassengers = 3;
         passengerSeats = new PassengerSeatData[numPassengers];
@@ -61,13 +61,13 @@ public class PropertiesClassic_Kubelwagen extends Truck_properties {
         COLLISION_FLIGHT_PLAYER = false;
         COLLISION_FLIGHT_ENTITY = true;
 
-        item_body =  new ItemStack(ww2Parts.smallCarChassis.id, 1, 0);
-        item_wheel =  new ItemStack(ww2Parts.largeWheel.id, 1, 0); //TODO
-        dyeColor = new ItemStack(Item.DYE.id, 1, 8);
-        itemlist1 = "   ";
-        itemlist2 = "ASD";
-        itemlist3 = "X X";
-        itemlist4 = "X X";
+        recipelist[0] = "   ";
+        recipelist[1] = "ASD";
+        recipelist[2] = "X X";
+        recipelist[3] = "X X";
+        recipeItem[4] = new ItemStack(ww2Parts.smallCarChassis); /// "S" | body
+        recipeItem[5] = new ItemStack(Item.DYE, 1, 8); /// "D" | symbol
+        recipeItem[6] = new ItemStack(ww2Parts.largeWheel); /// "X" | wheel
 
     }
 }

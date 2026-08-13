@@ -29,7 +29,12 @@ public class RenderTestSeatBoat extends EntityRenderer {
     String text = "";
 
 
-    public void renderMe(EntityPassengerSeat passSeat, double d, double e, double f, float g, float h) {
+    public void renderMe(EntityPassengerSeat passSeat, double d, double d1, double d2, float f, float f1) {
+
+        if(passSeat.mother == null){
+            return;
+        }
+
         if(passSeat.seatNumber == 1){
             this.model = new MinecartEntityModel();
             text = "/item/cart.png";
@@ -38,8 +43,18 @@ public class RenderTestSeatBoat extends EntityRenderer {
             text = "/item/boat.png";
         }
         GL11.glPushMatrix();
-        GL11.glTranslatef((float)d, (float)e, (float)f);
-        GL11.glRotatef(180.0F - g, 0.0F, 1.0F, 0.0F);
+        GL11.glTranslatef((float)d, (float)d1, (float)d2);
+//        GL11.glTranslatef((float)passSeat.mother.x, (float)passSeat.mother.y, (float)passSeat.mother.z);
+        GL11.glRotatef(180.0F - f, 0.0F, 1.0F, 0.0F);
+        float f2 = passSeat.prevPitch + (passSeat.pitch - passSeat.prevPitch) * f1;
+        GL11.glRotatef(-f2, 0.0F, 0.0F, 1.0F);
+
+//        float f2 = passSeat.mother.prevPitch + (passSeat.mother.pitch - passSeat.mother.prevPitch) * f1;
+//        GL11.glTranslatef((float)d, (float)d1, (float)d2);
+//        GL11.glRotatef(180F - f, 0.0F, 1.0F, 0.0F);
+//        GL11.glRotatef(-f2, 0.0F, 0.0F, 1.0F);
+//        GL11.glTranslatef(0.0F, 0.5F, 0.0F);
+
         float var10 = 1.0F;
         float var11 = 1.0F;
         if (var11 < 0.0F) {

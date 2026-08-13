@@ -84,15 +84,14 @@ public class PropertiesClassic_Sherman extends Tank_properties {
         COLLISION_FLIGHT_ENTITY = true;
         UPHILL_SLOWDOWN = 0.9D; //todo tak samo jak auto na razie
 
-        item_track =  new ItemStack(ww2Parts.caterpillarTrack.id, 1, 0);
-        item_body =  new ItemStack(ww2Parts.lightTankBody.id, 1, 0);
-        item_mg =  new ItemStack(ww2Parts.machinegun.id, 1, 0);
-        item_turret =  new ItemStack(ww2Parts.lightTankTurret.id, 1, 0);
-        item_cannon =  new ItemStack(Item.EGG.id, 1, 0);
-        dyeColor = new ItemStack(Item.DYE.id, 1, 2);
-        itemlist1 = "QW ";
-        itemlist2 = "ASD";
-        itemlist3 = " X ";
-        itemlist4 = " X ";
+        recipelist[0] = "QW ";
+        recipelist[1] = "ASD";
+        recipelist[2] = " C ";
+        recipelist[3] = " C ";
+        recipeItem[0] = new ItemStack(ww2Parts.machinegun); /// "Q" | body-gun
+        recipeItem[1] = new ItemStack(ww2Parts.lightTankTurret); /// "W" | turret
+        recipeItem[4] = new ItemStack(ww2Parts.lightTankBody); /// "S" | body
+        recipeItem[5] = new ItemStack(Item.DYE, 1, 2); /// "D" | symbol
+        recipeItem[7] = new ItemStack(ww2Parts.caterpillarTrack); /// "C" | track
     }
 }

@@ -12,6 +12,7 @@ import net.kozibrodka.ww2.network.CarCrashPacket;
 import net.kozibrodka.ww2.network.PassengerEnterPacket;
 import net.kozibrodka.ww2.network.TruckLoadPacket;
 import net.kozibrodka.ww2.properties.TankType;
+import net.kozibrodka.ww2.utils.WW2Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Monster;
@@ -239,10 +240,11 @@ public class EntityTank extends EntityVehicle implements WW2Tank, EntitySpawnDat
             System.out.println("TYPE: " + automobile.name);
             System.out.println("ENGINE: " + engineType);
             System.out.println("HEALTH: " + health);
-            System.out.println(ShellType.AP.ordinal() + "  lsita: " + Arrays.toString(ShellType.values()));
-            for(ShellType kolor: ShellType.values()) {
-                System.out.println(kolor.ordinal() + " " + kolor.name());
-            }
+//            System.out.println(ShellType.AP.ordinal() + "  lsita: " + Arrays.toString(ShellType.values()));
+//            for(ShellType kolor: ShellType.values()) {
+//                System.out.println(kolor.ordinal() + " " + kolor.name());
+//            }
+            damage(null, 500);
             entityplayer.swingHand();
             return true;
         }
@@ -613,37 +615,18 @@ public class EntityTank extends EntityVehicle implements WW2Tank, EntitySpawnDat
     public void dropParts(){
         int r8 = 2;
         float f8 = 1.5F;
-        if(automobile.item_cannon.itemId != Item.EGG.id && random.nextInt(r8) == 0)
-            dropItem(automobile.item_cannon.itemId, 1, f8);
-        if(random.nextInt(r8) == 0)
-            dropItem(automobile.item_body.itemId, 1, f8);
-        if(random.nextInt(r8) == 0)
-            dropItem(automobile.item_turret.itemId, 1, f8);
-        if(random.nextInt(r8) == 0)
-            dropItem(automobile.item_mg.itemId, 1, f8);
-        if(random.nextInt(r8) == 0)
-            dropItem(automobile.item_track.itemId, 1, f8);
-        if(random.nextInt(r8) == 0)
-            dropItem(automobile.item_track.itemId, 1, f8);
-        dropItem(automobile.dyeColor.itemId, random.nextInt(2) + 1, f8);
 
-        switch(engineType)
-        {
-            case 1: // '\001'
-                if(random.nextInt(r8) == 0)
-                    dropItem(ww2Parts.smallEngine.id, 1, f8);
-                break;
-
-            case 2: // '\002'
-                if(random.nextInt(r8) == 0)
-                    dropItem(ww2Parts.mediumEngine.id, 1, f8);
-                break;
-
-            case 3: // '\003'
-                if(random.nextInt(r8) == 0)
-                    dropItem(ww2Parts.largeEngine.id, 1, f8);
-                break;
-
+        int index = 0;
+        for(String znak : WW2Utils.recipeCharList){
+            int ilosc = WW2Utils.countCharInRecipeList(automobile.recipelist, znak.charAt(0));
+            for (int i = 0; i < ilosc; i++) {
+                if(String.valueOf(znak.charAt(0)).equals("A")){ /// SILNIK
+                    dropItem(new ItemStack(WW2Utils.engines[engineType-1].getItem().id,1,0), 1.5F);
+                }else{
+                    dropItem(new ItemStack(automobile.recipeItem[index].getItem().id, 1 ,automobile.recipeItem[index].getDamage()), 1.5F);
+                }
+            }
+            index++;
         }
     }
 
@@ -807,59 +790,38 @@ public class EntityTank extends EntityVehicle implements WW2Tank, EntitySpawnDat
         return automobile.playerYOffset;
     }
 
-    public void updatePassengerPosition(){
-///// 1. offSety pozycji Kierowcy
-//        double dX = (double)automobile.playerXOffset / 16.0;
-//        double dY = (double)automobile.playerYOffset / 16.0 + passenger.standingEyeHeight;
-//        double dZ = (double)automobile.playerZOffset / 16.0;
-//
-///// 2. Kąty w radianach (gunYaw z korektą 180 stopni zsynchronizowany z ujemnym yaw świata)
-//        double radYaw = Math.toRadians(-yaw);
-//        double radGun = Math.toRadians(gunYaw - 180.0F);
-//        double radPitch = Math.toRadians(pitch);
-//
-///// 3. Obrót osi fotela (dX, dZ) o kąt wieży (gunYaw)
-//        double cosG = Math.cos(radGun), sinG = Math.sin(radGun);
-//        double tX = dX * cosG - dZ * sinG;
-//        double tZ = dX * sinG + dZ * cosG;
-//
-///// 4. Nałożenie kąta Pitch (tylko na oś przód/tył 'tX' i wysokość 'dY')
-//        double cosP = Math.cos(radPitch), sinP = Math.sin(radPitch);
-//        double localX = tX * cosP - dY * sinP;
-//        double localY = tX * sinP + dY * cosP;
-//
-///// 5. Globalna transformacja Yaw na współrzędne świata gry + stały promień rotacji (0.4)
-//        double cosY = Math.cos(radYaw), sinY = Math.sin(radYaw);
-//        double totalYawRad = Math.toRadians(yaw + gunYaw - 180.0F);
-//
-//        double worldX = localX * cosY + tZ * sinY + (Math.cos(totalYawRad) * 0.4 * cosP);
-//        double worldY = localY;
-//        double worldZ = -localX * sinY + tZ * cosY + (Math.sin(totalYawRad) * 0.4 * cosP);
-//
-//        passenger.setPosition(x + worldX, y + worldY, z + worldZ);
-        /// 1. OffSety pozycji z pikseli na bloki
-        double dX = (double)automobile.playerXOffset / 16.0;
-        double dY = (double)automobile.playerYOffset / 16.0 + passenger.standingEyeHeight;
-        double dZ = (double)automobile.playerZOffset / 16.0;
+    @Override
+    public void updatePassengerPosition() { /// optymalization - claudeAI
+        double dX = automobile.playerXOffset / 16.0;
+        double dY = automobile.playerYOffset / 16.0 + passenger.standingEyeHeight;
+        double dZ = automobile.playerZOffset / 16.0;
 
-        /// 2. Kąty w radianach (totalYawRad wyliczamy raz, a radYaw to po prostu -yaw)
-        double totalYawRad = Math.toRadians(yaw + gunYaw - 180.0F);
-        double cosG = Math.cos(Math.toRadians(gunYaw - 180.0F)), sinG = Math.sin(Math.toRadians(gunYaw - 180.0F));
-        double cosP = Math.cos(Math.toRadians(pitch)), sinP = Math.sin(Math.toRadians(pitch));
-        double cosY = Math.cos(Math.toRadians(-yaw)), sinY = Math.sin(Math.toRadians(-yaw));
+        double cosG = Math.cos(Math.toRadians(gunYaw - 180.0F));
+        double sinG = Math.sin(Math.toRadians(gunYaw - 180.0F));
+        double cosP = Math.cos(Math.toRadians(pitch));
+        double sinP = Math.sin(Math.toRadians(pitch));
+        double cosY = Math.cos(Math.toRadians(-yaw));
+        double sinY = Math.sin(Math.toRadians(-yaw));
 
-        /// 3. Obrót o kąt wieży (gunYaw) wpisany bezpośrednio w zmienne tX i tZ
-        double tX = dX * cosG - dZ * sinG;
-        double tZ = dX * sinG + dZ * cosG;
+        // --- wektor siedzenia (dX, dY, dZ) ---
+        double sX1 = dX * cosG - dZ * sinG;
+        double sZ1 = dX * sinG + dZ * cosG;
+        double sX2 = sX1 * cosP - dY * sinP;
+        double sY2 = sX1 * sinP + dY * cosP;
 
-        /// 4. Ostateczna, jednofazowa transformacja pozycji bez zmiennych pośrednich localX/localY/worldX
+        // --- wektor pochylenia siedzenia do przodu (0.4, 0, 0) ---
+        // x1 = 0.4*cosG, z1 = 0.4*sinG  (bo lokalny y=0, z=0 na starcie)
+        double lX1 = 0.4 * cosG;
+        double lZ1 = 0.4 * sinG;
+        double lX2 = lX1 * cosP;          // -0*sinP pominięte
+        double lY2 = lX1 * sinP;          // +0*cosP pominięte
+
         passenger.setPosition(
-                x + (tX * cosP - dY * sinP) * cosY + tZ * sinY + (Math.cos(totalYawRad) * 0.4 * cosP),
-                y + tX * sinP + dY * cosP,
-                z + (dY * sinP - tX * cosP) * sinY + tZ * cosY + (Math.sin(totalYawRad) * 0.4 * cosP)
+                x + (sX2 * cosY + sZ1 * sinY) + (lX2 * cosY + lZ1 * sinY),
+                y + sY2 + lY2,
+                z + (-sX2 * sinY + sZ1 * cosY) + (-lX2 * sinY + lZ1 * cosY)
         );
     }
-
 
 //    public boolean shouldRenderAtDistance(double d) {
 //        return true;

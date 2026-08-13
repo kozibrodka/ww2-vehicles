@@ -16,12 +16,13 @@ public class RenderShell extends EntityRenderer
     {
     }
 
-    public void renderArrow(SdkEntityTankShell entityshell, double d, double d1, double d2,
+    public void rendershell(SdkEntityTankShell entityshell, double d, double d1, double d2,
                             float f, float f1)
     {
         bindTexture("/assets/ww2/stationapi/textures/mob/bullet.png");
         GL11.glPushMatrix();
         GL11.glTranslatef((float)d, (float)d1, (float)d2);
+        GL11.glTranslatef(0.0F, 0.13F, 0.0F); /// render Y fix
         GL11.glRotatef((entityshell.prevYaw + (entityshell.yaw - entityshell.prevYaw) * f1) - 90F, 0.0F, 1.0F, 0.0F);
         GL11.glRotatef(entityshell.prevPitch + (entityshell.pitch - entityshell.prevPitch) * f1, 0.0F, 0.0F, 1.0F);
         Tessellator tessellator = Tessellator.INSTANCE;
@@ -36,15 +37,9 @@ public class RenderShell extends EntityRenderer
         float f9 = (float)(10 + i * 10) / 32F;
         float f10 = 0.05625F;
         GL11.glEnable(32826 /*GL_RESCALE_NORMAL_EXT*/);
-//        float f11 = (float)entityshell.arrowShake - f1;
-//        if(f11 > 0.0F)
-//        {
-//            float f12 = -MathHelper.sin(f11 * 3F) * f11;
-//            GL11.glRotatef(f12, 0.0F, 0.0F, 1.0F);
-//        }
         GL11.glRotatef(45F, 1.0F, 0.0F, 0.0F);
         GL11.glScalef(f10, f10, f10);
-        GL11.glTranslatef(-4F, 0.0F, 0.0F);
+        GL11.glTranslatef(3F, 0.0F, 0.0F); ///!!!!!!!! -4
         GL11.glNormal3f(f10, 0.0F, 0.0F);
         tessellator.startQuads();
         tessellator.vertex(-6D, -2D, -2D, f6, f8);
@@ -79,6 +74,6 @@ public class RenderShell extends EntityRenderer
     public void render(Entity entity, double d, double d1, double d2,
                        float f, float f1)
     {
-        renderArrow((SdkEntityTankShell) entity, d, d1, d2, f, f1);
+        rendershell((SdkEntityTankShell) entity, d, d1, d2, f, f1);
     }
 }

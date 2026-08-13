@@ -5,7 +5,7 @@ import net.glasslauncher.mods.gcapi3.api.ConfigEntry;
 
 public class VehiclesCFG {
 
-    @ConfigEntry(name = "Render-Debug Passanger Seat")
+    @ConfigEntry(name = "Render-Debug Passanger Seat", requiresRestart = true)
     public Boolean debugPassSeats = false; ///DEV
 
     @ConfigEntry(name = "Enable Tanks", multiplayerSynced = true, requiresRestart = true)

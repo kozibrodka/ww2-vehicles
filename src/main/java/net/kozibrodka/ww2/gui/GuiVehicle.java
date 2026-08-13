@@ -45,21 +45,25 @@ public class GuiVehicle extends HandledScreen
         if(vehicle.isFuelled())
         {
             int l = vehicle.getBurnTimeRemainingScaled(12);
-            drawTexture(j + 8, (k + 36 + 12) - l, 176, 12 - l, 14, l + 2);
+            drawTexture(j + 8, (k + 36 + 12) - l, 176, 12 - l, 14, l + 2); ///rysowanie ognia
         }
         for(int i1 = vehicle.guiData.numCargoSlots; i1 < 5; i1++)
         {
-            drawTexture(j + 79 + 18 * i1, k + 17, 190, 0, 18, 18);
+            drawTexture(j + 79 + 18 * i1, k + 17, 190, 0, 18, 18); ///zasłanianie nieistniejących cargoSlots
         }
 
         for(int j1 = vehicle.guiData.numBulletSlots; j1 < 5; j1++)
         {
-            drawTexture(j + 79 + 18 * j1, k + 35, 190, 0, 18, 18);
+            drawTexture(j + 79 + 18 * j1, k + 35, 190, 0, 18, 18); ///zasłanianie nieistniejących bulletSlots
         }
 
         for(int k1 = vehicle.guiData.numShellSlots; k1 < 5; k1++)
         {
-            drawTexture(j + 79 + 18 * k1, k + 53, 190, 0, 18, 18);
+            drawTexture(j + 79 + 18 * k1, k + 53, 190, 0, 18, 18); ///zasłanianie nieistniejących shellSlots
+        }
+        if(vehicle.guiData.isCannon){
+            drawTexture(j + 79 + 18 * -4, k + 52, 190, 0, 18, 18); ///zasłanianie paliwa
+            drawTexture(j + 79 + 18 * -4, k + 35, 190, 0, 18, 18); ///zasłanianie ognia
         }
 
     }

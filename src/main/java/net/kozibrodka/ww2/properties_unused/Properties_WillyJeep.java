@@ -29,8 +29,8 @@ public class Properties_WillyJeep extends Truck_properties {
         autoWidth = 1.5F;
         autoHeight = 1F;
         standingOko = 0.6F;
-        playerYOffset = 0.2D;
-        playerXOffset = 5.0D;
+        playerYOffset = 3;
+        playerXOffset = 80;
 
         MAX_SPEED = 0.5D;
         TURN_SPEED_STOPPED = 8D;
@@ -54,13 +54,13 @@ public class Properties_WillyJeep extends Truck_properties {
         COLLISION_FLIGHT_PLAYER = false;
         COLLISION_FLIGHT_ENTITY = false;
 
-        item_body =  new ItemStack(ww2Parts.smallCarChassis.id, 1, 0);
-        item_wheel =  new ItemStack(ww2Parts.largeWheel.id, 1, 0); //TODO
-        dyeColor = new ItemStack(Item.DYE.id, 1, 0);
-        itemlist1 = "   ";
-        itemlist2 = "ASD";
-        itemlist3 = "X X";
-        itemlist4 = "X X";
+//        item_body =  new ItemStack(ww2Parts.smallCarChassis.id, 1, 0);
+//        item_wheel =  new ItemStack(ww2Parts.largeWheel.id, 1, 0); //TODO
+//        dyeColor = new ItemStack(Item.DYE.id, 1, 0);
+//        itemlist1 = "   ";
+//        itemlist2 = "ASD";
+//        itemlist3 = "X X";
+//        itemlist4 = "X X";
 
     }
 }

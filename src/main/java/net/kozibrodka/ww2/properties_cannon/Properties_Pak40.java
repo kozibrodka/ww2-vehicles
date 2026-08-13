@@ -21,12 +21,14 @@ public class Properties_Pak40 extends Cannon_properties {
         overheatSound = "planes:mp44reload";
         isAntiAircraft = false;
         numBarrels = 50;
-        shellXOffset = new int[numBarrels];
+        barrelLength = 44;
+        barrelPivotXOffset = 0;
+        barrelPivotYOffset = 16;
+        barrelPivotZOffset = 0;
         shellYOffset = new int[numBarrels];
         shellZOffset = new int[numBarrels];
-        Arrays.fill(shellXOffset, 44);
-        Arrays.fill(shellYOffset, 10);
-        Arrays.fill(shellZOffset, 4);
+        Arrays.fill(shellYOffset, 0);
+        Arrays.fill(shellZOffset, 0);
 
         MAX_HEALTH = 100;
         artWidth = 2.0F;

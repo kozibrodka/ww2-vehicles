@@ -37,29 +37,7 @@ public class TextureListener {
         veh_work_bottom = registerBlockTexture("block/WorkSide");
         veh_work_side = registerBlockTexture("block/WorkBot");
 
-        if(FabricLoader.getInstance().isModLoaded("planes")) {
-            ww2Parts.biplaneWing.setTexture(Identifier.of(MOD_ID, "item/part/BiplaneWing"));
-            ww2Parts.woodenTail.setTexture(Identifier.of(MOD_ID, "item/part/WoodenTail"));
-            ww2Parts.woodenPropeller.setTexture(Identifier.of(MOD_ID, "item/part/WoodenPropeller"));
-            ww2Parts.triplaneWing.setTexture(Identifier.of(MOD_ID, "item/part/TriplaneWing"));
-            ww2Parts.woodenCockpit.setTexture(Identifier.of(MOD_ID, "item/part/WoodenCockpit"));
-            ww2Parts.wheel.setTexture(Identifier.of(MOD_ID, "item/part/Wheel"));
-            ww2Parts.metalWingMG.setTexture(Identifier.of(MOD_ID, "item/part/MetalWingMG"));
-            ww2Parts.metalTail.setTexture(Identifier.of(MOD_ID, "item/part/MetalTail"));
-            ww2Parts.bombBay.setTexture(Identifier.of(MOD_ID, "item/part/BombBay"));
-            ww2Parts.metalNose.setTexture(Identifier.of(MOD_ID, "item/part/MetalNose"));
-            ww2Parts.metalWing.setTexture(Identifier.of(MOD_ID, "item/part/MetalWing"));
-            ww2Parts.metalWingSection.setTexture(Identifier.of(MOD_ID, "item/part/metalWingSection"));
-            ww2Parts.metalCockpit.setTexture(Identifier.of(MOD_ID, "item/part/MetalCockpit"));
-            ww2Parts.advancedMetalCockpit.setTexture(Identifier.of(MOD_ID, "item/part/AdvancedMetalCockpit"));
-            ww2Parts.passengerBay.setTexture(Identifier.of(MOD_ID, "item/part/PassengerBay"));
-            ww2Parts.metalPropeller.setTexture(Identifier.of(MOD_ID, "item/part/MetalPropeller"));
-            ww2Parts.metalWingpPropv4.setTexture(Identifier.of(MOD_ID, "item/part/MetalWingProp"));
-            ww2Parts.metalWingpPropv6.setTexture(Identifier.of(MOD_ID, "item/part/MetalWingProp"));
-            ww2Parts.metalWingpPropv8.setTexture(Identifier.of(MOD_ID, "item/part/MetalWingProp"));
-            ww2Parts.metalWingpPropRot.setTexture(Identifier.of(MOD_ID, "item/part/MetalWingProp"));
-            ww2Parts.vehicleSeat.setTexture(Identifier.of(MOD_ID, "item/part/vehicleseat"));
-        }
+
 
         if(FabricLoader.getInstance().isModLoaded("ww2") || FabricLoader.getInstance().isModLoaded("planes")) {
             ww2Parts.smallEngine.setTexture(Identifier.of(MOD_ID, "item/part/V4Engine"));
@@ -68,6 +46,7 @@ public class TextureListener {
             ww2Parts.rotaryEngine.setTexture(Identifier.of(MOD_ID, "item/part/RotaryEngine"));
             ww2Parts.piston.setTexture(Identifier.of(MOD_ID, "item/part/EnginePiston"));
             ww2Parts.machinegun.setTexture(Identifier.of(MOD_ID, "item/part/Machinegun"));
+            ww2Parts.aaBarrel.setTexture(Identifier.of(MOD_ID, "item/part/AABarrel"));
 //            ww2Parts.symbolGerman.setTexture(Identifier.of(MOD_ID, "item/part/SymbolGerman"));
 //            ww2Parts.symbolAmerican.setTexture(Identifier.of(MOD_ID, "item/part/SymbolAmerican"));
 //            ww2Parts.symbolBritish.setTexture(Identifier.of(MOD_ID, "item/part/SymbolBritish"));
@@ -91,13 +70,37 @@ public class TextureListener {
             ww2Parts.towBar.setTexture(Identifier.of(MOD_ID, "item/part/Towbar"));
             ww2Parts.caterpillarTrack.setTexture(Identifier.of(MOD_ID, "item/part/CaterpillarTrack"));
         }
+        if(FabricLoader.getInstance().isModLoaded("ww2")) {
+            ww2Parts.biplaneWing.setTexture(Identifier.of(MOD_ID, "item/part/BiplaneWing"));
+            ww2Parts.woodenTail.setTexture(Identifier.of(MOD_ID, "item/part/WoodenTail"));
+            ww2Parts.woodenPropeller.setTexture(Identifier.of(MOD_ID, "item/part/WoodenPropeller"));
+            ww2Parts.triplaneWing.setTexture(Identifier.of(MOD_ID, "item/part/TriplaneWing"));
+            ww2Parts.woodenCockpit.setTexture(Identifier.of(MOD_ID, "item/part/WoodenCockpit"));
+            ww2Parts.wheel.setTexture(Identifier.of(MOD_ID, "item/part/Wheel"));
+            ww2Parts.metalWingMG.setTexture(Identifier.of(MOD_ID, "item/part/MetalWingMG"));
+            ww2Parts.metalTail.setTexture(Identifier.of(MOD_ID, "item/part/MetalTail"));
+            ww2Parts.bombBay.setTexture(Identifier.of(MOD_ID, "item/part/BombBay"));
+            ww2Parts.metalNose.setTexture(Identifier.of(MOD_ID, "item/part/MetalNose"));
+            ww2Parts.metalWing.setTexture(Identifier.of(MOD_ID, "item/part/MetalWing"));
+            ww2Parts.metalWingSection.setTexture(Identifier.of(MOD_ID, "item/part/MetalWingSection"));
+            ww2Parts.metalCockpit.setTexture(Identifier.of(MOD_ID, "item/part/MetalCockpit"));
+            ww2Parts.advancedMetalCockpit.setTexture(Identifier.of(MOD_ID, "item/part/AdvancedMetalCockpit"));
+            ww2Parts.passengerBay.setTexture(Identifier.of(MOD_ID, "item/part/PassengerBay"));
+            ww2Parts.metalPropeller.setTexture(Identifier.of(MOD_ID, "item/part/MetalPropeller"));
+            ww2Parts.metalWingpPropv4.setTexture(Identifier.of(MOD_ID, "item/part/MetalWingProp"));
+            ww2Parts.metalWingpPropv6.setTexture(Identifier.of(MOD_ID, "item/part/MetalWingProp"));
+            ww2Parts.metalWingpPropv8.setTexture(Identifier.of(MOD_ID, "item/part/MetalWingProp"));
+            ww2Parts.metalWingpPropRot.setTexture(Identifier.of(MOD_ID, "item/part/MetalWingProp"));
+            ww2Parts.vehicleSeat.setTexture(Identifier.of(MOD_ID, "item/part/vehicleseat"));
+        }
     }
 
     @EventListener
     public static void registerEntityRenderers(EntityRendererRegisterEvent event) {
         event.renderers.put(EntityShell_OLD.class, new RenderShell_OLD());
-        event.renderers.put(SdkEntityTankShell.class, new RenderShell());
+        event.renderers.put(SdkEntityTankShell.class, new RenderShell()); //todo, rendery powinny być dla podKlas HE, AP ... itd..
         event.renderers.put(EntityAAShell.class, new RenderAAShell());
+        event.renderers.put(SdkEntityAAShell.class, new RenderAAShell());
         event.renderers.put(TankBulletMachineGun.class, new SdkRenderBulletMachineGun());
         event.renderers.put(EntityTank.class, new RenderTank());
         event.renderers.put(EntityTruck.class, new RenderTruck());
@@ -108,7 +111,8 @@ public class TextureListener {
         /// HIDE TO SHOW PASSSEAT DEBUG MODEL
         if(mod_Vehicles.ww2Glass.debugPassSeats) {
             /// puste ewentualnie wtedy - biały square
-            event.renderers.put(EntityPassengerSeat.class, new RenderTestSeatBoat());
+//            event.renderers.put(EntityPassengerSeat.class, new RenderTestSeatBoat());
+            event.renderers.put(EntityPassengerSeat.class, new RenderTestPassShell());
         }else{
             event.renderers.put(EntityPassengerSeat.class, new RenderPassSeat());
         }

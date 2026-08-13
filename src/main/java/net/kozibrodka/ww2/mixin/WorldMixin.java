@@ -83,6 +83,9 @@ public class WorldMixin{
             if(objectEntity instanceof LivingEntity livin && livin.vehicle instanceof EntityPassengerSeat passSeat2 && passSeat2.mother == movingEntity){
                 return false;
             }
+            if(objectEntity == movingEntity.passenger){
+                return false;
+            }
         }
         if(movingEntity instanceof EntityTank){
             if(objectEntity == movingEntity.passenger || objectEntity instanceof ItemEntity){

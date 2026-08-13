@@ -63,17 +63,6 @@ public class TankType {
           cannonBulletDrop = klasa.cannonBulletDrop;
           cannonExploPower = klasa.cannonExploPower;
 
-          dyeColor = klasa.dyeColor;
-          item_track = klasa.item_track;
-          item_body = klasa.item_body;
-          item_mg = klasa.item_mg;
-          item_turret = klasa.item_turret;
-          item_cannon = klasa.item_cannon;
-          itemlist1 = klasa.itemlist1;
-          itemlist2 = klasa.itemlist2;
-          itemlist3 = klasa.itemlist3;
-          itemlist4 = klasa.itemlist4;
-
           ACCEL_FORWARD_STOPPED = klasa.ACCEL_FORWARD_STOPPED;
           ACCEL_FORWARD_FULL = klasa.ACCEL_FORWARD_FULL;
           ACCEL_BACKWARD_STOPPED = klasa.ACCEL_BACKWARD_STOPPED;
@@ -95,6 +84,8 @@ public class TankType {
           COLLISION_DAMAGE = klasa.COLLISION_DAMAGE;
           COLLISION_FLIGHT_ENTITY = klasa.COLLISION_FLIGHT_ENTITY;
           UPHILL_SLOWDOWN = klasa.UPHILL_SLOWDOWN;
+          recipeItem = klasa.recipeItem;
+          recipelist = klasa.recipelist;
 
           types.add(this);
     }
@@ -152,17 +143,6 @@ public class TankType {
     public float cannonBulletDrop;
     public float cannonExploPower;
 
-    public ItemStack dyeColor;
-    public ItemStack item_track;
-    public ItemStack item_body;
-    public ItemStack item_mg;
-    public ItemStack item_turret;
-    public ItemStack item_cannon;
-    public String itemlist1;
-    public String itemlist2;
-    public String itemlist3;
-    public String itemlist4;
-
     public double ACCEL_FORWARD_STOPPED;
     public double ACCEL_FORWARD_FULL;
     public double ACCEL_BACKWARD_STOPPED;
@@ -184,4 +164,7 @@ public class TankType {
     public boolean COLLISION_DAMAGE;
     public boolean COLLISION_FLIGHT_ENTITY;
     public double UPHILL_SLOWDOWN;
+
+    public ItemStack[] recipeItem;
+    public String[] recipelist;
 }

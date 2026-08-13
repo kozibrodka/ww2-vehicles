@@ -68,15 +68,15 @@ public class PropertiesOld_Flakpanzer4 extends Tank_properties {
         COLLISION_DAMAGE = true;
         COLLISION_FLIGHT_ENTITY = true;
 
-        item_track =  new ItemStack(ww2Parts.trackPiece.id, 1, 0);
-        item_body =  new ItemStack(ww2Parts.mediumTankBody.id, 1, 0);
-        item_mg =  new ItemStack(ww2Parts.machinegun.id, 1, 0);
-        item_turret =  new ItemStack(ww2Parts.gunShield.id, 1, 0);
-        item_cannon =  new ItemStack(ww2Parts.tankBarrel.id, 1, 0);
-        dyeColor = new ItemStack(Item.DYE.id, 1, 8);
-        itemlist1 = "QWE";
-        itemlist2 = "ASD";
-        itemlist3 = " X ";
-        itemlist4 = " X ";
+//        item_track =  new ItemStack(ww2Parts.trackPiece.id, 1, 0);
+//        item_body =  new ItemStack(ww2Parts.mediumTankBody.id, 1, 0);
+//        item_mg =  new ItemStack(ww2Parts.machinegun.id, 1, 0);
+//        item_turret =  new ItemStack(ww2Parts.gunShield.id, 1, 0);
+//        item_cannon =  new ItemStack(ww2Parts.tankBarrel.id, 1, 0);
+//        dyeColor = new ItemStack(Item.DYE.id, 1, 8);
+//        itemlist1 = "QWE";
+//        itemlist2 = "ASD";
+//        itemlist3 = " X ";
+//        itemlist4 = " X ";
     }
 }

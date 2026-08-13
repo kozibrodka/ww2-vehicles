@@ -1,8 +1,14 @@
 package net.kozibrodka.ww2.properties_cannon;
 
 import net.kozibrodka.ww2.events.mod_Vehicles;
+import net.kozibrodka.ww2.events.ww2Parts;
 import net.kozibrodka.ww2.model_cannon.ModelBofors;
 import net.kozibrodka.ww2.properties.Cannon_properties;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+
+import java.util.Arrays;
 
 public class Properties_Bofors extends Cannon_properties {
 
@@ -16,18 +22,20 @@ public class Properties_Bofors extends Cannon_properties {
         overheatSound = "planes:barreload";
         isAntiAircraft = true;
         numBarrels = 1;
-        shellXOffset = new int[numBarrels];
+        barrelLength = 47; ///44
+        barrelPivotXOffset = -6;
+        barrelPivotYOffset = 10;
+        barrelPivotZOffset = 4;
         shellYOffset = new int[numBarrels];
         shellZOffset = new int[numBarrels];
-        shellXOffset[0] = 44;
-        shellYOffset[0] = 10;
-        shellZOffset[0] = 4;
+        shellYOffset[0] = -2;
+        shellZOffset[0] = 0;
 
         MAX_HEALTH = 100;
         artWidth = 2.0F;
         artHeight = 2.0F;
-        gunnerX = -4;
-        gunnerY = 28;
+        gunnerX = 6;
+        gunnerY = -1;
         gunnerZ = -8;
         numCargoSlots = 5;
         numBulletSlots = 5;
@@ -50,6 +58,17 @@ public class Properties_Bofors extends Cannon_properties {
         cannonMuzzleVelocity = 3.0F;
         cannonExploPower = 4.0F;
         cannonRange = 20;
+
+        recipelist[0] = "QW ";
+        recipelist[1] = "ASD";
+        recipelist[2] = "X X";
+        recipelist[3] = "X X";
+        recipeItem[0] = new ItemStack(ww2Parts.aaBarrel); /// "Q" | body-gun //TODO itemsy z Planes...
+        recipeItem[1] = new ItemStack(Item.IRON_INGOT); /// "W" | turret
+        recipeItem[3] = new ItemStack(Item.IRON_INGOT); /// "A" | engine
+        recipeItem[4] = new ItemStack(Block.IRON_BLOCK); /// "S" | body
+        recipeItem[5] = new ItemStack(Item.DYE, 1, 2); /// "D" | symbol
+        recipeItem[6] = new ItemStack(ww2Parts.wheel); /// "X" | wheel //todo LARGE WHEEL
 
     }
 }

@@ -1,0 +1,11 @@
+Notatka Techniczna.
+
+        /// Pozostaje nierozwiązania kwestia Renderu passSeat przy pitch!=0,  jakby rotationPoint (PivotPoint) był błędny>
+        /// Czy dało by się ustawić punkt Rotacji dla Renderu Pass seat, dokładnie ten sam co dla renderu Całego Auta???
+
+
+        Kwestia Pocisku z Lufy - system działa fantastycznie.
+
+        Ale... Jako, że jest Tylko punkt (x,y,z) Pivot lufy oraz jej długość.
+        To jest za mało danych dla FlakVieringa, która ma wspólny pivot ale 4 działka...
+        Potrzebne jest wprowadzenie indywidualnich danych w []  (barrelLenght(już jest, stary XoffSet), Barrel z,y offsety....)

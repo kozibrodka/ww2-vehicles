@@ -1,6 +1,6 @@
 WSKAZÓWKI:
 - broadcastEventy do wartości BYTE - wykorzystaj - EZZ  - czy broadcastEvent działa z HasTrackingParameters wysoki interwal?
-- Wstawienie do RenderPassSeat nie powoduje tego przesuwania, jak na tym "default" białym kwadracie - dobrze się sprawdzi do renderowania GUNSów
+- Wstawienie do RenderPassSeat nie powoduje tego przesuwania, jak na tym "default" białym kwadracie - dobrze się sprawdzi do renderowania GUNSów - jedynie przy PITCH=0
 ISSUES:
 - Wysiadki przycinki, Alternate Exit jedynie zmiejsza szanse, to jest Vanilla Bug, jak stanę na łódce to też po jakimś czasie się zglitchuje [VANILLA BUG]
 TODO BEFORE RELEASE:
@@ -8,25 +8,23 @@ TODO BEFORE RELEASE:
 - Loading COntent na razie jedynie Vehicles/Cars etc... + dodaj if checki przy ukrywaniu itemów, części i crafting recipes dla itemów
 - SLOT - wpusczający jedynie AMMO - jak będą samoloty się pomyśli.
 - Wychodznie z pojazdu przycnika, może spróbuj dodać velocity?
-- WSPÓLNE GUI - done for Truck/TANK - remove old GUIS
-
-//todo na szybko z wczoraj
-- zobacz w tym claude AI, czy kod jest dobrze zoptymalizowany.
-- Trzeba wprowadzić kod z czołgu dla Cannon.
+- zobacz dokładnie gdzie zaczynają kule MG czołgu na freeze. - to w ramach properties...
 
 CANNON:
--clean-up interface of WW2Cannon - maybe add Towing?
-- CRAftingi, Towing,
-- overheat - ogarnij, tylko wstępnie zrobione jest
-- zobacz dokładnie gdzie zaczynają kule MG czołgu na freeze.
+- DropItems, Explode, DMG particles...
+- Multiplayer
 
+-PRZETESTUJ CZY BYTE w eventBrodcast może być ujemny????
+
+
+- overheat - ogarnij, tylko wstępnie zrobione jest
 
 
 //TODO bulletsy server spawned nie szukają Entity? - usunąłem to dla Shellsa, i wtedy nie potrzeba broadCastować eventów. - czy to się sprawdzi dla kul zwykłych, czy zbyt wiele jest "missów" wtedy - przeanalizować na SDK guns.
 
-- Multiplayer - done for truck/tank
-- Są pewne brakujące partsy. Stapi-resources. święty gral + itemsww2 sprawdź.   MetalWingSection np. Ogarnij to i rozpisz.
-- Crafting Cannons INSIDE vehicles BOX. - no vanilla workbench
+- Multiplayer - done for truck/tank, cannon to do.
+- Brakujących partsów z zestawu simpleParts już nie ma (poza łodzią, + częsciami do helki i odrzutowców).
+- Dużo fajnych nowych itemów - w tym fajne ikony AMMO do boforsa -> święty GRAl 1.2.5
 - INtegrate Planes/Cannons Part... - release jako ww2 mod
 
 Pierwszy mały update:
@@ -34,6 +32,8 @@ Pierwszy mały update:
 - Achievementy
 - Healing pojazdu
 - Przegrzewanie się MG czołgu...
+- Towing Cannons...
+- Działa przeciwpancerne
 TODO AFTER : (zero nowych pojazdów przez ogarnięciem wszyskich systemów)
 - TMT 1.6.4 - Donem trzeba uporządkowac repo (master commit)
 - Player jego rotacja w Render...

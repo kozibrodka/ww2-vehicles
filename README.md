@@ -1,5 +1,8 @@
 # SDK Vehicles Legacy Unofficial
 
+## Credits
+Classic WW2 Content Pack - Flan
+
 ## Setup
 
 [See the StationAPI wiki.](https://github.com/ModificationStation/StationAPI/wiki)

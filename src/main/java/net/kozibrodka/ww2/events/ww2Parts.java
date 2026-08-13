@@ -1,8 +1,10 @@
 package net.kozibrodka.ww2.events;
 
 import net.fabricmc.loader.api.FabricLoader;
+import net.kozibrodka.ww2.utils.WW2Utils;
 import net.mine_diver.unsafeevents.listener.EventListener;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.modificationstation.stationapi.api.event.registry.ItemRegistryEvent;
 import net.modificationstation.stationapi.api.mod.entrypoint.Entrypoint;
 import net.modificationstation.stationapi.api.template.item.TemplateItem;
@@ -18,29 +20,6 @@ public class ww2Parts {
     @EventListener
     public void registerItems(ItemRegistryEvent event) {
 //    public static void registerWW2Parts() {
-        if(FabricLoader.getInstance().isModLoaded("planes")) {
-            biplaneWing = new TemplateItem(Identifier.of(MOD_ID, "biplaneWing")).setTranslationKey(MOD_ID, "biplaneWing").setMaxCount(8);
-            woodenTail =  new TemplateItem(Identifier.of(MOD_ID, "woodenTail")).setTranslationKey(MOD_ID, "woodenTail").setMaxCount(4);
-            woodenPropeller =  new TemplateItem(Identifier.of(MOD_ID, "woodenPropeller")).setTranslationKey(MOD_ID, "woodenPropeller").setMaxCount(4);
-            triplaneWing =  new TemplateItem(Identifier.of(MOD_ID, "triplaneWing")).setTranslationKey(MOD_ID, "triplaneWing").setMaxCount(8);
-            woodenCockpit =  new TemplateItem(Identifier.of(MOD_ID, "woodenCockpit")).setTranslationKey(MOD_ID, "woodenCockpit").setMaxCount(4);
-            wheel =  new TemplateItem(Identifier.of(MOD_ID, "wheel")).setTranslationKey(MOD_ID, "wheel").setMaxCount(12);
-            metalWingMG =  new TemplateItem(Identifier.of(MOD_ID, "metalWingMG")).setTranslationKey(MOD_ID, "metalWingMG").setMaxCount(8);
-            metalTail =  new TemplateItem(Identifier.of(MOD_ID, "metalTail")).setTranslationKey(MOD_ID, "metalTail").setMaxCount(4);
-            bombBay =  new TemplateItem(Identifier.of(MOD_ID, "bombBay")).setTranslationKey(MOD_ID, "bombBay").setMaxCount(4);
-            metalNose =  new TemplateItem(Identifier.of(MOD_ID, "metalNose")).setTranslationKey(MOD_ID, "metalNose").setMaxCount(4);
-            metalWing =  new TemplateItem(Identifier.of(MOD_ID, "metalWing")).setTranslationKey(MOD_ID, "metalWing").setMaxCount(8);
-            metalWingSection =  new TemplateItem(Identifier.of(MOD_ID, "metalWingSection")).setTranslationKey(MOD_ID, "metalWingSection").setMaxCount(8);
-            metalCockpit =  new TemplateItem(Identifier.of(MOD_ID, "metalCockpit")).setTranslationKey(MOD_ID, "metalCockpit").setMaxCount(4);
-            advancedMetalCockpit =  new TemplateItem(Identifier.of(MOD_ID, "advancedMetalCockpit")).setTranslationKey(MOD_ID, "advancedMetalCockpit").setMaxCount(2);
-            passengerBay =  new TemplateItem(Identifier.of(MOD_ID, "passengerBay")).setTranslationKey(MOD_ID, "passengerBay").setMaxCount(4);
-            metalPropeller =  new TemplateItem(Identifier.of(MOD_ID, "metalPropeller")).setTranslationKey(MOD_ID, "metalPropeller").setMaxCount(4);
-            metalWingpPropv4 =  new TemplateItem(Identifier.of(MOD_ID, "metalWingpPropv4")).setTranslationKey(MOD_ID, "metalWingpPropv4").setMaxCount(8);
-            metalWingpPropv6 =  new TemplateItem(Identifier.of(MOD_ID, "metalWingpPropv6")).setTranslationKey(MOD_ID, "metalWingpPropv6").setMaxCount(8);
-            metalWingpPropv8 =  new TemplateItem(Identifier.of(MOD_ID, "metalWingpPropv8")).setTranslationKey(MOD_ID, "metalWingpPropv8").setMaxCount(8);
-            metalWingpPropRot =  new TemplateItem(Identifier.of(MOD_ID, "metalWingpPropRot")).setTranslationKey(MOD_ID, "metalWingpPropRot").setMaxCount(8);
-            vehicleSeat =  new TemplateItem(Identifier.of(MOD_ID, "vehicleSeat")).setTranslationKey(MOD_ID, "vehicleSeat").setMaxCount(8);
-        }
         if(true || FabricLoader.getInstance().isModLoaded("planes")) {
             smallEngine =  new TemplateItem(Identifier.of(MOD_ID, "smallEngine")).setTranslationKey(MOD_ID, "smallEngine").setMaxCount(4);
             mediumEngine =  new TemplateItem(Identifier.of(MOD_ID, "mediumEngine")).setTranslationKey(MOD_ID, "mediumEngine").setMaxCount(4);
@@ -48,6 +27,7 @@ public class ww2Parts {
             rotaryEngine =  new TemplateItem(Identifier.of(MOD_ID, "rotaryEngine")).setTranslationKey(MOD_ID, "rotaryEngine").setMaxCount(4);
             piston =  new TemplateItem(Identifier.of(MOD_ID, "piston")).setTranslationKey(MOD_ID, "piston").setMaxCount(16);
             machinegun =  new TemplateItem(Identifier.of(MOD_ID, "machinegun")).setTranslationKey(MOD_ID, "machinegun").setMaxCount(8);
+            aaBarrel = new TemplateItem(Identifier.of(MOD_ID, "aaBarrel")).setTranslationKey(MOD_ID, "aaBarrel").setMaxCount(4);
             /// na razie nie używam i tak
 //            symbolGerman =  new TemplateItem(Identifier.of(MOD_ID, "symbolGerman")).setTranslationKey(MOD_ID, "symbolGerman");
 //            symbolAmerican =  new TemplateItem(Identifier.of(MOD_ID, "symbolAmerican")).setTranslationKey(MOD_ID, "symbolAmerican");
@@ -72,6 +52,34 @@ public class ww2Parts {
             towBar =  new TemplateItem(Identifier.of(MOD_ID, "towBar")).setTranslationKey(MOD_ID, "towBar").setMaxCount(4);
             caterpillarTrack =  new TemplateItem(Identifier.of(MOD_ID, "caterpillarTrack")).setTranslationKey(MOD_ID, "caterpillarTrack").setMaxCount(8);
         }
+        if(true){
+            biplaneWing = new TemplateItem(Identifier.of(MOD_ID, "biplaneWing")).setTranslationKey(MOD_ID, "biplaneWing").setMaxCount(8);
+            woodenTail =  new TemplateItem(Identifier.of(MOD_ID, "woodenTail")).setTranslationKey(MOD_ID, "woodenTail").setMaxCount(4);
+            woodenPropeller =  new TemplateItem(Identifier.of(MOD_ID, "woodenPropeller")).setTranslationKey(MOD_ID, "woodenPropeller").setMaxCount(4);
+            triplaneWing =  new TemplateItem(Identifier.of(MOD_ID, "triplaneWing")).setTranslationKey(MOD_ID, "triplaneWing").setMaxCount(8);
+            woodenCockpit =  new TemplateItem(Identifier.of(MOD_ID, "woodenCockpit")).setTranslationKey(MOD_ID, "woodenCockpit").setMaxCount(4);
+            wheel =  new TemplateItem(Identifier.of(MOD_ID, "wheel")).setTranslationKey(MOD_ID, "wheel").setMaxCount(12);
+            metalWingMG =  new TemplateItem(Identifier.of(MOD_ID, "metalWingMG")).setTranslationKey(MOD_ID, "metalWingMG").setMaxCount(8);
+            metalTail =  new TemplateItem(Identifier.of(MOD_ID, "metalTail")).setTranslationKey(MOD_ID, "metalTail").setMaxCount(4);
+            bombBay =  new TemplateItem(Identifier.of(MOD_ID, "bombBay")).setTranslationKey(MOD_ID, "bombBay").setMaxCount(4);
+            metalNose =  new TemplateItem(Identifier.of(MOD_ID, "metalNose")).setTranslationKey(MOD_ID, "metalNose").setMaxCount(4);
+            metalWing =  new TemplateItem(Identifier.of(MOD_ID, "metalWing")).setTranslationKey(MOD_ID, "metalWing").setMaxCount(8);
+            metalWingSection =  new TemplateItem(Identifier.of(MOD_ID, "metalWingSection")).setTranslationKey(MOD_ID, "metalWingSection").setMaxCount(8);
+            metalCockpit =  new TemplateItem(Identifier.of(MOD_ID, "metalCockpit")).setTranslationKey(MOD_ID, "metalCockpit").setMaxCount(4);
+            advancedMetalCockpit =  new TemplateItem(Identifier.of(MOD_ID, "advancedMetalCockpit")).setTranslationKey(MOD_ID, "advancedMetalCockpit").setMaxCount(2);
+            passengerBay =  new TemplateItem(Identifier.of(MOD_ID, "passengerBay")).setTranslationKey(MOD_ID, "passengerBay").setMaxCount(4);
+            metalPropeller =  new TemplateItem(Identifier.of(MOD_ID, "metalPropeller")).setTranslationKey(MOD_ID, "metalPropeller").setMaxCount(4);
+            metalWingpPropv4 =  new TemplateItem(Identifier.of(MOD_ID, "metalWingpPropv4")).setTranslationKey(MOD_ID, "metalWingpPropv4").setMaxCount(8);
+            metalWingpPropv6 =  new TemplateItem(Identifier.of(MOD_ID, "metalWingpPropv6")).setTranslationKey(MOD_ID, "metalWingpPropv6").setMaxCount(8);
+            metalWingpPropv8 =  new TemplateItem(Identifier.of(MOD_ID, "metalWingpPropv8")).setTranslationKey(MOD_ID, "metalWingpPropv8").setMaxCount(8);
+            metalWingpPropRot =  new TemplateItem(Identifier.of(MOD_ID, "metalWingpPropRot")).setTranslationKey(MOD_ID, "metalWingpPropRot").setMaxCount(8);
+            vehicleSeat =  new TemplateItem(Identifier.of(MOD_ID, "vehicleSeat")).setTranslationKey(MOD_ID, "vehicleSeat").setMaxCount(8);
+        }
+
+        WW2Utils.engines[0] = new ItemStack(smallEngine);
+        WW2Utils.engines[1] = new ItemStack(mediumEngine);
+        WW2Utils.engines[2] = new ItemStack(largeEngine);
+        WW2Utils.engines[3] = new ItemStack(rotaryEngine);
     }
 
     public static Item biplaneWing;
@@ -117,6 +125,7 @@ public class ww2Parts {
     public static Item trackPiece;
     public static Item towBar;
     public static Item caterpillarTrack;
+    public static Item aaBarrel;
     public static Item symbolGerman;
     public static Item symbolAmerican;
     public static Item symbolBritish;

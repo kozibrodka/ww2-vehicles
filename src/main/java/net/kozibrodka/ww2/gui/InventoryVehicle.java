@@ -16,17 +16,19 @@ public class InventoryVehicle extends ScreenHandler
     public InventoryVehicle(Inventory iinventory, EntityVehicle entityvehicle)
     {
         vehicle = entityvehicle;
-        addSlot(new Slot(entityvehicle, 0, 8, 53));
+        if(!vehicle.guiData.isCannon) {
+            addSlot(new Slot(entityvehicle, 0, 8, 53)); /// nie dodaje slota na paliwo dla Cannons
+        }
         int i = 1;
         for(int j = 0; j < vehicle.guiData.numCargoSlots; j++)
         {
-            addSlot(new Slot(entityvehicle, i, 80 + j * 18, 18));
+            addSlot(new Slot(entityvehicle, i, 80 + j * 18, 18)); /// dodawanie SLOTÓW cargo
             i++;
         }
 
         for(int k = 0; k < vehicle.guiData.numBulletSlots; k++)
         {
-            addSlot(new Slot(entityvehicle, i, 80 + k * 18, 36));
+            addSlot(new SlotBullets(entityvehicle, i, 80 + k * 18, 36));
             i++;
         }
 
@@ -40,14 +42,14 @@ public class InventoryVehicle extends ScreenHandler
         {
             for(int k1 = 0; k1 < 9; k1++)
             {
-                addSlot(new Slot(iinventory, k1 + i1 * 9 + 9, 8 + k1 * 18, 84 + i1 * 18));
+                addSlot(new Slot(iinventory, k1 + i1 * 9 + 9, 8 + k1 * 18, 84 + i1 * 18)); /// dodawanie inventory gracza
             }
 
         }
 
         for(int j1 = 0; j1 < 9; j1++)
         {
-            addSlot(new Slot(iinventory, j1, 8 + j1 * 18, 142));
+            addSlot(new Slot(iinventory, j1, 8 + j1 * 18, 142)); /// dodawanie hotbar slots gracza
         }
 
     }
